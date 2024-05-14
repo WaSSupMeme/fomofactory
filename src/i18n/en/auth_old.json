@@ -1,0 +1,26 @@
+{
+  "confirmEmail": {
+    "success": "Your e-mail has been confirmed. You can Sign in now."
+  },
+  "header": {
+    "signIn": "Sign In",
+    "signUp": "Sign Up"
+  },
+  "resetPassword": {
+    "email": "E-mail",
+    "success": {
+      "subTitle": "An e-mail with further instructions has been sent to your e-mail address.",
+      "title": "Success"
+    },
+    "title": "Forgot password?"
+  },
+  "signIn": {
+    "resetPassword": "Forgot password?"
+  },
+  "signUp": {
+    "success": {
+      "subTitle": "Confirmation e-mail with further instructions has been sent to your e-mail address.",
+      "title": "Your account has been created."
+    }
+  }
+}

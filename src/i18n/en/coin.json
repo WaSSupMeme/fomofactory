@@ -1,0 +1,78 @@
+{
+  "new": {
+    "title": "New Meme Incoming!",
+    "socials": {
+      "title": "Socials",
+      "extra": "Help your community find you!"
+    },
+    "liquidity": {
+      "title": "Liquidity",
+      "extra": "Give your frens a head start!"
+    },
+    "cost": "Approximate cost: ~{{cost}} ETH",
+    "submit": "Mint My Meme!",
+    "steps": {
+      "token": "Deploying token contract",
+      "initLiquidity": "Initializing liquidity pool",
+      "approveLiquidity": "Approving token for liquidity pool",
+      "approveSwap": "Approving token for first trade",
+      "addLiquidity": "Adding liquidity to pool",
+      "addLiquidityAndSwap": "Adding liquidity to pool and making first trade"
+    }
+  },
+  "my": {
+    "title": "My Coins"
+  },
+  "metadata": {
+    "name": {
+      "label": "Name",
+      "placeholder": "$WASSUP"
+    },
+    "symbol": {
+      "label": "Symbol",
+      "placeholder": "WASSUP"
+    },
+    "description": {
+      "label": "Description",
+      "extra": "(max 140 characters)",
+      "placeholder": "$WASSUP on Base - The timeless meme from Bitconneeeect!"
+    },
+    "totalSupply": {
+      "label": "Total Supply",
+      "placeholder": "420690000000"
+    },
+    "image": {
+      "label": "Avatar",
+      "extra": "(max 100KB)",
+      "preview": "Coin Avatar Preview"
+    }
+  },
+  "socials": {
+    "twitter": {
+      "label": "Twitter",
+      "placeholder": "@WASSUPonBASE"
+    },
+    "telegram": {
+      "label": "Telegram",
+      "placeholder": "@wassup_on_base"
+    },
+    "website": {
+      "label": "Website",
+      "placeholder": "https://wassup.meme/"
+    }
+  },
+  "liquidity": {
+    "lp": {
+      "label": "Liquidity Provision",
+      "extra": "(% of total supply)"
+    },
+    "lpEth": {
+      "label": "Liquidity Initial Value",
+      "extra": "(required if LP > 0%)"
+    },
+    "firstTrade": {
+      "label": "First Trade Value",
+      "extra": "(recommended to avoid sniping and make your meme discoverable by DEX tools)"
+    }
+  }
+}

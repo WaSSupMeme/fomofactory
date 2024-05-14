@@ -1,0 +1,11 @@
+{
+  "changePassword": {
+    "password": "New Password",
+    "success": "Your password has been changed.",
+    "title": "Change Password"
+  },
+  "menu": {
+    "changePassword": "Change Password"
+  },
+  "title": "Profile"
+}
