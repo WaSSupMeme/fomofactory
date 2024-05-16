@@ -24,8 +24,8 @@ interface Props {
 const StickyHeader = ({ logo, drawer, middleSlot, endSlot }: Props) => (
   <header className="sticky top-0 z-50 w-full border-b bg-background">
     <div className="container flex h-14 items-center gap-6">
-      <div className="hidden lg:block">{logo}</div>
-      <div className="lg:hidden">{drawer}</div>
+      <div className="hidden xl:block">{logo}</div>
+      <div className="xl:hidden">{drawer}</div>
       <div className="flex-1">{middleSlot}</div>
       {endSlot}
     </div>
@@ -37,7 +37,7 @@ interface NavProps {
 }
 
 const Nav = ({ items }: NavProps) => (
-  <nav className="hidden gap-6 lg:flex">
+  <nav className="hidden gap-6 xl:flex">
     {items.map(({ to, label, isActive }) => (
       <Link
         key={to}

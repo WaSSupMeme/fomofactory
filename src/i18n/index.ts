@@ -10,6 +10,7 @@ import dayjsEN from 'dayjs/locale/en'
 import coin from './en/coin.json'
 import common from './en/common.json'
 import dashboard from './en/dashboard.json'
+import faq from './en/faq.json'
 import global from './en/global.json'
 import landing from './en/landing.json'
 import wallet from './en/wallet.json'
@@ -31,6 +32,7 @@ export const LANGUAGES_CONFIG = {
       coin,
       common,
       dashboard,
+      faq,
       landing,
       global,
       wallet,

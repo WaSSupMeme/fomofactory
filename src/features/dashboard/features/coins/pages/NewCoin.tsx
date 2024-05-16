@@ -280,7 +280,7 @@ const NewCoin = () => {
               </>
             ),
             footer: (
-              <div className="space-y-4 pb-5">
+              <div className="space-y-4">
                 {wallet && (
                   <Button form="new-coin-form" type="submit" block>
                     {t('coin:new.submit')}

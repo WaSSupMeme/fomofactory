@@ -15,7 +15,7 @@ const Layout = ({ children, headerProps }: Props) => (
         links={headerProps.links}
         endSlot={headerProps.endSlot}
       />
-      <main className="flex-1py-4 container relative h-full sm:py-8">{children}</main>
+      <main className="flex-1py-4 container relative h-full py-8">{children}</main>
     </div>
   </>
 )
