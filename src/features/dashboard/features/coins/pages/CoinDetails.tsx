@@ -388,7 +388,7 @@ const CoinDetails = () => {
             <iframe
               title={`${token?.name} Price Chart`}
               className="h-full w-full"
-              src={`https://www.dextools.io/widget-chart/en/base/pe-light/${pool}?theme=${theme}&chartType=1&chartResolution=15&drawingToolbars=false&headerColor=${theme === Theme.DARK ? '141414' : 'FFFFFF'}&tvPlatformColor=${theme === Theme.DARK ? '141414' : 'FFFFFF'}&tvPaneColor=${theme === Theme.DARK ? '141414' : 'FFFFFF'}`}
+              src={`https://www.dextools.io/widget-chart/en/base/pe-light/${pool.address}?theme=${theme}&chartType=1&chartResolution=15&drawingToolbars=false&headerColor=${theme === Theme.DARK ? '141414' : 'FFFFFF'}&tvPlatformColor=${theme === Theme.DARK ? '141414' : 'FFFFFF'}&tvPaneColor=${theme === Theme.DARK ? '141414' : 'FFFFFF'}`}
             ></iframe>
           )}
           {!pool && <Loading />}
