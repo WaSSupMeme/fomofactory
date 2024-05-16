@@ -13,14 +13,13 @@ import {
   FormMessage,
 } from '@/common/components/ui/form'
 import { Input } from '@/common/components/ui/input'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import {
   Accordion,
   AccordionContent,
   AccordionHeader,
   AccordionItem,
 } from '@/common/components/ui/accordion'
-import { Slider } from '@/common/components/ui/slider'
 import { Textarea } from '@/common/components/ui/textarea'
 import { InputGroup, InputGroupInput, InputGroupText } from '@/common/components/ui/input-group'
 import { Button } from '@/common/components/ui/button'
@@ -28,6 +27,8 @@ import { Card, CardHeader } from '@/common/components/ui/card'
 import { useWallet } from '@/app/providers/Wallet'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { useShowError } from '@/common/hooks/usePrintErrorMessage'
+import { EthIcon } from '@/assets/svg/EthIcon'
+import { useSetTokenMetadata } from '@/api/mutations/tokenMetadata'
 
 const NewCoin = () => {
   const { t } = useTranslation()
@@ -40,6 +41,8 @@ const NewCoin = () => {
     resolver: zodResolver(useNewCoinValidation()),
   })
 
+  const { mutate: setTokenMetadata } = useSetTokenMetadata({ onError: showError })
+
   const [, setCurrentImage] = useState<File>()
   const [previewImage, setPreviewImage] = useState<string>('')
 
@@ -51,65 +54,16 @@ const NewCoin = () => {
     }
   }
 
-  const defaultLiquidity = 0
-  const [liquidityPercentage, setLiquidityPercentage] = useState<number>(defaultLiquidity)
-
-  const handleLiquiditySliderChange = (value: number[]) => {
-    setLiquidityPercentage(value![0]!)
-    form.setValue('liquidityPercentage', value![0]!)
-  }
-
-  const liquidityPercentageWatch = form.watch('liquidityPercentage')
-
-  useEffect(() => {
-    if (liquidityPercentageWatch !== undefined) {
-      setLiquidityPercentage(liquidityPercentageWatch!)
-    }
-  }, [liquidityPercentageWatch])
-
-  const liquidityValueWatch = form.watch('liquidityEthereum')
-
-  const handleMetadataUpload = async (values: NewCoinFields) => {
-    try {
-      const formData = new FormData()
-      formData.append('file', values.avatar[0]!)
-      const metadata = JSON.stringify({
-        name: '0x3339E8800Aa7233060741046650797B8723A2954',
-        keyvalues: {
-          name: values.name,
-          symbol: values.symbol,
-          description: values.description,
-          twitter: values.twitter,
-          telegram: values.telegram,
-          website: values.website,
-        },
-      })
-      formData.append('pinataMetadata', metadata)
-
-      const options = JSON.stringify({
-        cidVersion: 0,
-      })
-      formData.append('pinataOptions', options)
-
-      await fetch('https://api.pinata.cloud/pinning/pinFileToIPFS', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${import.meta.env.VITE_PINATA_JWT}`,
-        },
-        body: formData,
-      })
-    } catch (error) {
-      showError(error)
-    }
-  }
-
   const onSubmit = useCallback(async (values: NewCoinFields) => {
-    try {
-      await handleMetadataUpload(values)
-    } catch (error) {
-      showError(error)
-    }
-  }, [])
+    setTokenMetadata({
+      address: '0x3339E8800Aa7233060741046650797B8723A2954',
+      description: values.description,
+      avatar: values.avatar[0]!,
+      twitter: values.twitter,
+      telegram: values.telegram,
+      website: values.website,
+    })
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="flex w-full flex-col items-center justify-center">
@@ -292,193 +246,27 @@ const NewCoin = () => {
                       />
                     </AccordionContent>
                   </AccordionItem>
-                  <AccordionItem value="liquidity">
+                  <AccordionItem value="trading">
                     <AccordionHeader>
-                      {t('coin:new.liquidity.title')}
+                      {t('coin:new.trading.title')}
                       <span className="ml-4 text-muted-foreground">
-                        {t('coin:new.liquidity.extra')}
+                        {t('coin:new.trading.extra')}
                       </span>
                     </AccordionHeader>
                     <AccordionContent>
                       <FormField
                         control={form.control}
-                        name="liquidityPercentage"
+                        name="firstBuy"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>{t('coin:liquidity.lp.label')}</FormLabel>
-                            <FormExtraLabel>{t('coin:liquidity.lp.extra')}</FormExtraLabel>
-                            <FormControl>
-                              <div className="flex w-full flex-row items-center justify-center space-x-2">
-                                <Slider
-                                  step={5}
-                                  defaultValue={[defaultLiquidity]}
-                                  className="w-11/12"
-                                  value={[liquidityPercentage]}
-                                  onValueChange={handleLiquiditySliderChange}
-                                />
-                                <Input
-                                  type="number"
-                                  min={0}
-                                  max={100}
-                                  step={5}
-                                  className="w-max"
-                                  {...field}
-                                />
-                              </div>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="liquidityEthereum"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>{t('coin:liquidity.lpEth.label')}</FormLabel>
+                            <FormLabel>{t('coin:trading.firstBuy.label')}</FormLabel>
+                            <FormExtraLabel>{t('coin:trading.firstBuy.extra')}</FormExtraLabel>
                             <FormControl>
                               <InputGroup>
                                 <InputGroupText>
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="100%"
-                                    height="100%"
-                                    version="1.1"
-                                    shape-rendering="geometricPrecision"
-                                    text-rendering="geometricPrecision"
-                                    image-rendering="optimizeQuality"
-                                    fill-rule="evenodd"
-                                    clip-rule="evenodd"
-                                    viewBox="0 0 784.37 1277.39"
-                                    className="h-5 w-5"
-                                  >
-                                    <g id="Layer_x0020_1">
-                                      <metadata id="CorelCorpID_0Corel-Layer" />
-                                      <g id="_1421394342400">
-                                        <g>
-                                          <polygon
-                                            fill="#343434"
-                                            fill-rule="nonzero"
-                                            points="392.07,0 383.5,29.11 383.5,873.74 392.07,882.29 784.13,650.54 "
-                                          />
-                                          <polygon
-                                            fill="#8C8C8C"
-                                            fill-rule="nonzero"
-                                            points="392.07,0 -0,650.54 392.07,882.29 392.07,472.33 "
-                                          />
-                                          <polygon
-                                            fill="#3C3C3B"
-                                            fill-rule="nonzero"
-                                            points="392.07,956.52 387.24,962.41 387.24,1263.28 392.07,1277.38 784.37,724.89 "
-                                          />
-                                          <polygon
-                                            fill="#8C8C8C"
-                                            fill-rule="nonzero"
-                                            points="392.07,1277.38 392.07,956.52 -0,724.89 "
-                                          />
-                                          <polygon
-                                            fill="#141414"
-                                            fill-rule="nonzero"
-                                            points="392.07,882.29 784.13,650.54 392.07,472.33 "
-                                          />
-                                          <polygon
-                                            fill="#393939"
-                                            fill-rule="nonzero"
-                                            points="0,650.54 392.07,882.29 392.07,472.33 "
-                                          />
-                                        </g>
-                                      </g>
-                                    </g>
-                                  </svg>
+                                  <EthIcon className="h-5 w-5" />
                                 </InputGroupText>
-                                <InputGroupInput
-                                  type="number"
-                                  min={0}
-                                  step={0.0001}
-                                  disabled={
-                                    liquidityPercentageWatch === undefined ||
-                                    liquidityPercentageWatch === 0
-                                  }
-                                  {...field}
-                                />
-                                <InputGroupText>ETH</InputGroupText>
-                              </InputGroup>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="firstTrade"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>{t('coin:liquidity.firstTrade.label')}</FormLabel>
-                            <FormExtraLabel>{t('coin:liquidity.firstTrade.extra')}</FormExtraLabel>
-                            <FormControl>
-                              <InputGroup>
-                                <InputGroupText>
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="100%"
-                                    height="100%"
-                                    version="1.1"
-                                    shape-rendering="geometricPrecision"
-                                    text-rendering="geometricPrecision"
-                                    image-rendering="optimizeQuality"
-                                    fill-rule="evenodd"
-                                    clip-rule="evenodd"
-                                    viewBox="0 0 784.37 1277.39"
-                                    className="h-5 w-5"
-                                  >
-                                    <g id="Layer_x0020_1">
-                                      <metadata id="CorelCorpID_0Corel-Layer" />
-                                      <g id="_1421394342400">
-                                        <g>
-                                          <polygon
-                                            fill="#343434"
-                                            fill-rule="nonzero"
-                                            points="392.07,0 383.5,29.11 383.5,873.74 392.07,882.29 784.13,650.54 "
-                                          />
-                                          <polygon
-                                            fill="#8C8C8C"
-                                            fill-rule="nonzero"
-                                            points="392.07,0 -0,650.54 392.07,882.29 392.07,472.33 "
-                                          />
-                                          <polygon
-                                            fill="#3C3C3B"
-                                            fill-rule="nonzero"
-                                            points="392.07,956.52 387.24,962.41 387.24,1263.28 392.07,1277.38 784.37,724.89 "
-                                          />
-                                          <polygon
-                                            fill="#8C8C8C"
-                                            fill-rule="nonzero"
-                                            points="392.07,1277.38 392.07,956.52 -0,724.89 "
-                                          />
-                                          <polygon
-                                            fill="#141414"
-                                            fill-rule="nonzero"
-                                            points="392.07,882.29 784.13,650.54 392.07,472.33 "
-                                          />
-                                          <polygon
-                                            fill="#393939"
-                                            fill-rule="nonzero"
-                                            points="0,650.54 392.07,882.29 392.07,472.33 "
-                                          />
-                                        </g>
-                                      </g>
-                                    </g>
-                                  </svg>
-                                </InputGroupText>
-                                <InputGroupInput
-                                  type="number"
-                                  min={0}
-                                  step={0.0001}
-                                  disabled={
-                                    liquidityValueWatch === undefined || liquidityValueWatch === 0
-                                  }
-                                  {...field}
-                                />
+                                <InputGroupInput type="number" min={0} step={0.0001} {...field} />
                                 <InputGroupText>ETH</InputGroupText>
                               </InputGroup>
                             </FormControl>
@@ -492,7 +280,7 @@ const NewCoin = () => {
               </>
             ),
             footer: (
-              <div className="space-y-4">
+              <div className="space-y-4 pb-5">
                 {wallet && (
                   <Button form="new-coin-form" type="submit" block>
                     {t('coin:new.submit')}
@@ -507,37 +295,6 @@ const NewCoin = () => {
                   <CardHeader>
                     <Typography variant="regularText">{t('coin:new.cost', { cost: 0 })}</Typography>
                   </CardHeader>
-                  {/* <CardContent>
-                    <Stepper>
-                      <StepperStep index={0}>
-                        <StepperStepContent>{t('coin:new.steps.token')}</StepperStepContent>
-                      </StepperStep>
-                      {form.getValues('liquidityPercentage') !== undefined &&
-                        form.getValues('liquidityPercentage')! > 0 && (
-                          <StepperStep index={1}>
-                            <StepperStepContent>
-                              {t('coin:new.steps.initLiquidity')}
-                            </StepperStepContent>
-                          </StepperStep>
-                        )}
-                      {form.getValues('liquidityPercentage') !== undefined &&
-                        form.getValues('liquidityPercentage')! > 0 && (
-                          <StepperStep index={2}>
-                            <StepperStepContent>
-                              {t('coin:new.steps.approveLiquidity')}
-                            </StepperStepContent>
-                          </StepperStep>
-                        )}
-                      {form.getValues('firstTrade') !== undefined &&
-                        form.getValues('firstTrade') !== 0 && (
-                          <StepperStep index={3}>
-                            <StepperStepContent>
-                              {t('coin:new.steps.approveSwap')}
-                            </StepperStepContent>
-                          </StepperStep>
-                        )}
-                    </Stepper>
-                  </CardContent> */}
                 </Card>
               </div>
             ),

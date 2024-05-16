@@ -8,7 +8,7 @@ import {
   cssStringFromTheme,
 } from '@rainbow-me/rainbowkit'
 import { WagmiProvider, useWalletClient } from 'wagmi'
-import { base } from 'wagmi/chains'
+import { base, baseSepolia } from 'wagmi/chains'
 
 interface Props {
   children: ReactNode
@@ -18,7 +18,7 @@ const WalletProvider = ({ children }: Props) => {
   const config = getDefaultConfig({
     appName: import.meta.env.VITE_APP_NAME,
     projectId: import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID,
-    chains: [base],
+    chains: [base, baseSepolia],
     ssr: import.meta.env.SSR,
   })
 
@@ -35,7 +35,7 @@ const WalletProvider = ({ children }: Props) => {
 
   return (
     <WagmiProvider config={config}>
-      <RainbowKitProvider modalSize="compact" theme={null}>
+      <RainbowKitProvider modalSize="compact" locale="en" theme={null}>
         <style
           dangerouslySetInnerHTML={{
             __html: `

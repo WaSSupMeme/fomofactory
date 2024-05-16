@@ -7,14 +7,11 @@ import dayjs from 'dayjs'
 // DayJS locales https://github.com/iamkun/dayjs/tree/dev/src/locale
 import dayjsEN from 'dayjs/locale/en'
 
-import auth from './en/auth.json'
-import bookshelf from './en/bookshelf.json'
 import coin from './en/coin.json'
 import common from './en/common.json'
 import dashboard from './en/dashboard.json'
 import global from './en/global.json'
 import landing from './en/landing.json'
-import profile from './en/profile.json'
 import wallet from './en/wallet.json'
 
 // Maps to src/i18n/{code}
@@ -31,14 +28,11 @@ export const LANGUAGES_CONFIG = {
     shortName: 'EN',
     dayjs: dayjsEN,
     resources: {
-      auth,
-      bookshelf,
       coin,
       common,
       dashboard,
       landing,
       global,
-      profile,
       wallet,
     },
   },

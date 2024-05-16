@@ -1,8 +1,9 @@
 {
   "header": {
     "language": "Language",
-    "profile": "Profile",
-    "signOut": "Sign Out",
-    "theme": "Theme"
+    "theme": "Theme",
+    "newCoin": "Make New Coin",
+    "myCoins": "My Coins",
+    "faq": "FAQ"
   }
 }

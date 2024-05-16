@@ -44,13 +44,7 @@ export const useNewCoinValidation = () => {
           .regex(new RegExp('^@[A-Za-z0-9_]{5,}$'), t('global:validations.telegram'))
           .optional(),
         website: z.string().url(t('global:validations.website')).optional(),
-        liquidityPercentage: z.coerce
-          .number({ invalid_type_error: t('global:validations.required') })
-          .min(5),
-        liquidityEthereum: z.coerce.number({
-          invalid_type_error: t('global:validations.required'),
-        }),
-        firstTrade: z.coerce
+        firstBuy: z.coerce
           .number({ invalid_type_error: t('global:validations.required') })
           .optional(),
       }),

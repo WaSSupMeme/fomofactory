@@ -21,6 +21,11 @@ export const APP_ROUTES = {
     to: (coinId: string) => generatePath('/coins/:coinId', { coinId }),
     absPath: '/coins/:coinId',
   },
+  faq: {
+    path: 'faq',
+    to: '/faq',
+    absPath: '/faq',
+  },
 } as const satisfies Record<
   string,
   {

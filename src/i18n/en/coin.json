@@ -5,12 +5,12 @@
       "title": "Socials",
       "extra": "Help your community find you!"
     },
-    "liquidity": {
-      "title": "Liquidity",
-      "extra": "Give your frens a head start!"
+    "trading": {
+      "title": "Start Trading",
+      "extra": "Give yourself a head start!"
     },
     "cost": "Approximate cost: ~{{cost}} ETH",
-    "submit": "Mint My Meme!",
+    "submit": "Mint My Coin",
     "steps": {
       "token": "Deploying token contract",
       "initLiquidity": "Initializing liquidity pool",
@@ -45,6 +45,18 @@
       "label": "Avatar",
       "extra": "(max 100KB)",
       "preview": "Coin Avatar Preview"
+    },
+    "liquidity": {
+      "label": "Liquidity"
+    },
+    "marketCap": {
+      "label": "Market Cap"
+    },
+    "volume": {
+      "label": "Volume (24h)"
+    },
+    "pair": {
+      "label": "Pair"
     }
   },
   "socials": {
@@ -61,18 +73,10 @@
       "placeholder": "https://wassup.meme/"
     }
   },
-  "liquidity": {
-    "lp": {
-      "label": "Liquidity Provision",
-      "extra": "(% of total supply)"
-    },
-    "lpEth": {
-      "label": "Liquidity Initial Value",
-      "extra": "(required if LP > 0%)"
-    },
-    "firstTrade": {
-      "label": "First Trade Value",
-      "extra": "(recommended to avoid sniping and make your meme discoverable by DEX tools)"
+  "trading": {
+    "firstBuy": {
+      "label": "First Buy",
+      "extra": "(recommended to make your meme discoverable by DEX tools and snap up some early liquidity)"
     }
   }
 }

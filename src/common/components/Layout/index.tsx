@@ -9,7 +9,7 @@ interface Props {
 
 const Layout = ({ children, headerProps }: Props) => (
   <>
-    <div className="flex h-full flex-col">
+    <div className="flex h-full w-full flex-col">
       <Header
         baseUrl={headerProps.baseUrl}
         links={headerProps.links}
