@@ -22,7 +22,7 @@ const fetchPool = async (
     address: import.meta.env[`VITE_UNISWAP_V3_FACTORY_ADDRESS_${chainId}`],
     abi: IUniswapV3FactoryABI.abi,
     functionName: 'getPool',
-    args: [address, '0x4200000000000000000000000000000000000006', fee],
+    args: [address, import.meta.env[`VITE_WETH_ADDRESS_${chainId}`], fee],
   })) as `0x${string}`
 
   const [token0, token1] = await readContracts(config, {

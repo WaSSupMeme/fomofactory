@@ -1205,6 +1205,11 @@
   dependencies:
     statuses "^2.0.1"
 
+"@chainlink/abi@^0.1.4":
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/@chainlink/abi/-/abi-0.1.4.tgz#6c76830e701519cc463f0298a3c508023764da6b"
+  integrity sha512-64Rgj6lVTosSdCd3F7h3GLs6fdy1vgaYYg75S+gv4gl69EddcUeo+hbyCB9JMt6Jk4zjc9GUn4V6oHwE/Me9cQ==
+
 "@coinbase/wallet-sdk@3.9.1":
   version "3.9.1"
   resolved "https://registry.yarnpkg.com/@coinbase/wallet-sdk/-/wallet-sdk-3.9.1.tgz#503a14671bb392d653623ef2340934e213ac971f"

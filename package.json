@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
+    "@chainlink/abi": "^0.1.4",
     "@emotion/react": "^11.11.4",
     "@fontsource/ibm-plex-mono": "^5.0.13",
     "@hookform/resolvers": "^3.3.4",

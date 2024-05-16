@@ -24,9 +24,11 @@ import { useShowError } from '@/common/hooks/usePrintErrorMessage.js'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { Button } from '@/common/components/ui/button'
 import { Card } from '@/common/components/ui/card'
-import { useToken } from '@/api/queries/token'
+import { useToken, useTokenUsdAmount } from '@/api/queries/token'
 import { usePool } from '@/api/queries/pool'
 import { useDexData } from '@/api/queries/dex'
+import { useEthUsdAmount } from '@/api/queries/eth'
+import { useEffect, useState } from 'react'
 
 const CoinDetails = () => {
   const { t } = useTranslation()
@@ -43,7 +45,30 @@ const CoinDetails = () => {
 
   const { theme } = useTheme()
 
-  const formatter = Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 2 })
+  const { data: ethPrice } = useEthUsdAmount(1)
+
+  const { data: tokenPrice } = useTokenUsdAmount(coinId, 1000)
+
+  const [tokenFees, setTokenFees] = useState<number>()
+  const [ethFees, setEthFees] = useState<number>()
+
+  useEffect(() => {
+    if (pool) {
+      if (pool.token0 === coinId) {
+        setTokenFees(pool.fees.token0)
+        setEthFees(pool.fees.token1)
+      } else {
+        setTokenFees(pool.fees.token1)
+        setEthFees(pool.fees.token0)
+      }
+    }
+  }, [pool])
+
+  const formatter = Intl.NumberFormat('en', {
+    notation: 'compact',
+    maximumFractionDigits: 2,
+    minimumFractionDigits: 2,
+  })
 
   const widgetConfig: WidgetConfig = {
     integrator: 'offblocks',
@@ -329,7 +354,8 @@ const CoinDetails = () => {
                     <Typography variant="mutedText">ETH</Typography>
                     <div className="grow"></div>
                     <Typography variant="mutedText">
-                      {(pool.token0 === coinId ? pool.fees.token1 : pool.fees.token0).toFixed(3)}
+                      {ethFees && ethFees.toFixed(3)}
+                      {ethFees && ethPrice && ` ($${formatter.format(ethPrice * ethFees)})`}
                     </Typography>
                   </div>
                   <div className="flex flex-row items-center gap-2">
@@ -341,9 +367,10 @@ const CoinDetails = () => {
                     <Typography variant="mutedText">{token?.symbol}</Typography>
                     <div className="grow"></div>
                     <Typography variant="mutedText">
-                      {formatter.format(
-                        pool.token0 === coinId ? pool.fees.token0 : pool.fees.token1,
-                      )}
+                      {tokenFees && formatter.format(tokenFees)}
+                      {tokenFees &&
+                        tokenPrice &&
+                        ` ($${formatter.format(tokenPrice * (tokenFees / 1000))})`}
                     </Typography>
                   </div>
                 </div>
