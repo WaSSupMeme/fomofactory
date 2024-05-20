@@ -5,6 +5,7 @@ import CoinCard from '../components/CoinCard'
 import { useTokens } from '@/api/queries/token'
 import { useNavigate } from 'react-router-dom'
 import { APP_ROUTES } from '@/app/routes'
+import { ShrugIcon } from '@/assets/svg/ShrugIcon'
 
 const MyCoins = () => {
   const { t } = useTranslation()
@@ -14,11 +15,11 @@ const MyCoins = () => {
 
   return (
     <div className="flex w-full flex-col items-center justify-center">
-      <aside className="w-fit space-y-4">
+      <aside className="w-fit justify-center space-y-4">
         <Typography variant="h3">{t('coin:my.title')}</Typography>
 
         {!tokens && (
-          <div className="h-full w-full">
+          <div className="h-72 w-full">
             <Loading />
           </div>
         )}
@@ -39,6 +40,9 @@ const MyCoins = () => {
               </div>
             ))}
           </div>
+        )}
+        {tokens !== undefined && tokens.length === 0 && (
+          <ShrugIcon className="h-72 w-72 fill-muted-foreground" />
         )}
       </aside>
     </div>

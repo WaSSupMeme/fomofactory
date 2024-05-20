@@ -150,6 +150,9 @@ const CoinDetails = () => {
           },
           styleOverrides: {
             root: {
+              lineHeight: 'inherit',
+              fontWeight: 700,
+              padding: '0.5rem 0.5rem',
               ':hover': {
                 transform: 'scale(1.025)',
                 backgroundColor: theme === Theme.LIGHT ? '#171717' : '#FAFAFA',
@@ -160,6 +163,7 @@ const CoinDetails = () => {
               },
               transition: 'transform 300ms cubic-bezier(0.4, 0, 0.2, 1)',
               '&.MuiLoadingButton-root': {
+                padding: '0.5rem 0.5rem',
                 transition: 'transform 300ms cubic-bezier(0.4, 0, 0.2, 1)',
               },
             },
@@ -193,9 +197,9 @@ const CoinDetails = () => {
           <Loading />
         </div>
       ) : (
-        <div className="flex h-min w-80 flex-col gap-4 xl:h-[80svh]">
-          <div className=" flex w-80 flex-row items-center gap-4 rounded-md bg-card px-6 py-4 text-card-foreground">
-            <div className="flex w-32 flex-col gap-2">
+        <div className="flex h-min w-96 flex-col gap-4 pb-5 xl:h-[80svh]">
+          <div className=" flex w-96 flex-row items-center gap-4 rounded-md bg-card px-6 py-4 text-card-foreground ">
+            <div className="flex w-48 flex-col gap-2">
               <Typography variant="regularText">{token?.name}</Typography>
               <Typography variant="mutedText">{token?.symbol}</Typography>
               <div className="flex flex-row gap-1">
@@ -239,7 +243,7 @@ const CoinDetails = () => {
               />
             </div>
           </div>
-          <div className="flex w-80 flex-col gap-4 rounded-md bg-card px-6 text-card-foreground">
+          <div className="flex w-96 flex-col gap-4 rounded-md bg-card px-6 text-card-foreground">
             {token && (
               <>
                 <Typography variant="regularText">{token.description}</Typography>
@@ -377,7 +381,7 @@ const CoinDetails = () => {
             )}
           </div>
           {pool && pool.owner === account.address && (
-            <div className="flex w-80 flex-col gap-4 rounded-md bg-card px-6 text-card-foreground">
+            <div className="flex w-96 flex-col gap-4 rounded-md bg-card px-6 text-card-foreground">
               <Card className="p-2">
                 <div className="flex flex-col space-y-2">
                   <div className="flex flex-row items-center gap-2">
