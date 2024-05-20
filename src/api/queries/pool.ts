@@ -6,35 +6,43 @@ import { readContract, readContracts } from '@wagmi/core'
 import { Abi, formatEther, maxUint128, PublicClient } from 'viem'
 import { Config, useChainId, useConfig, usePublicClient } from 'wagmi'
 
-import IUniswapV3FactoryABI from '@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Factory.sol/IUniswapV3Factory.json'
+import FomoFactoryABI from '../abi/FomoFactory.json'
+import LiquidityLockerABI from '../abi/LiquidityLocker.json'
 import IUniswapV3PoolABI from '@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json'
 import INonfungiblePositionManagerABI from '@uniswap/v3-periphery/artifacts/contracts/interfaces/INonfungiblePositionManager.sol/INonfungiblePositionManager.json'
 
 const fetchPool = async (
-  client: PublicClient,
+  client: PublicClient | undefined,
   config: Config,
   chainId: number,
-  address: `0x${string}`,
-  positionId: number,
-  fee: number,
+  tokenAddress: `0x${string}`,
 ) => {
-  const poolAddress = (await readContract(config, {
-    address: import.meta.env[`VITE_UNISWAP_V3_FACTORY_ADDRESS_${chainId}`],
-    abi: IUniswapV3FactoryABI.abi,
-    functionName: 'getPool',
-    args: [address, import.meta.env[`VITE_WETH_ADDRESS_${chainId}`], fee],
+  if (!client) throw new Error('Failed to initialize client')
+
+  const [address, positionId] = (await readContract(config, {
+    address: import.meta.env[`VITE_FOMO_FACTORY_ADDRESS_${chainId}`],
+    abi: FomoFactoryABI as Abi,
+    functionName: 'poolMetadataOf',
+    args: [tokenAddress],
+  })) as [`0x${string}`, number]
+
+  const owner = (await readContract(config, {
+    address: import.meta.env[`VITE_LIQUIDITY_LOCKER_ADDRESS_${chainId}`],
+    abi: LiquidityLockerABI as Abi,
+    functionName: 'ownerOf',
+    args: [positionId],
   })) as `0x${string}`
 
   const [token0, token1] = await readContracts(config, {
     allowFailure: false,
     contracts: [
       {
-        address: poolAddress,
+        address: address,
         abi: IUniswapV3PoolABI.abi as Abi,
         functionName: 'token0',
       },
       {
-        address: poolAddress,
+        address: address,
         abi: IUniswapV3PoolABI.abi as Abi,
         functionName: 'token1',
       },
@@ -56,7 +64,9 @@ const fetchPool = async (
   })
 
   return {
-    address: poolAddress,
+    address,
+    owner,
+    positionId,
     token0,
     token1,
     fees: {
@@ -66,15 +76,13 @@ const fetchPool = async (
   } as Pool
 }
 
-export const usePool = (address: `0x${string}`, positionId: number, fee: number) => {
+export const usePool = (tokenAddress: `0x${string}`) => {
   const config = useConfig()
   const chainId = useChainId()
   const client = usePublicClient()
 
-  if (!client) throw new Error('Failed to initialize client')
-
   return useQuery({
-    queryKey: ['pool', { address, fee, chainId }],
-    queryFn: () => fetchPool(client, config, chainId, address, positionId, fee),
+    queryKey: ['pool', { tokenAddress, chainId }],
+    queryFn: () => fetchPool(client, config, chainId, tokenAddress),
   })
 }

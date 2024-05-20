@@ -2,16 +2,16 @@ import { Loading, Typography } from '@/common/components'
 
 import { useTranslation } from 'react-i18next'
 import { useCoinDetailsParams } from '@/app/routes'
-import { useChainId } from 'wagmi'
+import { useAccount, useBalance, useChainId } from 'wagmi'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/common/components/ui/tooltip'
-import { addToMetamask, truncateEthAddress } from '@/common/utils'
+import { truncateEthAddress } from '@/common/utils'
 
 import { TelegramIcon } from '@/assets/svg/TelegramIcon'
 import { TwitterIcon } from '@/assets/svg/TwitterIcon'
 import { WebIcon } from '@/assets/svg/WebIcon'
 import { LockIcon } from '@/assets/svg/LockIcon'
 import { ClipboardIcon } from '@/assets/svg/ClipboardIcon'
-import { MetamaskIcon } from '@/assets/svg/MetamaskIcon'
+import { WalletIcon } from '@/assets/svg/WalletIcon'
 import { EthRoundIcon } from '@/assets/svg/EthRoundIcon'
 
 import { toast } from 'sonner'
@@ -19,7 +19,6 @@ import { toast } from 'sonner'
 import { LiFiWidget, WidgetConfig } from '@lifi/widget'
 import { Theme, useTheme } from '@/app/providers/Theme'
 
-import { FeeAmount } from '@uniswap/v3-sdk'
 import { useShowError } from '@/common/hooks/usePrintErrorMessage.js'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { Button } from '@/common/components/ui/button'
@@ -29,6 +28,8 @@ import { usePool } from '@/api/queries/pool'
 import { useDexData } from '@/api/queries/dex'
 import { useEthUsdAmount } from '@/api/queries/eth'
 import { useEffect, useState } from 'react'
+import { useAddTokenToWallet, useClaimFees } from '@/api/mutations/token'
+import { formatUnits } from 'viem'
 
 const CoinDetails = () => {
   const { t } = useTranslation()
@@ -38,19 +39,30 @@ const CoinDetails = () => {
 
   const { openConnectModal } = useConnectModal()
   const chainId = useChainId()
+  const account = useAccount()
 
   const { data: token, isLoading: isTokenLoading } = useToken(coinId)
-  const { data: pool } = usePool(coinId, 362720, FeeAmount.HIGH)
+  const { data: pool, refetch: refetchPool } = usePool(coinId)
   const { data: dexData } = useDexData(coinId)
+  const { data: balance, refetch: refetchBalance } = useBalance({
+    address: account.address,
+    token: coinId,
+  })
 
   const { theme } = useTheme()
 
   const { data: ethPrice } = useEthUsdAmount(1)
-
   const { data: tokenPrice } = useTokenUsdAmount(coinId, 1000)
 
   const [tokenFees, setTokenFees] = useState<number>()
   const [ethFees, setEthFees] = useState<number>()
+
+  const { mutate: addToWallet } = useAddTokenToWallet({
+    onError: () => showError(t('global:addFailed', { token: token?.name })),
+    onSuccess: () => {
+      toast.success(t('global:added', { token: token?.name }))
+    },
+  })
 
   useEffect(() => {
     if (pool) {
@@ -62,7 +74,18 @@ const CoinDetails = () => {
         setEthFees(pool.fees.token0)
       }
     }
-  }, [pool])
+  }, [pool, coinId])
+
+  const { mutate: claimFees, isPending: isClaimingFees } = useClaimFees({
+    onSuccess: () => {
+      toast.success(t('coin:misc.claimSuccess'))
+      refetchPool()
+      refetchBalance()
+    },
+    onError: () => {
+      toast.error(t('coin:misc.claimError'))
+    },
+  })
 
   const formatter = Intl.NumberFormat('en', {
     notation: 'compact',
@@ -227,6 +250,17 @@ const CoinDetails = () => {
                   <div className="grow"></div>
                   <Typography variant="mutedText">{token.totalSupply.toLocaleString()}</Typography>
                 </div>
+                {balance && (
+                  <div className="flex flex-row items-center gap-2">
+                    <Typography variant="regularText">
+                      {t('coin:metadata.balance.label')}
+                    </Typography>
+                    <div className="grow"></div>
+                    <Typography variant="mutedText">
+                      {Number(formatUnits(balance.value, balance.decimals)).toLocaleString()}
+                    </Typography>
+                  </div>
+                )}
                 {dexData && (
                   <>
                     <div className="flex flex-row items-center gap-0">
@@ -277,7 +311,7 @@ const CoinDetails = () => {
                         className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-primary transition duration-300 ease-in-out hover:scale-105 active:scale-95"
                         onClick={() => {
                           navigator.clipboard.writeText(coinId)
-                          toast.success(t('global:copied'))
+                          toast.success(t('global:copied', { token: token.name }))
                         }}
                       >
                         <ClipboardIcon className="h-4 w-4 fill-primary-foreground" />
@@ -292,22 +326,19 @@ const CoinDetails = () => {
                           data-tooltip-target="tooltip-click"
                           data-tooltip-trigger="click"
                           className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-primary transition duration-300 ease-in-out hover:scale-105 active:scale-95"
-                          onClick={() => {
-                            addToMetamask(
-                              coinId,
-                              token.symbol,
-                              token.decimals,
-                              token.avatar,
-                              chainId,
-                            ).catch((error) => {
-                              showError(error)
+                          onClick={() =>
+                            addToWallet({
+                              address: coinId,
+                              symbol: token.symbol,
+                              decimals: token.decimals,
+                              image: token.avatar,
                             })
-                          }}
+                          }
                         >
-                          <MetamaskIcon className="h-4 w-4" />
+                          <WalletIcon className="h-4 w-4 fill-primary-foreground" />
                         </button>
                       </TooltipTrigger>
-                      <TooltipContent>{t('global:metamask')}</TooltipContent>
+                      <TooltipContent>{t('global:wallet')}</TooltipContent>
                     </Tooltip>
                   )}
                 </div>
@@ -332,7 +363,7 @@ const CoinDetails = () => {
                           className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-primary transition duration-300 ease-in-out hover:scale-105 active:scale-95"
                           onClick={() => {
                             navigator.clipboard.writeText(pool.address)
-                            toast.success(t('global:copied'))
+                            toast.success(t('global:copied', { token: 'Pair' }))
                           }}
                         >
                           <ClipboardIcon className="h-4 w-4 fill-primary-foreground" />
@@ -345,7 +376,7 @@ const CoinDetails = () => {
               </>
             )}
           </div>
-          {pool && (
+          {pool && pool.owner === account.address && (
             <div className="flex w-80 flex-col gap-4 rounded-md bg-card px-6 text-card-foreground">
               <Card className="p-2">
                 <div className="flex flex-col space-y-2">
@@ -354,8 +385,10 @@ const CoinDetails = () => {
                     <Typography variant="mutedText">ETH</Typography>
                     <div className="grow"></div>
                     <Typography variant="mutedText">
-                      {ethFees && ethFees.toFixed(3)}
-                      {ethFees && ethPrice && ` ($${formatter.format(ethPrice * ethFees)})`}
+                      {ethFees !== undefined && ethFees.toFixed(3)}
+                      {ethFees !== undefined &&
+                        ethPrice &&
+                        ` ($${formatter.format(ethPrice * ethFees)})`}
                     </Typography>
                   </div>
                   <div className="flex flex-row items-center gap-2">
@@ -367,16 +400,28 @@ const CoinDetails = () => {
                     <Typography variant="mutedText">{token?.symbol}</Typography>
                     <div className="grow"></div>
                     <Typography variant="mutedText">
-                      {tokenFees && formatter.format(tokenFees)}
-                      {tokenFees &&
-                        tokenPrice &&
-                        ` ($${formatter.format(tokenPrice * (tokenFees / 1000))})`}
+                      {tokenFees !== undefined && formatter.format(tokenFees)}
+                      {tokenFees !== undefined &&
+                        ` ($${formatter.format((tokenPrice || 0) * (tokenFees / 1000))})`}
                     </Typography>
                   </div>
                 </div>
               </Card>
-              <Button variant="default" size="default" onClick={() => {}}>
-                Claim Fees
+              <Button
+                variant="default"
+                size="default"
+                loading={isClaimingFees}
+                disabled={
+                  !pool.positionId || !account?.address || !ethFees || !tokenFees || isClaimingFees
+                }
+                onClick={() => {
+                  claimFees({
+                    positionId: pool.positionId,
+                    recipient: account!.address!!,
+                  })
+                }}
+              >
+                {isClaimingFees ? t('coin:misc.claiming') : t('coin:misc.claimFees')}
               </Button>
             </div>
           )}

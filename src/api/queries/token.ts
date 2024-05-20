@@ -3,12 +3,23 @@ import { Token } from '../models/token'
 import { useQuery } from '@tanstack/react-query'
 
 import { readContract, readContracts } from '@wagmi/core'
-import { erc20Abi, formatEther, formatUnits, parseEther, PublicClient } from 'viem'
-import { Config, useChainId, useConfig, usePublicClient } from 'wagmi'
+import {
+  Abi,
+  erc20Abi,
+  formatEther,
+  formatUnits,
+  numberToHex,
+  parseEther,
+  parseUnits,
+  PublicClient,
+} from 'viem'
+import { Config, useAccount, useChainId, useConfig, usePublicClient } from 'wagmi'
 
+import FomoFactoryABI from '../abi/FomoFactory.json'
 import IQuoterV2ABI from '@uniswap/v3-periphery/artifacts/contracts/interfaces/IQuoterV2.sol/IQuoterV2.json'
 import { FeeAmount } from '@uniswap/v3-sdk'
 import { fetchEthUsdAmount } from './eth'
+import { useWallet } from '@/app/providers/Wallet'
 
 const fetchMetadata = async (address: `0x${string}`) => {
   const res = await fetch(
@@ -25,7 +36,7 @@ const fetchMetadata = async (address: `0x${string}`) => {
   if (resData.rows.length > 0) {
     const avatar = resData.rows[0]
     return {
-      avatar: `${import.meta.env.VITE_GATEWAY_URL}/ipfs/${avatar.ipfs_pin_hash}`,
+      avatar: `${import.meta.env.VITE_GATEWAY_URL}/ipfs/${avatar.ipfs_pin_hash}/${avatar.metadata.keyvalues.fileName}`,
       description: avatar.metadata.keyvalues.description,
       telegram: avatar.metadata.keyvalues.telegram,
       twitter: avatar.metadata.keyvalues.twitter,
@@ -91,12 +102,14 @@ export const useToken = (address: `0x${string}`) => {
 }
 
 const fetchTokenUsdAmount = async (
-  client: PublicClient,
+  client: PublicClient | undefined,
   config: Config,
   chainId: number,
   address: `0x${string}`,
   tokenAmount: number,
 ) => {
+  if (!client) throw new Error('Failed to initialize client')
+
   const quote = await client.simulateContract({
     address: import.meta.env[`VITE_UNISWAP_V3_QUOTER_ADDRESS_${chainId}`],
     abi: IQuoterV2ABI.abi,
@@ -129,10 +142,83 @@ export const useTokenUsdAmount = (address: `0x${string}`, tokenAmount: number) =
   const client = usePublicClient()
   const config = useConfig()
 
-  if (!client) throw new Error('Failed to initialize client')
-
   return useQuery({
     queryKey: ['tokenUsdAmount', { address, tokenAmount, chainId }],
     queryFn: () => fetchTokenUsdAmount(client, config, chainId, address, tokenAmount),
+  })
+}
+
+const fetchTokenAddress = async (
+  config: Config,
+  chainId: number,
+  name: string,
+  symbol: string,
+  totalSupply: number,
+  salt: number,
+  creator?: `0x${string}`,
+) => {
+  if (!creator) {
+    throw new Error('Missing creator address')
+  }
+
+  const address = await readContract(config, {
+    address: import.meta.env[`VITE_FOMO_FACTORY_ADDRESS_${chainId}`],
+    abi: FomoFactoryABI as Abi,
+    functionName: 'computeMemecoinAddress',
+    args: [
+      creator,
+      name,
+      symbol,
+      parseUnits(totalSupply.toString(), 18),
+      numberToHex(salt, { size: 32 }),
+    ],
+  })
+
+  return address as `0x${string}`
+}
+
+export const useTokenAddress = (
+  name: string,
+  symbol: string,
+  totalSupply: number,
+  salt: number,
+) => {
+  const config = useConfig()
+  const chainId = useChainId()
+  const { data: wallet } = useWallet()
+
+  return useQuery({
+    queryKey: [
+      'tokenAddress',
+      { creator: wallet?.account.address, name, symbol, totalSupply, salt, chainId },
+    ],
+    queryFn: () =>
+      fetchTokenAddress(config, chainId, name, symbol, totalSupply, salt, wallet?.account.address),
+  })
+}
+
+const fetchTokens = async (config: Config, chainId: number, account?: `0x${string}`) => {
+  if (!account) {
+    throw new Error('Missing account address')
+  }
+
+  const tokens = await readContract(config, {
+    address: import.meta.env[`VITE_FOMO_FACTORY_ADDRESS_${chainId}`],
+    abi: FomoFactoryABI as Abi,
+    functionName: 'memecoinsOf',
+    args: [account],
+  })
+
+  return tokens as `0x${string}`[]
+}
+
+export const useTokens = () => {
+  const config = useConfig()
+  const chainId = useChainId()
+  const account = useAccount()
+
+  return useQuery({
+    queryKey: ['tokens', { chainId, account: account?.address }],
+    queryFn: () => fetchTokens(config, chainId, account?.address),
   })
 }

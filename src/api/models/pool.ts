@@ -2,6 +2,8 @@ import { z } from 'zod'
 
 const poolSchema = z.object({
   address: z.custom<`0x${string}`>(),
+  owner: z.custom<`0x${string}`>(),
+  positionId: z.number(),
   token0: z.custom<`0x${string}`>(),
   token1: z.custom<`0x${string}`>(),
   fees: z.object({

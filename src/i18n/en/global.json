@@ -25,6 +25,8 @@
   },
   "optional": "(optional)",
   "copy": "Copy to clipboard",
-  "copied": "Copied!",
-  "metamask": "Add to Metamask"
+  "copied": "{{token}} contract address copied!",
+  "wallet": "Add to wallet",
+  "addFailed": "Failed to add {{token}} to your wallet",
+  "added": "{{token}} added to your wallet!"
 }

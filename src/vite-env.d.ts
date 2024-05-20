@@ -7,8 +7,9 @@ interface ImportMetaEnv {
   readonly VITE_PINATA_JWT: string
   readonly VITE_GATEWAY_URL: string
 
+  readonly VITE_USD_MARKET_CAP: number
+
   readonly VITE_WETH_ADDRESS_8453: string
-  readonly VITE_USDC_ADDRESS_8453: string
   readonly VITE_UNISWAP_V3_FACTORY_ADDRESS_8453: string
   readonly VITE_UNISWAP_V3_NONFUNGIBLE_POSITION_MANAGER_ADDRESS_8453: string
   readonly VITE_UNISWAP_V3_QUOTER_ADDRESS_8453: string

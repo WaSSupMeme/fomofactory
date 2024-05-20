@@ -12,9 +12,9 @@
     "title": "Is there any ownership associated with the token contract by default?",
     "content": "No, by default, the token does not have any owners. This ensures the token appears clean on DEX tools"
   },
-  "marketCap": {
-    "title": "What is the initial market cap of the token?",
-    "content": "The initial market cap of the token is set at $10K"
+  "tokenomics": {
+    "title": "What is the tokenomics of the token?",
+    "content": "The initial market cap of the token is set at $10K. The token launch is a fair launch with 100% of the tokens locked in a liquidity pool"
   },
   "optionalBuy": {
     "title": "What is the optional first buy feature?",

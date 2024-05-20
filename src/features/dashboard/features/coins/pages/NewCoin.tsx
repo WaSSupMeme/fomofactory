@@ -13,7 +13,7 @@ import {
   FormMessage,
 } from '@/common/components/ui/form'
 import { Input } from '@/common/components/ui/input'
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import {
   Accordion,
   AccordionContent,
@@ -29,41 +29,93 @@ import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { useShowError } from '@/common/hooks/usePrintErrorMessage'
 import { EthIcon } from '@/assets/svg/EthIcon'
 import { useSetTokenMetadata } from '@/api/mutations/tokenMetadata'
+import { useCreateToken, useEstimateCreateToken } from '@/api/mutations/token'
+import { useTokenAddress } from '@/api/queries/token'
+import { useEthUsdAmount } from '@/api/queries/eth'
+import { useNavigate } from 'react-router-dom'
+import { APP_ROUTES } from '@/app/routes'
 
 const NewCoin = () => {
   const { t } = useTranslation()
+  const navigate = useNavigate()
   const showError = useShowError()
 
   const { data: wallet } = useWallet()
   const { openConnectModal } = useConnectModal()
 
+  const { data: ethPrice } = useEthUsdAmount(1)
+
   const form = useForm<NewCoinFields>({
     resolver: zodResolver(useNewCoinValidation()),
   })
 
-  const { mutate: setTokenMetadata } = useSetTokenMetadata({ onError: showError })
+  const salt = useMemo(() => new Date().getTime(), [])
 
-  const [, setCurrentImage] = useState<File>()
+  const { mutate: setTokenMetadata, isPending: isSettingTokenMetadata } = useSetTokenMetadata({
+    onError: () => showError(t('coin:new.error', { name: name })),
+  })
+  const { mutate: createToken, isPending: isCreatingToken } = useCreateToken({
+    onError: () => showError(t('coin:new.error', { name: name })),
+    onSuccess: (address) => {
+      navigate({
+        pathname: APP_ROUTES.coinDetails.to(address),
+      })
+    },
+  })
+
+  const name = form.watch('name')
+  const symbol = form.watch('symbol')
+  const totalSupply = form.watch('totalSupply')
+  const firstBuy = form.watch('firstBuy')
+
+  const { data: gasEstimate } = useEstimateCreateToken({
+    name,
+    symbol,
+    totalSupply,
+    salt,
+    initialBuy: firstBuy,
+  })
+  const { data: tokenAddress } = useTokenAddress(name, symbol, totalSupply, salt)
+
   const [previewImage, setPreviewImage] = useState<string>('')
 
   const handleAvatarChange = (fileList: FileList) => {
     if (fileList.length === 1) {
-      setCurrentImage(fileList[0])
-      console.log(fileList[0]!)
       setPreviewImage(URL.createObjectURL(fileList[0]!))
     }
   }
 
-  const onSubmit = useCallback(async (values: NewCoinFields) => {
-    setTokenMetadata({
-      address: '0x3339E8800Aa7233060741046650797B8723A2954',
-      description: values.description,
-      avatar: values.avatar[0]!,
-      twitter: values.twitter,
-      telegram: values.telegram,
-      website: values.website,
-    })
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  const onSubmit = useCallback(
+    async (values: NewCoinFields) => {
+      if (!tokenAddress) {
+        showError(t('coin:new.error', { name: name }))
+        return
+      }
+
+      setTokenMetadata(
+        {
+          address: tokenAddress,
+          description: values.description,
+          avatar: values.avatar[0]!,
+          twitter: values.twitter,
+          telegram: values.telegram,
+          website: values.website,
+        },
+        {
+          onSuccess: () => {
+            createToken({
+              name: values.name,
+              symbol: values.symbol,
+              totalSupply: values.totalSupply,
+              salt: salt,
+              initialBuy: values.firstBuy,
+            })
+          },
+        },
+      )
+    },
+    [tokenAddress, salt], // eslint-disable-line react-hooks/exhaustive-deps
+  )
 
   return (
     <div className="flex w-full flex-col items-center justify-center">
@@ -280,10 +332,18 @@ const NewCoin = () => {
               </>
             ),
             footer: (
-              <div className="space-y-4">
+              <div className="space-y-4 pb-6">
                 {wallet && (
-                  <Button form="new-coin-form" type="submit" block>
-                    {t('coin:new.submit')}
+                  <Button
+                    form="new-coin-form"
+                    type="submit"
+                    loading={isSettingTokenMetadata || isCreatingToken}
+                    disabled={isSettingTokenMetadata || isCreatingToken}
+                    block
+                  >
+                    {isSettingTokenMetadata || isCreatingToken
+                      ? t('coin:new.minting', { name: name })
+                      : t('coin:new.submit')}
                   </Button>
                 )}
                 {!wallet && (
@@ -292,8 +352,13 @@ const NewCoin = () => {
                   </Button>
                 )}
                 <Card>
-                  <CardHeader>
-                    <Typography variant="regularText">{t('coin:new.cost', { cost: 0 })}</Typography>
+                  <CardHeader className="flex flex-row items-center space-x-1 space-y-0">
+                    <Typography variant="regularText">
+                      {t('coin:new.cost', { cost: (gasEstimate || 0).toFixed(4) })}
+                    </Typography>
+                    <Typography variant="regularText" className="text-muted-foreground">
+                      {ethPrice && `($${((gasEstimate || 0) * ethPrice).toFixed(2)})`}
+                    </Typography>
                   </CardHeader>
                 </Card>
               </div>

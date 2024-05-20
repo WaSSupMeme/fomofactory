@@ -12,39 +12,15 @@ const truncateEthAddress = (address: string) => {
   return `${match[1]}…${match[2]}`
 }
 
-async function addToMetamask(
-  address: `0x${string}`,
-  symbol: string,
-  decimals: number,
-  image: string,
-  chainId: number,
-) {
-  if (window.ethereum.networkVersion !== chainId) {
-    try {
-      await window.ethereum.request({
-        method: 'wallet_switchEthereumChain',
-        params: [{ chainId: `0x${chainId.toString(16)}` }],
-      })
-    } catch (err: any) {
-      throw err
-    }
-  }
-  try {
-    await window.ethereum.request({
-      method: 'wallet_watchAsset',
-      params: {
-        type: 'ERC20',
-        options: {
-          address: address,
-          symbol: symbol,
-          decimals: decimals,
-          image: image,
-        },
-      },
-    })
-  } catch (error) {
-    throw error
-  }
+const adjustSpacing = (tick: number, spacing: number) => {
+  return Math.floor(tick / spacing) * spacing
 }
 
-export { truncateEthAddress, addToMetamask }
+function calculateInitialTick(totalSupply: number, marketCap: number, tickSpacing: number) {
+  return adjustSpacing(
+    Math.floor(Math.log(Math.sqrt(marketCap / totalSupply)) / Math.log(Math.sqrt(1.0001))),
+    tickSpacing,
+  )
+}
+
+export { truncateEthAddress, calculateInitialTick }

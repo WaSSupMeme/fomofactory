@@ -6,7 +6,7 @@ import { readContracts } from '@wagmi/core'
 import { Config, useChainId, useConfig } from 'wagmi'
 import { Abi, formatUnits } from 'viem'
 
-const fetchUsdEthAmount = async (config: Config, chainId: number, usdAmount: number) => {
+export const fetchUsdEthAmount = async (config: Config, chainId: number, usdAmount: number) => {
   const [latestRoundData, decimals] = await readContracts(config, {
     allowFailure: false,
     contracts: [

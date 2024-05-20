@@ -14,7 +14,7 @@ const FAQ = () => {
       <div className="w-11/12 space-y-4 sm:w-11/12 md:w-11/12 lg:w-4/5 xl:w-3/5">
         <Typography variant="h3">{t('faq:title')}</Typography>
         <Accordion type="multiple">
-          {['what', 'how', 'ownership', 'marketCap', 'optionalBuy', 'fees'].map((value) => (
+          {['what', 'how', 'ownership', 'tokenomics', 'optionalBuy', 'fees'].map((value) => (
             <AccordionItem value={value} className="p-2">
               <AccordionHeader>
                 <Typography variant="h4" className="text-left">
