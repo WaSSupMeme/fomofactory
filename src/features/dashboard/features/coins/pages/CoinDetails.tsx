@@ -412,7 +412,10 @@ const CoinDetails = () => {
                 size="default"
                 loading={isClaimingFees}
                 disabled={
-                  !pool.positionId || !account?.address || !ethFees || !tokenFees || isClaimingFees
+                  !pool.positionId ||
+                  !account?.address ||
+                  (!ethFees && !tokenFees) ||
+                  isClaimingFees
                 }
                 onClick={() => {
                   claimFees({
