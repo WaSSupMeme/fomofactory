@@ -8,7 +8,7 @@ const Footer = () => {
   const navigate = useNavigate()
   return (
     <footer className="sticky bottom-0 z-40 w-full border-t bg-background">
-      <div className="container flex h-14 flex-row items-center justify-center gap-6 sm:flex-row">
+      <div className="container flex h-fit flex-col items-center justify-center gap-6 py-2 sm:flex-row">
         <div className="flex flex-row items-center gap-2">
           <button onClick={() => navigate({ pathname: APP_ROUTES.tos.to })}>
             <Typography variant="mutedText">Terms of Service</Typography>
