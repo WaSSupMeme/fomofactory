@@ -10,8 +10,8 @@ const Landing = () => {
   const navigate = useNavigate()
 
   return (
-    <div className="flex h-full items-center justify-center">
-      <div className="flex flex-col items-center gap-x-6 gap-y-6 sm:flex-col">
+    <div className="flex w-full grow flex-col items-center justify-center">
+      <div className="flex h-full grow flex-col items-center justify-center gap-x-6 gap-y-6">
         <Typography variant="h1">{t('landing:message.title')}</Typography>
         <Typography variant="h3">{t('landing:message.subtitle')}</Typography>
         <Button

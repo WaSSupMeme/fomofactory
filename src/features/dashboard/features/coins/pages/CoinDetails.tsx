@@ -191,13 +191,13 @@ const CoinDetails = () => {
   }
 
   return (
-    <div className="flex flex-col items-center xl:flex-row">
+    <div className="flex h-full w-full flex-col items-center xl:flex-row">
       {isTokenLoading ? (
         <div className="h-min min-w-80 flex-col gap-4 xl:h-[80svh]">
           <Loading />
         </div>
       ) : (
-        <div className="flex h-min w-96 flex-col gap-4 pb-5 xl:h-[80svh]">
+        <div className="flex h-min w-96 flex-col gap-4 pb-6 xl:h-[80svh] xl:pb-0">
           <div className=" flex w-96 flex-row items-center gap-4 rounded-md bg-card px-6 py-4 text-card-foreground ">
             <div className="flex w-48 flex-col gap-2">
               <Typography variant="regularText">{token?.name}</Typography>
@@ -446,7 +446,7 @@ const CoinDetails = () => {
           {!pool && <Loading />}
         </div>
       </div>
-      <div className="h-min w-96 xl:h-[80svh]">
+      <div className="h-fit w-96 xl:h-[80svh]">
         {token && (
           <LiFiWidget
             integrator="offblocks"

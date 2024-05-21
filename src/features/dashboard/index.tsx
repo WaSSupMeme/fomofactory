@@ -12,6 +12,7 @@ import CoinDetails from './features/coins/pages/CoinDetails'
 import MyCoins from './features/coins/pages/MyCoins'
 import FAQ from './features/coins/pages/FAQ'
 import { useTranslation } from 'react-i18next'
+import Terms from '@/common/components/Terms'
 
 const Dashboard = () => {
   const { isLoggedIn } = useAuth()
@@ -51,6 +52,7 @@ const Dashboard = () => {
           <Route path={APP_ROUTES.coinDetails.path} element={<CoinDetails />} />
           <Route path={APP_ROUTES.newCoin.path} element={<NewCoin />} />
           <Route path={APP_ROUTES.faq.path} element={<FAQ />} />
+          <Route path={APP_ROUTES.tos.path} element={<Terms />} />
           <Route path="*" element={<Navigate replace to={APP_ROUTES.index.to} />} />
         </Route>
       </Routes>

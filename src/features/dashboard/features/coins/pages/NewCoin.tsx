@@ -118,7 +118,7 @@ const NewCoin = () => {
   )
 
   return (
-    <div className="flex w-full flex-col items-center justify-center">
+    <div className="flex h-full w-full flex-col items-center justify-center">
       <aside className="w-11/12 space-y-4 sm:w-11/12 md:w-9/12 lg:w-3/5 xl:w-2/5">
         <Typography variant="h3">{t('coin:new.title')}</Typography>
 
@@ -332,7 +332,7 @@ const NewCoin = () => {
               </>
             ),
             footer: (
-              <div className="space-y-4 pb-6">
+              <div className="space-y-4">
                 {wallet && (
                   <Button
                     form="new-coin-form"

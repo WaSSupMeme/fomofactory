@@ -10,8 +10,8 @@ import { useTranslation } from 'react-i18next'
 const FAQ = () => {
   const { t } = useTranslation()
   return (
-    <div className="flex w-full flex-col items-center justify-center">
-      <div className="w-11/12 space-y-4 pb-6 sm:w-11/12 md:w-11/12 lg:w-4/5 xl:w-3/5">
+    <div className="flex h-full w-full flex-col items-center justify-center">
+      <div className="w-11/12 space-y-4 sm:w-11/12 md:w-11/12 lg:w-4/5 xl:w-3/5">
         <Typography variant="h3">{t('faq:title')}</Typography>
         <Accordion type="multiple">
           {['what', 'how', 'ownership', 'tokenomics', 'optionalBuy', 'fees'].map((value) => (

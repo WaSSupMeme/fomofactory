@@ -22,7 +22,7 @@ interface Props {
 }
 
 const StickyHeader = ({ logo, drawer, middleSlot, endSlot }: Props) => (
-  <header className="sticky top-0 z-50 w-full border-b bg-background">
+  <header className="sticky top-0 z-40 w-full border-b bg-background">
     <div className="container flex h-14 items-center gap-6">
       <div className="hidden xl:block">{logo}</div>
       <div className="xl:hidden">{drawer}</div>

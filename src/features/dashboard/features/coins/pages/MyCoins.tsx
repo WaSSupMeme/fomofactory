@@ -14,7 +14,7 @@ const MyCoins = () => {
   const { data: tokens } = useTokens()
 
   return (
-    <div className="flex w-full flex-col items-center justify-center">
+    <div className="flex h-full w-full flex-col items-center justify-center">
       <aside className="w-fit justify-center space-y-4">
         <Typography variant="h3">{t('coin:my.title')}</Typography>
 

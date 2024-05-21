@@ -1,6 +1,7 @@
 import { type ReactNode } from 'react'
 
 import Header, { type HeaderProps } from '@/common/components/Header'
+import Footer from '../Footer'
 
 interface Props {
   children: ReactNode
@@ -9,13 +10,14 @@ interface Props {
 
 const Layout = ({ children, headerProps }: Props) => (
   <>
-    <div className="flex h-full w-full flex-col">
+    <div className="flex min-h-screen w-full flex-col">
       <Header
         baseUrl={headerProps.baseUrl}
         links={headerProps.links}
         endSlot={headerProps.endSlot}
       />
-      <main className="flex-1py-4 container relative h-full py-8">{children}</main>
+      <main className="container relative mb-auto flex h-full grow py-8">{children}</main>
+      <Footer />
     </div>
   </>
 )

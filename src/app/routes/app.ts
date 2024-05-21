@@ -26,6 +26,11 @@ export const APP_ROUTES = {
     to: '/faq',
     absPath: '/faq',
   },
+  tos: {
+    path: 'tos',
+    to: '/tos',
+    absPath: '/tos',
+  },
 } as const satisfies Record<
   string,
   {

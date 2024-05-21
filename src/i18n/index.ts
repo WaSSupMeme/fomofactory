@@ -13,6 +13,7 @@ import dashboard from './en/dashboard.json'
 import faq from './en/faq.json'
 import global from './en/global.json'
 import landing from './en/landing.json'
+import terms from './en/terms.json'
 import wallet from './en/wallet.json'
 
 // Maps to src/i18n/{code}
@@ -34,6 +35,7 @@ export const LANGUAGES_CONFIG = {
       dashboard,
       faq,
       landing,
+      terms,
       global,
       wallet,
     },
