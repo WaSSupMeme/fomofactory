@@ -28,7 +28,7 @@ const MyCoins = () => {
           <div className="container m-auto grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
             {tokens.map((coinId) => (
               <div
-                className="w-fit rounded-md transition duration-300 ease-in-out hover:rounded-md hover:outline-none hover:ring-2 hover:ring-ring hover:ring-offset-2"
+                className="w-fit rounded-md"
                 onClick={() =>
                   navigate({
                     pathname: APP_ROUTES.coinDetails.to(coinId),

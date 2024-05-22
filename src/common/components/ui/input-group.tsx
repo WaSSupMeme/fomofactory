@@ -7,7 +7,7 @@ const InputGroup = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDiv
     return (
       <div
         ref={ref}
-        className="has-[:focus]:shadow-te-primary relative flex flex-row rounded-md transition duration-300 ease-in-out has-[:focus-visible]:outline-none has-[:focus]:outline-none has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring has-[:focus-visible]:ring-offset-2"
+        className="relative flex flex-row rounded-md transition duration-300 ease-in-out has-[:focus]:shadow-lg has-[:focus]:shadow-primary has-[:focus-visible]:outline-none has-[:focus]:outline-none has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring "
       >
         {React.Children.map(props.children, (child, index) =>
           React.isValidElement(child)

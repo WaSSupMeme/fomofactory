@@ -16,7 +16,7 @@ const CoinCard = ({ coinId, showBorder = false }: CoinCardProps) => {
   return (
     <div
       className={cn(
-        'flex w-80 flex-row items-center gap-4 rounded-md bg-card px-6 py-4 text-card-foreground shadow-sm',
+        'flex w-80 cursor-pointer flex-row items-center gap-4 rounded-md bg-card px-6 py-4 text-card-foreground transition duration-300 ease-in-out hover:rounded-md hover:shadow-lg hover:shadow-primary hover:outline-none hover:ring-2 hover:ring-ring',
         showBorder && 'border',
       )}
     >
