@@ -9,7 +9,7 @@
       "title": "Start Trading",
       "extra": "Give yourself a head start!"
     },
-    "cost": "Approximate cost: ~{{cost}} ETH",
+    "cost": "Cost: ~{{cost}} ETH",
     "submit": "Mint My Coin",
     "minting": "Minting {{name}}...",
     "steps": {

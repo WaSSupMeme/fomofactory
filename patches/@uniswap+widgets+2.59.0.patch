@@ -1,5 +1,5 @@
 diff --git a/node_modules/@uniswap/widgets/dist/index-53ec290b.js b/node_modules/@uniswap/widgets/dist/index-53ec290b.js
-index e7da428..3fc8040 100644
+index e7da428..a09b25b 100644
 --- a/node_modules/@uniswap/widgets/dist/index-53ec290b.js
 +++ b/node_modules/@uniswap/widgets/dist/index-53ec290b.js
 @@ -1230,7 +1230,7 @@ function H1(props) {
@@ -242,7 +242,19 @@ index e7da428..3fc8040 100644
      gap: 1,
      "data-testid": "header-children"
    }, children));
-@@ -15398,9 +15404,9 @@ function TokenButton$1(_ref4) {
+@@ -15068,10 +15074,7 @@ function BottomSheetModal(_ref5) {
+     forceContain: true
+   }, /*#__PURE__*/React.createElement(React.Fragment, null, title && /*#__PURE__*/React.createElement(Header$1, {
+     title: /*#__PURE__*/React.createElement(Trans, {
+-      id: "{title}",
+-      values: {
+-        title: title
+-      }
++      id: title
+     }),
+     closeButton: /*#__PURE__*/React.createElement(StyledXButton$1, null)
+   }), children))));
+@@ -15398,9 +15401,9 @@ function TokenButton$1(_ref4) {
    }, value ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(Logo, {
      currency: value,
      symbol: value.symbol
@@ -254,7 +266,7 @@ index e7da428..3fc8040 100644
      color: 'onAccent',
      style: {
        maxWidth: '10rem',
-@@ -15409,10 +15415,10 @@ function TokenButton$1(_ref4) {
+@@ -15409,10 +15412,10 @@ function TokenButton$1(_ref4) {
      }
    }, /*#__PURE__*/React.createElement(Trans, {
      id: "Select token"
@@ -267,7 +279,7 @@ index e7da428..3fc8040 100644
  }
  
  function useNativeEvent(element, type, listener, options) {
-@@ -16051,6 +16057,7 @@ var TokenInput = /*#__PURE__*/forwardRef(function TokenInput(_ref2, ref) {
+@@ -16051,6 +16054,7 @@ var TokenInput = /*#__PURE__*/forwardRef(function TokenInput(_ref2, ref) {
        approved = _ref2.approved,
        loading = _ref2.loading,
        disabled = _ref2.disabled,
@@ -275,7 +287,7 @@ index e7da428..3fc8040 100644
        onChangeInput = _ref2.onChangeInput,
        onChangeCurrency = _ref2.onChangeCurrency,
        children = _ref2.children,
-@@ -16094,7 +16101,7 @@ var TokenInput = /*#__PURE__*/forwardRef(function TokenInput(_ref2, ref) {
+@@ -16094,7 +16098,7 @@ var TokenInput = /*#__PURE__*/forwardRef(function TokenInput(_ref2, ref) {
      field: field,
      value: currency,
      approved: approved,
@@ -284,7 +296,7 @@ index e7da428..3fc8040 100644
      onSelect: onSelect
    })), children);
  });
-@@ -16112,7 +16119,7 @@ var Balance = /*#__PURE__*/_styled(Body2).withConfig({
+@@ -16112,7 +16116,7 @@ var Balance = /*#__PURE__*/_styled(Body2).withConfig({
  var InputColumn$1 = /*#__PURE__*/_styled(Column).withConfig({
    displayName: "Input__InputColumn",
    componentId: "sc-ud81g8-2"
@@ -293,7 +305,7 @@ index e7da428..3fc8040 100644
    var theme = _ref.theme;
    return theme.module;
  }, function (_ref2) {
-@@ -16124,13 +16131,14 @@ var InputColumn$1 = /*#__PURE__*/_styled(Column).withConfig({
+@@ -16124,13 +16128,14 @@ var InputColumn$1 = /*#__PURE__*/_styled(Column).withConfig({
  }, function (_ref4) {
    var theme = _ref4.theme,
        disableHover = _ref4.disableHover;
@@ -309,7 +321,7 @@ index e7da428..3fc8040 100644
        className = _ref6.className,
        subheader = _ref6.subheader;
  
-@@ -16203,6 +16211,7 @@ function FieldWrapper(_ref6) {
+@@ -16203,6 +16208,7 @@ function FieldWrapper(_ref6) {
      loading: isLoading,
      approved: approved,
      disabled: isDisabled,
@@ -317,7 +329,7 @@ index e7da428..3fc8040 100644
      onChangeInput: updateAmount,
      onChangeCurrency: updateCurrency
    }, /*#__PURE__*/React.createElement(Body2, {
-@@ -16227,7 +16236,7 @@ function FieldWrapper(_ref6) {
+@@ -16227,7 +16233,7 @@ function FieldWrapper(_ref6) {
      id: "Max"
    }))))))));
  }
@@ -326,7 +338,7 @@ index e7da428..3fc8040 100644
    var _useSwapInfo2 = useSwapInfo(),
        _useSwapInfo2$Field$I = _useSwapInfo2[Field.INPUT],
        balance = _useSwapInfo2$Field$I.balance,
-@@ -16246,6 +16255,7 @@ function Input$2() {
+@@ -16246,6 +16252,7 @@ function Input$2() {
      field: Field.INPUT,
      maxAmount: maxAmount,
      approved: approvalState === SwapApprovalState.APPROVED,
@@ -334,7 +346,7 @@ index e7da428..3fc8040 100644
      subheader:
      /*i18n*/
      i18n._("You pay")
-@@ -16268,7 +16278,7 @@ var OutputWrapper = /*#__PURE__*/_styled(FieldWrapper).withConfig({
+@@ -16268,7 +16275,7 @@ var OutputWrapper = /*#__PURE__*/_styled(FieldWrapper).withConfig({
    return hasColor === null ? "color ".concat(AnimationSpeed.Medium, " ease-in, stroke ").concat(AnimationSpeed.Medium, " ease-in") : undefined;
  });
  
@@ -343,7 +355,7 @@ index e7da428..3fc8040 100644
    var _useSwapInfo = useSwapInfo(),
        fiatValueChange = _useSwapInfo.fiatValueChange;
  
-@@ -16289,6 +16299,7 @@ function Output() {
+@@ -16289,6 +16296,7 @@ function Output() {
      field: Field.OUTPUT,
      fiatValueChange: fiatValueChange,
      hasColor: hasColor,
@@ -351,7 +363,7 @@ index e7da428..3fc8040 100644
      subheader:
      /*i18n*/
      i18n._("You receive")
-@@ -16298,7 +16309,7 @@ function Output() {
+@@ -16298,7 +16306,7 @@ function Output() {
  var Underlayer = /*#__PURE__*/_styled.div.withConfig({
    displayName: "ReverseButton__Underlayer",
    componentId: "sc-d3cn9-0"
@@ -360,7 +372,7 @@ index e7da428..3fc8040 100644
    var theme = _ref.theme;
    return theme.container;
  }, function (_ref2) {
-@@ -16309,15 +16320,18 @@ var Underlayer = /*#__PURE__*/_styled.div.withConfig({
+@@ -16309,15 +16317,18 @@ var Underlayer = /*#__PURE__*/_styled.div.withConfig({
  var StyledReverseButton = /*#__PURE__*/_styled(Button$1).withConfig({
    displayName: "ReverseButton__StyledReverseButton",
    componentId: "sc-d3cn9-1"
@@ -381,7 +393,7 @@ index e7da428..3fc8040 100644
  });
  
  function ReverseButton() {
-@@ -16862,7 +16876,7 @@ function Settings() {
+@@ -16862,7 +16873,7 @@ function Settings() {
  }
  
  var _ETHERSCAN_PREFIXES;
@@ -390,7 +402,7 @@ index e7da428..3fc8040 100644
  var ExplorerDataType;
  /**
   * Return the explorer link for the given data and data type
-@@ -17829,7 +17843,7 @@ function SummaryDialog(props) {
+@@ -17829,7 +17840,7 @@ function SummaryDialog(props) {
      value: boundary
    }, /*#__PURE__*/React.createElement(Header$1, {
      title: /*#__PURE__*/React.createElement(Trans, {
@@ -399,7 +411,7 @@ index e7da428..3fc8040 100644
      })
    }), /*#__PURE__*/React.createElement(Body$1, {
      flex: true,
-@@ -17889,7 +17903,7 @@ function TransactionStatus(_ref) {
+@@ -17889,7 +17900,7 @@ function TransactionStatus(_ref) {
      showIcon: false,
      color: "active"
    }, /*#__PURE__*/React.createElement(Trans, {
@@ -408,7 +420,7 @@ index e7da428..3fc8040 100644
    }))), /*#__PURE__*/React.createElement(ActionButton, {
      onClick: onClose
    }, /*#__PURE__*/React.createElement(Trans, {
-@@ -19270,9 +19284,9 @@ function SwapButton(_ref) {
+@@ -19270,9 +19281,9 @@ function SwapButton(_ref) {
      onClick: onClick,
      disabled: disabled
    }, missingToken ? /*#__PURE__*/React.createElement(Trans, {
@@ -420,7 +432,7 @@ index e7da428..3fc8040 100644
    })), trade && /*#__PURE__*/React.createElement(ResponsiveDialog, {
      open: open,
      setOpen: setOpen
-@@ -20824,7 +20838,11 @@ function Swap(props) {
+@@ -20824,7 +20835,11 @@ function Swap(props) {
      ref: setWrapper
    }, /*#__PURE__*/React.createElement(PopoverBoundaryProvider, {
      value: wrapper
@@ -433,7 +445,7 @@ index e7da428..3fc8040 100644
      color: "dialog"
    }, /*#__PURE__*/React.createElement(TransactionStatusDialog, {
      tx: displayTx,
-@@ -21306,7 +21324,7 @@ var StyledWidgetWrapper = /*#__PURE__*/_styled.div.withConfig({
+@@ -21306,7 +21321,7 @@ var StyledWidgetWrapper = /*#__PURE__*/_styled.div.withConfig({
    return theme.container;
  }, function (_ref2) {
    var theme = _ref2.theme;
@@ -442,7 +454,7 @@ index e7da428..3fc8040 100644
  }, function (_ref3) {
    var theme = _ref3.theme;
    return theme.borderRadius.large;
-@@ -21454,7 +21472,7 @@ var TitleColumn = /*#__PURE__*/_styled(Column).withConfig({
+@@ -21454,7 +21469,7 @@ var TitleColumn = /*#__PURE__*/_styled(Column).withConfig({
  var InputColumn = /*#__PURE__*/_styled(Column).withConfig({
    displayName: "Skeleton__InputColumn",
    componentId: "sc-1ra2yb8-4"
