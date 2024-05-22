@@ -2,7 +2,8 @@ import { Loading, Typography } from '@/common/components'
 
 import { useTranslation } from 'react-i18next'
 import { useCoinDetailsParams } from '@/app/routes'
-import { useAccount, useBalance, useChainId } from 'wagmi'
+import { useAccount, useBalance, useChainId, useConfig } from 'wagmi'
+import { waitForTransactionReceipt } from '@wagmi/core'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/common/components/ui/tooltip'
 import { truncateEthAddress } from '@/common/utils'
 
@@ -16,7 +17,8 @@ import { EthRoundIcon } from '@/assets/svg/EthRoundIcon'
 
 import { toast } from 'sonner'
 
-import { LiFiWidget, WidgetConfig } from '@lifi/widget'
+import { darkTheme, lightTheme, SwapWidget, SwapWidgetProps } from '@uniswap/widgets'
+
 import { Theme, useTheme } from '@/app/providers/Theme'
 
 import { useShowError } from '@/common/hooks/usePrintErrorMessage.js'
@@ -30,9 +32,11 @@ import { useEthUsdAmount } from '@/api/queries/eth'
 import { useEffect, useState } from 'react'
 import { useAddTokenToWallet, useClaimFees } from '@/api/mutations/token'
 import { formatUnits } from 'viem'
+import { useEthersSigner } from '@/common/utils/ethers'
 
 const CoinDetails = () => {
   const { t } = useTranslation()
+  const { theme } = useTheme()
   const showError = useShowError()
 
   const { coinId } = useCoinDetailsParams()
@@ -40,6 +44,8 @@ const CoinDetails = () => {
   const { openConnectModal } = useConnectModal()
   const chainId = useChainId()
   const account = useAccount()
+  const signer = useEthersSigner()
+  const config = useConfig()
 
   const { data: token, isLoading: isTokenLoading } = useToken(coinId)
   const { data: pool, refetch: refetchPool } = usePool(coinId)
@@ -48,8 +54,6 @@ const CoinDetails = () => {
     address: account.address,
     token: coinId,
   })
-
-  const { theme } = useTheme()
 
   const { data: ethPrice } = useEthUsdAmount(1)
   const { data: tokenPrice } = useTokenUsdAmount(coinId, 1000)
@@ -93,101 +97,94 @@ const CoinDetails = () => {
     minimumFractionDigits: 2,
   })
 
-  const widgetConfig: WidgetConfig = {
-    integrator: 'offblocks',
-    fromToken: '0x0000000000000000000000000000000000000000',
-    fromChain: chainId,
-    toChain: chainId,
-    hiddenUI: [
-      'appearance',
-      'language',
-      'drawerCloseButton',
-      'history',
-      'poweredBy',
-      'toAddress',
-      'walletMenu',
-    ],
-    walletConfig: {
-      onConnect: openConnectModal || (() => {}),
+  // hack to fix uniswap widget
+  useEffect(() => {
+    ;(window as any).Browser = {
+      T: () => {},
+    }
+  }, [])
+
+  const fontFamily = [
+    'SFRounded',
+    'ui-rounded',
+    'SF Pro Rounded',
+    '-apple-system',
+    'BlinkMacSystemFont',
+    'Segoe UI',
+    'Roboto',
+    'Helvetica',
+    'Arial',
+    'sans-serif',
+    'Apple Color Emoji',
+    'Segoe UI Emoji',
+    'Segoe UI Symbol',
+  ]
+  const borderRadius = { large: 1, medium: 0.75, small: 0.5, xsmall: 0.375 }
+
+  const lightWidgetTheme = {
+    ...lightTheme,
+    fontFamily: fontFamily.join(','),
+    borderRadius,
+    container: 'hsl(0,0%,100%)',
+    dialog: 'hsl(0,0%,100%)',
+    module: 'hsl(0,0%,100%)',
+    outline: 'hsl(0,0%,89.8%)',
+    border: 'hsl(0,0%,100%)',
+    accent: 'hsl(0,0%,9%)',
+    onAccent: 'hsl(0,0%,100%)',
+    interactive: 'hsl(0,0%,96.1%)',
+    action: 'hsl(0,0%,9%)',
+    onAction: 'hsl(0,0%,100%)',
+    onInteractive: 'hsl(0,0%,30.1%)',
+    focus: 'hsl(0,0%,9%)',
+    primary: 'hsl(0,0%,9%)',
+    secondary: 'hsl(0,0%,65%)',
+    deepShadow: 'hsl(0,0%,100%)',
+    networkDefaultShadow: 'hsl(0,0%,100%)',
+  }
+  const darkWidgetTheme = {
+    ...darkTheme,
+    fontFamily: fontFamily.join(','),
+    borderRadius,
+    container: 'hsl(0,0%,8%)',
+    dialog: 'hsl(0,0%,8%)',
+    module: 'hsl(0,0%,8%)',
+    outline: 'hsl(0,0%,14.9%)',
+    border: 'hsl(0,0%,8%)',
+    accent: 'hsl(0,0%,98%)',
+    onAccent: 'hsl(0,0%,9%)',
+    interactive: 'hsl(0,0%,14.9%)',
+    action: 'hsl(0,0%,96%)',
+    onAction: 'hsl(0,0%,9%)',
+    onInteractive: 'hsl(0,0%,63.9%)',
+    focus: 'hsl(0,0%,98%)',
+    primary: 'hsl(0,0%,98%)',
+    secondary: 'hsl(0,0%,35%)',
+    deepShadow: 'hsl(0,0%,8%)',
+    networkDefaultShadow: 'hsl(0,0%,8%)',
+  }
+
+  const widgetConfig: SwapWidgetProps = {
+    hideConnectionUI: true,
+    provider: signer?.provider || null,
+    onConnectWalletClick: () => {
+      openConnectModal!()
+      return false
     },
-    languages: { default: 'en' },
-    appearance: theme,
-    languageResources: {
-      en: {
-        header: { exchange: 'Swap' },
-        button: { exchange: 'Swap' },
-      },
+    onSwapSend: async (_, transaction) => {
+      const tx = await transaction
+      await waitForTransactionReceipt(config, {
+        hash: tx.response.hash as `0x${string}`,
+      })
+      refetchPool()
+      refetchBalance()
     },
-    theme: {
-      palette: {
-        primary: {
-          main: theme === Theme.LIGHT ? '#171717' : '#FAFAFA',
-        },
-        secondary: {
-          main: theme === Theme.LIGHT ? '#A6A6A6' : '#595959',
-        },
-        text: {
-          primary: theme === Theme.LIGHT ? '#171717' : '#FAFAFA',
-          secondary: theme === Theme.LIGHT ? '#A6A6A6' : '#595959',
-        },
-        background: {
-          default: theme === Theme.LIGHT ? '#FFFFFF' : '#141414',
-          paper: theme === Theme.LIGHT ? '#FFFFFF' : '#141414',
-        },
-      },
-      shape: {
-        borderRadius: 12,
-      },
-      container: {
-        width: '24rem',
-      },
-      components: {
-        MuiInputCard: {},
-        MuiButton: {
-          defaultProps: {
-            disableRipple: true,
-            disableTouchRipple: true,
-          },
-          styleOverrides: {
-            root: {
-              lineHeight: 'inherit',
-              fontWeight: 700,
-              padding: '0.5rem 0.5rem',
-              ':hover': {
-                transform: 'scale(1.025)',
-                backgroundColor: theme === Theme.LIGHT ? '#171717' : '#FAFAFA',
-              },
-              ':active': {
-                transform: 'scale(0.95)',
-                backgroundColor: theme === Theme.LIGHT ? '#171717' : '#FAFAFA',
-              },
-              transition: 'transform 300ms cubic-bezier(0.4, 0, 0.2, 1)',
-              '&.MuiLoadingButton-root': {
-                padding: '0.5rem 0.5rem',
-                transition: 'transform 300ms cubic-bezier(0.4, 0, 0.2, 1)',
-              },
-            },
-          },
-        },
-      },
-      typography: {
-        fontFamily: [
-          'SFRounded',
-          'ui-rounded',
-          'SF Pro Rounded',
-          '-apple-system',
-          'BlinkMacSystemFont',
-          'Segoe UI',
-          'Roboto',
-          'Helvetica',
-          'Arial',
-          'sans-serif',
-          'Apple Color Emoji',
-          'Segoe UI Emoji',
-          'Segoe UI Symbol',
-        ].join(','),
-      },
-    },
+    theme: theme === Theme.LIGHT ? lightWidgetTheme : darkWidgetTheme,
+    defaultInputTokenAddress: 'NATIVE',
+    defaultOutputTokenAddress: coinId,
+    disableTokenSelection: true,
+    brandedFooter: false,
+    permit2: true,
   }
 
   return (
@@ -446,37 +443,20 @@ const CoinDetails = () => {
           {!pool && <Loading />}
         </div>
       </div>
-      <div className="h-fit w-96 xl:h-[80svh]">
+      <div className="h-fit w-96 px-6 xl:h-[80svh]">
         {token && (
-          <LiFiWidget
-            integrator="offblocks"
-            config={{
-              ...widgetConfig,
-              toToken: token.symbol,
-              tokens: {
-                featured: [
-                  {
-                    address: coinId,
-                    symbol: token.symbol,
-                    decimals: token.decimals,
-                    chainId: chainId,
-                    name: token.name,
-                    logoURI: token.avatar,
-                  },
-                ],
-                include: [
-                  {
-                    address: coinId,
-                    symbol: token.symbol,
-                    decimals: token.decimals,
-                    chainId: chainId,
-                    name: token.name,
-                    logoURI: token.avatar,
-                    priceUSD: '',
-                  },
-                ],
+          <SwapWidget
+            {...widgetConfig}
+            tokenList={[
+              {
+                name: token.name,
+                address: coinId,
+                symbol: token.symbol,
+                decimals: token.decimals,
+                chainId: chainId,
+                logoURI: token.avatar,
               },
-            }}
+            ]}
           />
         )}
         {!token && (

@@ -8,6 +8,7 @@ import { checker } from 'vite-plugin-checker'
 import { ValidateEnv } from '@julr/vite-plugin-validate-env'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import { z } from 'zod'
+import path from 'path'
 
 export default defineConfig(({ mode }) => ({
   plugins: [
@@ -45,6 +46,13 @@ export default defineConfig(({ mode }) => ({
     chunkSizeWarningLimit: 1000,
     commonjsOptions: {
       transformMixedEsModules: true,
+    },
+  },
+  resolve: {
+    alias: {
+      jsbi: path.resolve(__dirname, './node_modules/jsbi/dist/jsbi-cjs.js'),
+      '~@fontsource/ibm-plex-mono': '@fontsource/ibm-plex-mono',
+      '~@fontsource/inter': '@fontsource/inter',
     },
   },
 }))
