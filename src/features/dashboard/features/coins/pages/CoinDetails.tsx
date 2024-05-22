@@ -17,7 +17,13 @@ import { EthRoundIcon } from '@/assets/svg/EthRoundIcon'
 
 import { toast } from 'sonner'
 
-import { darkTheme, lightTheme, SwapWidget, SwapWidgetProps } from '@uniswap/widgets'
+import {
+  darkTheme,
+  lightTheme,
+  SwapWidget,
+  SwapWidgetProps,
+  SwapWidgetSkeleton,
+} from '@uniswap/widgets'
 
 import { Theme, useTheme } from '@/app/providers/Theme'
 
@@ -446,7 +452,7 @@ const CoinDetails = () => {
         </div>
       </div>
       <div className="h-fit w-96 px-6 xl:h-[80svh]">
-        {token && (
+        {token && account.address && (
           <SwapWidget
             {...widgetConfig}
             tokenList={[
@@ -466,6 +472,7 @@ const CoinDetails = () => {
             <Loading />
           </div>
         )}
+        {!account.address && <SwapWidgetSkeleton theme={widgetConfig.theme} />}
       </div>
     </div>
   )

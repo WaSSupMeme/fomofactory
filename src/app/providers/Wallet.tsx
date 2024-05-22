@@ -23,13 +23,13 @@ const WalletProvider = ({ children }: Props) => {
   })
 
   const light = lightTheme({
-    accentColor: '#171717',
+    accentColor: '#2B3DCA',
     accentColorForeground: '#f5f5f5',
     overlayBlur: 'none',
   })
   const dark = darkTheme({
-    accentColor: '#fafafa',
-    accentColorForeground: '#242424',
+    accentColor: '#2B3DCA',
+    accentColorForeground: '#f5f5f5',
     overlayBlur: 'none',
   })
 
