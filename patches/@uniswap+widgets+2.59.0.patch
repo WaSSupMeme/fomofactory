@@ -1,5 +1,5 @@
 diff --git a/node_modules/@uniswap/widgets/dist/index-53ec290b.js b/node_modules/@uniswap/widgets/dist/index-53ec290b.js
-index e7da428..6b8092e 100644
+index e7da428..3fc8040 100644
 --- a/node_modules/@uniswap/widgets/dist/index-53ec290b.js
 +++ b/node_modules/@uniswap/widgets/dist/index-53ec290b.js
 @@ -1230,7 +1230,7 @@ function H1(props) {
@@ -289,7 +289,7 @@ index e7da428..6b8092e 100644
    displayName: "Input__InputColumn",
    componentId: "sc-ud81g8-2"
 -})(["background-color:", ";border-radius:", "rem;margin-bottom:0.25rem;padding:", ";position:relative;&:before{background-size:100%;border:1px solid transparent;border-radius:inherit;box-sizing:border-box;content:'';height:100%;left:0;pointer-events:none;position:absolute;top:0;transition:125ms ease border-color;width:100%;}", ""], function (_ref) {
-+})(["background-color:", ";border-radius:", "rem;border-width:1px;margin-bottom:0.25rem;padding:", ";position:relative;&:before{background-size:100%;border:1px solid transparent;border-radius:inherit;box-sizing:border-box;content:'';height:100%;left:0;pointer-events:none;position:absolute;top:0;transition:125ms ease border-color;width:100%;}", ""], function (_ref) {
++})(["background-color:", ";border-radius:", "rem;border-width:1px;margin-bottom:0.25rem;padding:", ";position:relative;&:before{background-size:100%;border:1px solid transparent;border-radius:inherit;box-sizing:border-box;content:'';height:100%;left:0;pointer-events:none;position:absolute;top:0;transition:300ms ease-in-out border-color;width:100%;}", ""], function (_ref) {
    var theme = _ref.theme;
    return theme.module;
  }, function (_ref2) {
@@ -298,7 +298,7 @@ index e7da428..6b8092e 100644
    var theme = _ref4.theme,
        disableHover = _ref4.disableHover;
 -  return !disableHover && " &:hover:before {\n        border-color: ".concat(theme.interactive, ";\n      }\n\n      &:focus-within:before {\n        border-color: ").concat(theme.networkDefaultShadow, ";\n      }");
-+  return !disableHover && " &:hover:before {\n        border-color: ".concat(theme.focus, ";\n      }\n\n      &:focus-within:before {\n        border-color: ").concat(theme.networkDefaultShadow, ";\n      }");
++  return !disableHover && " &:hover:before {\n        border-color: ".concat(theme.focus, ";\n      }\n\n      &:focus-within:before {\n        border-color: ").concat(theme.focus, ";\n      }");
  });
  function FieldWrapper(_ref6) {
    var field = _ref6.field,
