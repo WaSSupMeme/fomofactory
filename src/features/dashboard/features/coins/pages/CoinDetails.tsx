@@ -49,7 +49,7 @@ const CoinDetails = () => {
 
   const { data: token, isLoading: isTokenLoading } = useToken(coinId)
   const { data: pool, refetch: refetchPool } = usePool(coinId)
-  const { data: dexData } = useDexData(coinId)
+  const { data: dexData, refetch: refetchDexData } = useDexData(coinId)
   const { data: balance, refetch: refetchBalance } = useBalance({
     address: account.address,
     token: coinId,
@@ -84,6 +84,7 @@ const CoinDetails = () => {
     onSuccess: () => {
       toast.success(t('coin:misc.claimSuccess'))
       refetchPool()
+      refetchDexData()
       refetchBalance()
     },
     onError: () => {
@@ -177,6 +178,7 @@ const CoinDetails = () => {
         hash: tx.response.hash as `0x${string}`,
       })
       refetchPool()
+      refetchDexData()
       refetchBalance()
     },
     theme: theme === Theme.LIGHT ? lightWidgetTheme : darkWidgetTheme,
