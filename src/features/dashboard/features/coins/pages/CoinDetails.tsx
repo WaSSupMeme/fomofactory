@@ -196,13 +196,13 @@ const CoinDetails = () => {
   }
 
   return (
-    <div className="flex h-full w-full flex-col items-center xl:flex-row">
+    <div className="flex h-full w-full flex-col items-center xl:flex-row xl:items-start">
       {isTokenLoading ? (
-        <div className="h-min min-w-80 flex-col gap-4 xl:h-[80svh]">
+        <div className="h-fit min-w-80 flex-col gap-4 ">
           <Loading />
         </div>
       ) : (
-        <div className="flex h-min w-96 flex-col gap-4 pb-6 xl:h-[80svh] xl:pb-0">
+        <div className="flex h-fit w-96 flex-col gap-4 pb-6 xl:pb-0">
           <div className=" flex w-96 flex-row items-center gap-4 rounded-md bg-card px-6 py-4 text-card-foreground ">
             <div className="flex w-48 flex-col gap-2">
               <Typography variant="regularText">{token?.name}</Typography>
@@ -439,7 +439,7 @@ const CoinDetails = () => {
           )}
         </div>
       )}
-      <div className="flex h-[80svh] w-full flex-row items-center xl:h-[80svh]">
+      <div className="flex h-[80dvh] w-full flex-row items-center ">
         <div className="h-full w-full ">
           {pool && (
             <iframe
@@ -451,7 +451,7 @@ const CoinDetails = () => {
           {!pool && <Loading />}
         </div>
       </div>
-      <div className="h-fit w-96 px-6 xl:h-[80svh]">
+      <div className="flex h-fit w-96 flex-row  justify-center px-4 ">
         {token && account.address && (
           <SwapWidget
             {...widgetConfig}
