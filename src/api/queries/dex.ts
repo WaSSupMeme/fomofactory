@@ -1,121 +1,94 @@
-import { useChainId } from 'wagmi'
-import { DexData } from '../models/dex'
 import { useQuery } from '@tanstack/react-query'
 
+import { readContract, readContracts } from '@wagmi/core'
+import { Abi, erc20Abi, formatEther, formatUnits } from 'viem'
+import { Config, useChainId, useConfig } from 'wagmi'
+
+import { DexData } from '../models/dex'
+
+import FomoFactoryABI from '../abi/FomoFactory.json'
+import { fetchEthUsdAmount } from './eth'
+
 interface Pair {
-  chainId: string
-  dexId: string
-  url: string
-  pairAddress: string
-  baseToken: {
+  attributes: {
     address: string
-    name: string
-    symbol: string
-  }
-  quoteToken: {
-    symbol: string
-  }
-  priceNative: string
-  priceUsd?: string
-  txns: {
-    m5: {
-      buys: number
-      sells: number
-    }
-    h1: {
-      buys: number
-      sells: number
-    }
-    h6: {
-      buys: number
-      sells: number
-    }
-    h24: {
-      buys: number
-      sells: number
+    price_usd: number
+    volume_usd: {
+      h24: number
     }
   }
-  volume: {
-    m5: number
-    h1: number
-    h6: number
-    h24: number
-  }
-  priceChange: {
-    m5: number
-    h1: number
-    h6: number
-    h24: number
-  }
-  liquidity?: {
-    usd?: number
-    base: number
-    quote: number
-  }
-  fdv?: number
-  pairCreatedAt?: number
 }
 
-interface SearchResponse {
-  schemaVersion: string
-  pairs: Pair[]
+interface DexResponse {
+  data: Pair
 }
 
-async function fetchDexData(address: `0x${string}`) {
-  const response = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${address}`)
-  const resp = (await response.json()) as SearchResponse
-  return resp.pairs.reduce(
-    (acc, pair) => {
-      acc.txns.m5.buys += pair.txns.m5.buys
-      acc.txns.m5.sells += pair.txns.m5.sells
-      acc.txns.h1.buys += pair.txns.h1.buys
-      acc.txns.h1.sells += pair.txns.h1.sells
-      acc.txns.h6.buys += pair.txns.h6.buys
-      acc.txns.h6.sells += pair.txns.h6.sells
-      acc.txns.h24.buys += pair.txns.h24.buys
-      acc.txns.h24.sells += pair.txns.h24.sells
-
-      acc.volume.m5 += pair.volume.m5
-      acc.volume.h1 += pair.volume.h1
-      acc.volume.h6 += pair.volume.h6
-      acc.volume.h24 += pair.volume.h24
-
-      acc.liquidity.usd += pair.liquidity?.usd || 0
-      acc.liquidity.base += pair.liquidity?.base || 0
-      acc.liquidity.quote += pair.liquidity?.quote || 0
-
-      acc.marketCap += pair.fdv || 0
-
-      return acc
-    },
-    {
-      txns: {
-        m5: { buys: 0, sells: 0 },
-        h1: { buys: 0, sells: 0 },
-        h6: { buys: 0, sells: 0 },
-        h24: { buys: 0, sells: 0 },
-      },
-      volume: {
-        m5: 0,
-        h1: 0,
-        h6: 0,
-        h24: 0,
-      },
-      liquidity: {
-        usd: 0,
-        base: 0,
-        quote: 0,
-      },
-      marketCap: 0,
-    } as DexData,
+async function fetchDexData(config: Config, chainId: number, address: `0x${string}`) {
+  const response = await fetch(
+    `https://api.geckoterminal.com/api/v2/networks/base/tokens/${address}`,
   )
+  const resp = (await response.json()) as DexResponse
+
+  const [poolAddress] = (await readContract(config, {
+    address: import.meta.env[`VITE_FOMO_FACTORY_ADDRESS_${chainId}`],
+    abi: FomoFactoryABI as Abi,
+    functionName: 'poolMetadataOf',
+    args: [address],
+  })) as [`0x${string}`]
+
+  const [totalSupplyRaw, decimals, tokenBalanceRaw, wethBalanceRaw] = (await readContracts(config, {
+    allowFailure: false,
+    contracts: [
+      {
+        address: address,
+        abi: erc20Abi,
+        functionName: 'totalSupply',
+      },
+      {
+        address: address,
+        abi: erc20Abi,
+        functionName: 'decimals',
+      },
+      {
+        address: address,
+        abi: erc20Abi,
+        functionName: 'balanceOf',
+        args: [poolAddress],
+      },
+      {
+        address: import.meta.env[`VITE_WETH_ADDRESS_${chainId}`],
+        abi: erc20Abi,
+        functionName: 'balanceOf',
+        args: [poolAddress],
+      },
+    ],
+  })) as [bigint, number, bigint, bigint]
+
+  const totalSupply = Number(formatUnits(totalSupplyRaw, decimals))
+  const tokenBalance = Number(formatUnits(tokenBalanceRaw, decimals))
+  const wethBalance = Number(formatEther(wethBalanceRaw))
+
+  const tokenPrice = resp.data.attributes.price_usd
+  const ethPrice = await fetchEthUsdAmount(config, chainId, 1)
+
+  return {
+    address: poolAddress,
+    volume: {
+      h24: resp.data.attributes.volume_usd.h24,
+    },
+    liquidity: {
+      usd: tokenBalance * tokenPrice + wethBalance * ethPrice,
+    },
+    marketCap: totalSupply * tokenPrice,
+  } as DexData
 }
 
 export const useDexData = (address: `0x${string}`) => {
   const chainId = useChainId()
+  const config = useConfig()
 
   return useQuery({
     queryKey: ['dexData', { address, chainId }],
-    queryFn: () => fetchDexData(address),
+    queryFn: () => fetchDexData(config, chainId, address),
   })
 }

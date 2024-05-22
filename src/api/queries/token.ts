@@ -118,7 +118,7 @@ const fetchTokenUsdAmount = async (
       {
         tokenIn: address,
         tokenOut: import.meta.env[`VITE_WETH_ADDRESS_${chainId}`],
-        amount: parseEther('0.001'),
+        amount: parseEther('0.0001'),
         fee: FeeAmount.HIGH,
         sqrtPriceLimitX96: 0,
       },
@@ -132,7 +132,7 @@ const fetchTokenUsdAmount = async (
   })
 
   const referenceTokenPrice = Number(formatUnits(quote.result[0] as bigint, decimals as number))
-  const referenceEthPrice = await fetchEthUsdAmount(config, chainId, 0.001)
+  const referenceEthPrice = await fetchEthUsdAmount(config, chainId, 0.0001)
 
   return (referenceEthPrice / referenceTokenPrice) * tokenAmount
 }
