@@ -31,11 +31,11 @@
   "metadata": {
     "name": {
       "label": "Name",
-      "placeholder": "$WASSUP"
+      "placeholder": "WASSUP"
     },
     "symbol": {
       "label": "Symbol",
-      "placeholder": "WASSUP"
+      "placeholder": "$WASSUP"
     },
     "description": {
       "label": "Description",

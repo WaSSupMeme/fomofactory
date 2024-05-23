@@ -15,13 +15,15 @@ const fetchTopTokens = async (config: Config, chainId: number) => {
     args: [0, maxUint256, false],
   })) as `0x${string}`[]
 
-  const dexData = await Promise.all(
-    tokens.map(async (token) => await fetchDexData(config, chainId, token)),
-  )
+  const dexData = (
+    await Promise.all(tokens.map(async (token) => await fetchDexData(config, chainId, token)))
+  ).filter((token) => token.marketCap)
 
-  const dexDataSorted = dexData.sort((t1, t2) => t2.marketCap - t1.marketCap)
+  const dexDataSorted = dexData.sort((t1, t2) => t2.marketCap!! - t1.marketCap!!)
 
-  return dexDataSorted.map((token) => token.address)
+  return dexDataSorted.map((token, idx) => {
+    return { rank: idx + 1, address: token.address }
+  })
 }
 
 export const useTopTokens = () => {

@@ -19,8 +19,27 @@ interface Pair {
   }
 }
 
+interface Pair {
+  chainId: number
+  pairAddress: string
+  priceUsd: number
+  txns: {
+    h24: {
+      buys: number
+      sells: number
+    }
+  }
+  volume: {
+    h24: number
+  }
+  liquidity: {
+    usd: number
+  }
+}
+
 interface DexResponse {
-  data: Pair
+  schemaVersion: string
+  pairs: Pair[]
 }
 
 export async function fetchDexData(
@@ -28,11 +47,6 @@ export async function fetchDexData(
   chainId: number,
   address: `0x${string}`,
 ): Promise<DexData> {
-  const response = await fetch(
-    `https://api.geckoterminal.com/api/v2/networks/base/tokens/${address}`,
-  )
-  const resp = (await response.json()) as DexResponse
-
   const [poolAddress] = (await readContract(config, {
     address: import.meta.env[`VITE_FOMO_FACTORY_ADDRESS_${chainId}`],
     abi: FomoFactoryABI as Abi,
@@ -72,18 +86,25 @@ export async function fetchDexData(
   const tokenBalance = Number(formatUnits(tokenBalanceRaw, decimals))
   const wethBalance = Number(formatEther(wethBalanceRaw))
 
-  const tokenPrice = resp.data.attributes.price_usd
+  const response = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${address}`)
+  const resp = (await response.json()) as DexResponse
+  if (!resp.pairs || !resp.pairs.length) {
+    return {
+      address,
+      poolAddress,
+    } as DexData
+  }
+
+  const tokenPrice = resp.pairs[0]!!.priceUsd
   const ethPrice = await fetchEthUsdAmount(config, chainId, 1)
 
   return {
     address,
     poolAddress,
     volume: {
-      h24: resp.data.attributes.volume_usd.h24,
+      h24: resp.pairs[0]!!.volume.h24,
     },
-    liquidity: {
-      usd: tokenBalance * tokenPrice + wethBalance * ethPrice,
-    },
+    liquidity: tokenBalance * tokenPrice + wethBalance * ethPrice,
     marketCap: totalSupply * tokenPrice,
   } as DexData
 }

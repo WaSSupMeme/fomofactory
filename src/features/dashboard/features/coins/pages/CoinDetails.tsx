@@ -242,7 +242,7 @@ const CoinDetails = () => {
             </div>
             <div className="flex ">
               <img
-                className="aspect-square h-32 w-32 rounded-full object-cover"
+                className="aspect-square h-32 w-32 rounded-lg object-cover shadow-lg shadow-primary"
                 src={token?.avatar}
                 alt={token?.name}
               />
@@ -272,34 +272,40 @@ const CoinDetails = () => {
                 )}
                 {dexData && (
                   <>
-                    <div className="flex flex-row items-center gap-0">
-                      <Typography variant="regularText">
-                        {t('coin:metadata.liquidity.label')}
-                      </Typography>
-                      <div className="grow"></div>
-                      <Typography variant="mutedText">
-                        {`$${formatter.format(dexData.liquidity.usd)}`}
-                      </Typography>
-                      <LockIcon className="h-3.5 w-3.5 fill-muted-foreground" />
-                    </div>
-                    <div className="flex flex-row items-center gap-2">
-                      <Typography variant="regularText">
-                        {t('coin:metadata.marketCap.label')}
-                      </Typography>
-                      <div className="grow"></div>
-                      <Typography variant="mutedText">
-                        {`$${formatter.format(dexData.marketCap)}`}
-                      </Typography>
-                    </div>
-                    <div className="flex flex-row items-center gap-1">
-                      <Typography variant="regularText">
-                        {t('coin:metadata.volume.label')}
-                      </Typography>
-                      <div className="grow"></div>
-                      <Typography variant="mutedText">
-                        {`$${formatter.format(dexData.volume.h24)}`}
-                      </Typography>
-                    </div>
+                    {dexData.liquidity && (
+                      <div className="flex flex-row items-center gap-0">
+                        <Typography variant="regularText">
+                          {t('coin:metadata.liquidity.label')}
+                        </Typography>
+                        <div className="grow"></div>
+                        <Typography variant="mutedText">
+                          {`$${formatter.format(dexData.liquidity)}`}
+                        </Typography>
+                        <LockIcon className="h-3.5 w-3.5 fill-muted-foreground" />
+                      </div>
+                    )}
+                    {dexData.marketCap && (
+                      <div className="flex flex-row items-center gap-2">
+                        <Typography variant="regularText">
+                          {t('coin:metadata.marketCap.label')}
+                        </Typography>
+                        <div className="grow"></div>
+                        <Typography variant="mutedText">
+                          {`$${formatter.format(dexData.marketCap)}`}
+                        </Typography>
+                      </div>
+                    )}
+                    {dexData.volume && (
+                      <div className="flex flex-row items-center gap-1">
+                        <Typography variant="regularText">
+                          {t('coin:metadata.volume.label')}
+                        </Typography>
+                        <div className="grow"></div>
+                        <Typography variant="mutedText">
+                          {`$${formatter.format(dexData.volume.h24)}`}
+                        </Typography>
+                      </div>
+                    )}
                   </>
                 )}
                 <div className="flex flex-row items-center gap-1">

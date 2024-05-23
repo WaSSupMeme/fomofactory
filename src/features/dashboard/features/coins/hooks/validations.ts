@@ -32,8 +32,8 @@ export const useNewCoinValidation = () => {
           .refine((fileList) => fileList.length > 0, {
             message: t('global:validations.avatar.invalid'),
           })
-          .refine((fileList) => sizeInKB(fileList[0]!.size) <= 100, {
-            message: t('global:validations.avatar.size', { maxSize: 100 }),
+          .refine((fileList) => sizeInKB(fileList[0]!.size) <= 200, {
+            message: t('global:validations.avatar.size', { maxSize: 200 }),
           }),
         twitter: z
           .string()

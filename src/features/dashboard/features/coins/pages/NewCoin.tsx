@@ -208,7 +208,7 @@ const NewCoin = () => {
                         <>
                           <Input
                             type="file"
-                            accept="image/jpeg,image/png"
+                            accept="image/jpeg,image/png,image/gif"
                             onChange={(event) => {
                               if (event?.target?.files) {
                                 handleAvatarChange(event?.target?.files)
@@ -221,7 +221,7 @@ const NewCoin = () => {
                           {previewImage && (
                             <div className="flex flex-col items-center">
                               <img
-                                className="aspect-square h-32 w-32 rounded-full object-cover"
+                                className="aspect-square h-32 w-32 rounded-lg object-cover shadow-lg shadow-primary"
                                 src={previewImage}
                                 alt={t('coin:metadata.image.preview')}
                               />

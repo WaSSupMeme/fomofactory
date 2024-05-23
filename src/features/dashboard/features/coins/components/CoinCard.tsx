@@ -9,10 +9,11 @@ import { useDexData } from '@/api/queries/dex'
 
 interface CoinCardProps {
   coinId: `0x${string}`
+  rank?: number
   showBorder?: boolean
 }
 
-const CoinCard = ({ coinId, showBorder = false }: CoinCardProps) => {
+const CoinCard = ({ coinId, rank, showBorder = false }: CoinCardProps) => {
   const { t } = useTranslation()
   const { data: token } = useToken(coinId)
   const { data: dexData } = useDexData(coinId)
@@ -35,8 +36,16 @@ const CoinCard = ({ coinId, showBorder = false }: CoinCardProps) => {
           <Loading />
         </div>
       ) : (
-        <div className="group flex w-full flex-row items-center">
-          <div className="flex w-32 flex-col gap-2 ">
+        <div className="group relative flex w-full flex-row items-center">
+          {rank && (
+            <Typography
+              variant="regularText"
+              className="absolute -left-4 -top-5 text-xl text-primary"
+            >
+              {`#${rank}`}
+            </Typography>
+          )}
+          <div className="flex w-32 flex-col gap-2">
             <Typography variant="regularText">{token?.name}</Typography>
             <Typography variant="mutedText">{token?.symbol}</Typography>
             <div className="flex flex-row gap-1">
@@ -71,7 +80,6 @@ const CoinCard = ({ coinId, showBorder = false }: CoinCardProps) => {
                 </a>
               )}
             </div>
-            {/* <div className="grow"></div> */}
             {dexData?.marketCap && (
               <div className="flex flex-row items-center gap-2 group-hover:animate-bounce">
                 <Typography variant="regularText" className="text-xs text-primary">
@@ -86,7 +94,7 @@ const CoinCard = ({ coinId, showBorder = false }: CoinCardProps) => {
           <div className="grow"></div>
           <div className="flex">
             <img
-              className="aspect-square h-32 w-32 rounded-full object-cover shadow-lg shadow-primary group-hover:animate-bounce"
+              className="aspect-square h-32 w-32 rounded-lg object-cover shadow-lg shadow-primary group-hover:animate-bounce"
               src={token.avatar}
               alt={token.name}
             />
