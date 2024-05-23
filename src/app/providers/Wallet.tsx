@@ -7,7 +7,7 @@ import {
   darkTheme,
   cssStringFromTheme,
 } from '@rainbow-me/rainbowkit'
-import { WagmiProvider, useWalletClient } from 'wagmi'
+import { WagmiProvider, http, useWalletClient } from 'wagmi'
 import { base } from 'wagmi/chains'
 
 interface Props {
@@ -19,6 +19,9 @@ const WalletProvider = ({ children }: Props) => {
     appName: import.meta.env.VITE_APP_NAME,
     projectId: import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID,
     chains: [base],
+    transports: {
+      [base.id]: http(import.meta.env.VITE_RPC_PROVIDER_URL),
+    },
     ssr: import.meta.env.SSR,
   })
 

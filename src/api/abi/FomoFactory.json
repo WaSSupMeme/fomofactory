@@ -74,6 +74,12 @@
         "inputs": [
             {
                 "indexed": true,
+                "internalType": "uint256",
+                "name": "memecoinIdx",
+                "type": "uint256"
+            },
+            {
+                "indexed": true,
                 "internalType": "address",
                 "name": "creator",
                 "type": "address"
@@ -242,7 +248,7 @@
                 "type": "address"
             }
         ],
-        "name": "createdBy",
+        "name": "creatorOf",
         "outputs": [
             {
                 "internalType": "address",
@@ -305,13 +311,19 @@
         "type": "function"
     },
     {
-        "inputs": [],
-        "name": "memecoinCount",
-        "outputs": [
+        "inputs": [
             {
                 "internalType": "uint256",
                 "name": "",
                 "type": "uint256"
+            }
+        ],
+        "name": "memecoins",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
             }
         ],
         "stateMutability": "view",
@@ -412,6 +424,35 @@
                 "internalType": "address",
                 "name": "",
                 "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "_start",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_end",
+                "type": "uint256"
+            },
+            {
+                "internalType": "bool",
+                "name": "_reverse",
+                "type": "bool"
+            }
+        ],
+        "name": "queryMemecoins",
+        "outputs": [
+            {
+                "internalType": "address[]",
+                "name": "result",
+                "type": "address[]"
             }
         ],
         "stateMutability": "view",

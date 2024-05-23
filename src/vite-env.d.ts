@@ -6,6 +6,7 @@ interface ImportMetaEnv {
   readonly VITE_WALLET_CONNECT_PROJECT_ID: string
   readonly VITE_PINATA_JWT: string
   readonly VITE_GATEWAY_URL: string
+  readonly VITE_RPC_PROVIDER_URL: string
 
   readonly VITE_USD_MARKET_CAP: number
 
