@@ -8,6 +8,7 @@ import {
   erc20Abi,
   formatEther,
   formatUnits,
+  maxUint256,
   numberToHex,
   parseEther,
   parseUnits,
@@ -197,7 +198,7 @@ export const useTokenAddress = (
   })
 }
 
-const fetchTokens = async (config: Config, chainId: number, account?: `0x${string}`) => {
+const fetchAccountTokens = async (config: Config, chainId: number, account?: `0x${string}`) => {
   if (!account) {
     throw new Error('Missing account address')
   }
@@ -212,13 +213,34 @@ const fetchTokens = async (config: Config, chainId: number, account?: `0x${strin
   return tokens as `0x${string}`[]
 }
 
-export const useTokens = () => {
+export const useAccountTokens = () => {
   const config = useConfig()
   const chainId = useChainId()
   const account = useAccount()
 
   return useQuery({
-    queryKey: ['tokens', { chainId, account: account?.address }],
-    queryFn: () => fetchTokens(config, chainId, account?.address),
+    queryKey: ['accountTokens', { chainId, account: account?.address }],
+    queryFn: () => fetchAccountTokens(config, chainId, account?.address),
+  })
+}
+
+const fetchTokens = async (config: Config, chainId: number) => {
+  const tokens = await readContract(config, {
+    address: import.meta.env[`VITE_FOMO_FACTORY_ADDRESS_${chainId}`],
+    abi: FomoFactoryABI as Abi,
+    functionName: 'queryMemecoins',
+    args: [0, maxUint256, false],
+  })
+
+  return tokens as `0x${string}`[]
+}
+
+export const useTokens = () => {
+  const config = useConfig()
+  const chainId = useChainId()
+
+  return useQuery({
+    queryKey: ['tokens', { chainId }],
+    queryFn: () => fetchTokens(config, chainId),
   })
 }

@@ -2,7 +2,8 @@
   "header": {
     "language": "Language",
     "theme": "Theme",
-    "newCoin": "Make New Coin",
+    "newCoin": "Mint New Coin",
+    "leaderboard": "Top Coins",
     "myCoins": "My Coins",
     "faq": "FAQ"
   }

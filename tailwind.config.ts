@@ -95,11 +95,17 @@ const config = {
           '50%': { position: 'relative', opacity: '0.5' },
           '100%': { position: 'relative', opacity: '1', top: '0px' },
         },
+        'infinite-scroll': {
+          from: { transform: 'translateX(0)' },
+          to: { transform: 'translateX(-100%)' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         'fade-in': 'fade-in 0.6s ease-in-out forwards',
+        'infinite-scroll':
+          'infinite-scroll var(--animation-duration, 25s) var(--animation-direction, forwards) linear infinite',
       },
       scale: {
         '1025': '1.025',

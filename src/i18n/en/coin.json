@@ -25,6 +25,9 @@
   "my": {
     "title": "My Coins"
   },
+  "leaderboard": {
+    "title": "Top Coins"
+  },
   "metadata": {
     "name": {
       "label": "Name",

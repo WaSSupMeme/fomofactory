@@ -5,7 +5,6 @@ import { Loading, Layout } from '@/common/components'
 import ThemeDropdown from '@/common/components/ThemeDropdown'
 import ConnectButton from '@/common/components/ConnectButton'
 import { APP_ROUTES } from '@/app/routes/app'
-import Landing from '@/common/components/Landing'
 import { useAuth } from '@/common/auth'
 import NewCoin from './features/coins/pages/NewCoin'
 import CoinDetails from './features/coins/pages/CoinDetails'
@@ -13,6 +12,8 @@ import MyCoins from './features/coins/pages/MyCoins'
 import FAQ from './features/coins/pages/FAQ'
 import { useTranslation } from 'react-i18next'
 import Terms from '@/common/components/Terms'
+import Landing from './features/coins/pages/Landing'
+import Leaderboard from './features/coins/pages/Leaderboard'
 
 const Dashboard = () => {
   const { isLoggedIn } = useAuth()
@@ -28,6 +29,7 @@ const Dashboard = () => {
                 baseUrl: APP_ROUTES.index.to,
                 links: [
                   ...[{ to: APP_ROUTES.newCoin.to, label: t('dashboard:header.newCoin') }],
+                  ...[{ to: APP_ROUTES.leaderboard.to, label: t('dashboard:header.leaderboard') }],
                   ...(isLoggedIn
                     ? [{ to: APP_ROUTES.coins.to, label: t('dashboard:header.myCoins') }]
                     : []),
@@ -53,6 +55,7 @@ const Dashboard = () => {
           <Route path={APP_ROUTES.newCoin.path} element={<NewCoin />} />
           <Route path={APP_ROUTES.faq.path} element={<FAQ />} />
           <Route path={APP_ROUTES.tos.path} element={<Terms />} />
+          <Route path={APP_ROUTES.leaderboard.path} element={<Leaderboard />} />
           <Route path="*" element={<Navigate replace to={APP_ROUTES.index.to} />} />
         </Route>
       </Routes>

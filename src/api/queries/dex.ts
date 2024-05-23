@@ -23,7 +23,11 @@ interface DexResponse {
   data: Pair
 }
 
-async function fetchDexData(config: Config, chainId: number, address: `0x${string}`) {
+export async function fetchDexData(
+  config: Config,
+  chainId: number,
+  address: `0x${string}`,
+): Promise<DexData> {
   const response = await fetch(
     `https://api.geckoterminal.com/api/v2/networks/base/tokens/${address}`,
   )
@@ -72,7 +76,8 @@ async function fetchDexData(config: Config, chainId: number, address: `0x${strin
   const ethPrice = await fetchEthUsdAmount(config, chainId, 1)
 
   return {
-    address: poolAddress,
+    address,
+    poolAddress,
     volume: {
       h24: resp.data.attributes.volume_usd.h24,
     },

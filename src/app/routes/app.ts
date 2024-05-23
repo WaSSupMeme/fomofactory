@@ -11,6 +11,11 @@ export const APP_ROUTES = {
     to: '/coins',
     absPath: '/coins',
   },
+  leaderboard: {
+    path: 'top',
+    to: '/top',
+    absPath: '/top',
+  },
   newCoin: {
     path: 'coins/create',
     to: '/coins/create',

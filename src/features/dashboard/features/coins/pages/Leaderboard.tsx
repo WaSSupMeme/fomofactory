@@ -2,21 +2,21 @@ import { Loading, Typography } from '@/common/components'
 
 import { useTranslation } from 'react-i18next'
 import CoinCard from '../components/CoinCard'
-import { useAccountTokens } from '@/api/queries/token'
 import { useNavigate } from 'react-router-dom'
 import { APP_ROUTES } from '@/app/routes'
 import { ShrugIcon } from '@/assets/svg/ShrugIcon'
+import { useTopTokens } from '@/api/queries/leaderboard'
 
-const MyCoins = () => {
+const Leaderboard = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
 
-  const { data: tokens } = useAccountTokens()
+  const { data: tokens } = useTopTokens()
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-center">
       <aside className="w-fit justify-center space-y-4">
-        <Typography variant="h3">{t('coin:my.title')}</Typography>
+        <Typography variant="h3">{t('coin:leaderboard.title')}</Typography>
 
         {!tokens && (
           <div className="h-72 w-full">
@@ -49,4 +49,4 @@ const MyCoins = () => {
   )
 }
 
-export default MyCoins
+export default Leaderboard

@@ -235,7 +235,7 @@ const CoinDetails = () => {
                     target="_blank"
                     rel="noreferrer"
                   >
-                    <WebIcon className="h-6 w-6 fill-primary" />
+                    <WebIcon className="h-6 w-6 fill-foreground" />
                   </a>
                 )}
               </div>

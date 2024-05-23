@@ -4,6 +4,8 @@ import { useToken } from '@/api/queries/token'
 import { TelegramIcon } from '@/assets/svg/TelegramIcon'
 import { TwitterIcon } from '@/assets/svg/TwitterIcon'
 import { WebIcon } from '@/assets/svg/WebIcon'
+import { useTranslation } from 'react-i18next'
+import { useDexData } from '@/api/queries/dex'
 
 interface CoinCardProps {
   coinId: `0x${string}`
@@ -11,21 +13,29 @@ interface CoinCardProps {
 }
 
 const CoinCard = ({ coinId, showBorder = false }: CoinCardProps) => {
+  const { t } = useTranslation()
   const { data: token } = useToken(coinId)
+  const { data: dexData } = useDexData(coinId)
+
+  const formatter = Intl.NumberFormat('en', {
+    notation: 'compact',
+    maximumFractionDigits: 2,
+    minimumFractionDigits: 2,
+  })
 
   return (
     <div
       className={cn(
-        'flex w-80 cursor-pointer flex-row items-center gap-4 rounded-md bg-card px-6 py-4 text-card-foreground transition duration-300 ease-in-out hover:rounded-md hover:shadow-lg hover:shadow-primary hover:outline-none hover:ring-2 hover:ring-ring',
+        'flex w-80 cursor-pointer flex-row items-center gap-4 rounded-md bg-card px-5 py-5 text-card-foreground transition duration-300 ease-in-out hover:rounded-md hover:shadow-lg hover:shadow-primary hover:outline-none hover:ring-2 hover:ring-ring',
         showBorder && 'border',
       )}
     >
       {!token ? (
-        <div className="flex w-full flex-row justify-center">
+        <div className="flex h-32 w-full flex-row justify-center">
           <Loading />
         </div>
       ) : (
-        <div className="flex flex-row">
+        <div className="group flex w-full flex-row items-center">
           <div className="flex w-32 flex-col gap-2 ">
             <Typography variant="regularText">{token?.name}</Typography>
             <Typography variant="mutedText">{token?.symbol}</Typography>
@@ -57,14 +67,26 @@ const CoinCard = ({ coinId, showBorder = false }: CoinCardProps) => {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  <WebIcon className="h-6 w-6 fill-primary" />
+                  <WebIcon className="h-6 w-6 fill-foreground" />
                 </a>
               )}
             </div>
+            {/* <div className="grow"></div> */}
+            {dexData?.marketCap && (
+              <div className="flex flex-row items-center gap-2 group-hover:animate-bounce">
+                <Typography variant="regularText" className="text-xs text-primary">
+                  {t('coin:metadata.marketCap.label')}
+                </Typography>
+                <Typography variant="mutedText" className="text-xs text-primary">
+                  {`$${formatter.format(dexData?.marketCap)}`}
+                </Typography>
+              </div>
+            )}
           </div>
-          <div className="flex ">
+          <div className="grow"></div>
+          <div className="flex">
             <img
-              className="aspect-square h-32 w-32 rounded-full object-cover"
+              className="aspect-square h-32 w-32 rounded-full object-cover shadow-lg shadow-primary group-hover:animate-bounce"
               src={token.avatar}
               alt={token.name}
             />
