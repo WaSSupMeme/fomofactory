@@ -55,6 +55,7 @@ const Landing = () => {
           variant="default"
           size="lg"
           disabled={false}
+          className="animate-beacon duration-1500 transition"
           onClick={() => {
             navigate({
               pathname: APP_ROUTES.newCoin.to,

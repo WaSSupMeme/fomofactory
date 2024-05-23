@@ -99,6 +99,33 @@ const config = {
           from: { transform: 'translateX(0)' },
           to: { transform: 'translateX(-100%)' },
         },
+        shake: {
+          '10%, 90%': {
+            transform: 'translate3d(-1px, 0, 0)',
+          },
+          '20%, 80%': {
+            transform: 'translate3d(2px, 0, 0)',
+          },
+          '30%, 50%, 70%': {
+            transform: 'translate3d(-4px, 0, 0)',
+          },
+          '40%, 60%': {
+            transform: 'translate3d(4px, 0, 0)',
+          },
+        },
+        beacon: {
+          '0%': {
+            transform: 'scale(0.8)',
+            'box-shadow': '0 0 0 0 hsl(var(--primary))',
+          },
+          '70%': {
+            transform: 'scale(1)',
+            'box-shadow': '0 0 0 60px rgba(0, 0, 0, 0)',
+          },
+          '100%': {
+            transform: 'scale(0.8)',
+          },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
@@ -106,6 +133,8 @@ const config = {
         'fade-in': 'fade-in 0.6s ease-in-out forwards',
         'infinite-scroll':
           'infinite-scroll var(--animation-duration, 25s) var(--animation-direction, forwards) linear infinite',
+        shake: 'shake 4s cubic-bezier(.36,.07,.19,.97) both infinite',
+        beacon: 'beacon 2s infinite',
       },
       scale: {
         '1025': '1.025',
