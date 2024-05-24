@@ -14,10 +14,12 @@ import QueryParamsProvider from './providers/QueryParams'
 
 import '@rainbow-me/rainbowkit/styles.css'
 import WalletProvider from './providers/Wallet'
+import Analytics from './providers/Analytics'
 
 const Root = () => (
   <GlobalErrorBoundary>
     <TailwindIndicator />
+    <Analytics />
     <Jotai>
       <Suspense fallback={<Loading />}>
         <ThemeProvider>
@@ -43,7 +45,7 @@ export default Root
 
 const TailwindIndicator = () =>
   import.meta.env.PROD ? null : (
-    <div className="fixed bottom-3 left-24 z-50 flex size-14 items-center justify-center rounded-full bg-gray-800 font-mono text-white">
+    <div className="font-mono fixed bottom-3 left-24 z-50 flex size-14 items-center justify-center rounded-full bg-gray-800 text-white">
       <div className="block sm:hidden">xs</div>
       <div className="hidden sm:block md:hidden">sm</div>
       <div className="hidden md:block lg:hidden">md</div>

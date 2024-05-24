@@ -94,7 +94,7 @@ const CoinCard = ({ coinId, rank, showBorder = false }: CoinCardProps) => {
           <div className="grow"></div>
           <div className="flex">
             <img
-              className="aspect-square h-32 w-32 rounded-lg object-cover shadow-lg shadow-primary group-hover:animate-bounce"
+              className="group-hover:animate-shake aspect-square h-32 w-32 rounded-lg object-cover shadow-lg shadow-primary group-hover:transition group-hover:duration-700"
               src={token.avatar}
               alt={token.name}
             />
