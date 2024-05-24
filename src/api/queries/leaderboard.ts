@@ -5,7 +5,7 @@ import { Abi, maxUint256 } from 'viem'
 import { Config, useChainId, useConfig } from 'wagmi'
 
 import FomoFactoryABI from '../abi/FomoFactory.json'
-import { fetchDexData } from './dex'
+import { fetchTokensDexData } from './dex'
 
 const fetchTopTokens = async (config: Config, chainId: number) => {
   const tokens = (await readContract(config, {
@@ -15,9 +15,9 @@ const fetchTopTokens = async (config: Config, chainId: number) => {
     args: [0, maxUint256, false],
   })) as `0x${string}`[]
 
-  const dexData = (
-    await Promise.all(tokens.map(async (token) => await fetchDexData(config, chainId, token)))
-  ).filter((token) => token.marketCap)
+  const dexData = (await fetchTokensDexData(config, chainId, tokens)).filter(
+    (token) => token.marketCap,
+  )
 
   const dexDataSorted = dexData.sort((t1, t2) => t2.marketCap!! - t1.marketCap!!)
 

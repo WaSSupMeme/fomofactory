@@ -272,7 +272,7 @@ const CoinDetails = () => {
                 )}
                 {dexData && (
                   <>
-                    {dexData.liquidity && (
+                    {dexData.liquidity !== undefined && dexData.liquidity !== 0 && (
                       <div className="flex flex-row items-center gap-0">
                         <Typography variant="regularText">
                           {t('coin:metadata.liquidity.label')}
@@ -284,7 +284,7 @@ const CoinDetails = () => {
                         <LockIcon className="h-3.5 w-3.5 fill-muted-foreground" />
                       </div>
                     )}
-                    {dexData.marketCap && (
+                    {dexData.marketCap !== undefined && dexData.marketCap !== 0 && (
                       <div className="flex flex-row items-center gap-2">
                         <Typography variant="regularText">
                           {t('coin:metadata.marketCap.label')}
@@ -295,7 +295,7 @@ const CoinDetails = () => {
                         </Typography>
                       </div>
                     )}
-                    {dexData.volume && (
+                    {dexData?.volume?.h24 !== undefined && dexData?.volume?.h24 !== null && (
                       <div className="flex flex-row items-center gap-1">
                         <Typography variant="regularText">
                           {t('coin:metadata.volume.label')}
