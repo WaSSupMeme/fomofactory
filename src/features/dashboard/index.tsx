@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next'
 import Terms from '@/common/components/Terms'
 import Landing from './features/coins/pages/Landing'
 import Leaderboard from './features/coins/pages/Leaderboard'
-import icon from '@/assets/png/meta-icon.png'
+import preview from '@/assets/png/preview.png'
 import SEO from '@/common/components/SEO'
 
 const Dashboard = () => {
@@ -25,8 +25,9 @@ const Dashboard = () => {
     <>
       <SEO
         title={t('seo:root.title')}
+        subtitle={t('seo:root.subtitle')}
         description={t('seo:root.description')}
-        image={icon}
+        image={preview}
         siteName={t('seo:root.siteName')}
       />
       <Routes>

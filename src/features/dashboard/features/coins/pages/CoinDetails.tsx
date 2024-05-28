@@ -199,6 +199,7 @@ const CoinDetails = () => {
     <>
       <SEO
         title={t('seo:coin.title', { name: token?.name })}
+        subtitle={t('seo:coin.subtitle', { name: token?.name })}
         description={t('seo:coin.description', { name: token?.name })}
         image={token?.avatar}
       />

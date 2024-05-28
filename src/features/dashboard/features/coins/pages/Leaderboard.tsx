@@ -16,7 +16,11 @@ const Leaderboard = () => {
 
   return (
     <>
-      <SEO title={t('seo:leaderboard.title')} description={t('seo:leaderboard.description')} />
+      <SEO
+        title={t('seo:leaderboard.title')}
+        subtitle={t('seo:leaderboard.subtitle')}
+        description={t('seo:leaderboard.description')}
+      />
       <div className="flex h-full w-full flex-col items-center justify-center">
         <aside className="w-fit justify-center space-y-4">
           <Typography variant="h3">{t('coin:leaderboard.title')}</Typography>
