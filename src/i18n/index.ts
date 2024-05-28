@@ -15,6 +15,7 @@ import global from './en/global.json'
 import landing from './en/landing.json'
 import terms from './en/terms.json'
 import wallet from './en/wallet.json'
+import seo from './en/seo.json'
 
 // Maps to src/i18n/{code}
 export const SUPPORTED_LANGUAGES = ['en'] as const
@@ -38,6 +39,7 @@ export const LANGUAGES_CONFIG = {
       terms,
       global,
       wallet,
+      seo,
     },
   },
 } as const satisfies Record<

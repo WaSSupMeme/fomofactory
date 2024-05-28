@@ -1,0 +1,25 @@
+{
+    "root": {
+        "description": "Deploy a contract, add liquidity and bootstrap trading with one click",
+        "title": "FomoFactory",
+        "siteName": "FomoFactory"
+    },
+    "leaderboard": {
+        "title": "FomoFactory - Top Coins",
+        "description": "Top coins by market cap. Mint new coins to get on the leaderboard"
+    },
+    "new": {
+        "title": "FomoFactory - Mint New Coin",
+        "description": "Mint a new coin and get it on the leaderboard"
+    },
+    "my": {
+        "title": "FomoFactory - My Coins"
+    },
+    "faq": {
+        "title": "FomoFactory - FAQ"
+    },
+    "coin": {
+        "title": "FomoFactory - {{ name }}",
+        "description": "I have just discovered {{ name }} on FomoFactory. Pump it and put it on the leaderboard!"
+    }
+}

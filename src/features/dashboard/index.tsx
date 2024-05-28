@@ -14,6 +14,8 @@ import { useTranslation } from 'react-i18next'
 import Terms from '@/common/components/Terms'
 import Landing from './features/coins/pages/Landing'
 import Leaderboard from './features/coins/pages/Leaderboard'
+import icon from '@/assets/png/meta-icon.png'
+import SEO from '@/common/components/SEO'
 
 const Dashboard = () => {
   const { isLoggedIn } = useAuth()
@@ -21,6 +23,12 @@ const Dashboard = () => {
 
   return (
     <>
+      <SEO
+        title={t('seo:root.title')}
+        description={t('seo:root.description')}
+        image={icon}
+        siteName={t('seo:root.siteName')}
+      />
       <Routes>
         <Route
           element={

@@ -15,29 +15,32 @@ import QueryParamsProvider from './providers/QueryParams'
 import '@rainbow-me/rainbowkit/styles.css'
 import WalletProvider from './providers/Wallet'
 import Analytics from './providers/Analytics'
+import SEOProvider from './providers/SEO'
 
 const Root = () => (
   <GlobalErrorBoundary>
-    <TailwindIndicator />
-    <Analytics />
-    <Jotai>
-      <Suspense fallback={<Loading />}>
-        <ThemeProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Query>
-              <Router>
-                <QueryParamsProvider>
-                  <WalletProvider>
-                    <App />
-                  </WalletProvider>
-                </QueryParamsProvider>
-              </Router>
-            </Query>
-          </TooltipProvider>
-        </ThemeProvider>
-      </Suspense>
-    </Jotai>
+    <SEOProvider>
+      <TailwindIndicator />
+      <Analytics />
+      <Jotai>
+        <Suspense fallback={<Loading />}>
+          <ThemeProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Query>
+                <Router>
+                  <QueryParamsProvider>
+                    <WalletProvider>
+                      <App />
+                    </WalletProvider>
+                  </QueryParamsProvider>
+                </Router>
+              </Query>
+            </TooltipProvider>
+          </ThemeProvider>
+        </Suspense>
+      </Jotai>
+    </SEOProvider>
   </GlobalErrorBoundary>
 )
 
