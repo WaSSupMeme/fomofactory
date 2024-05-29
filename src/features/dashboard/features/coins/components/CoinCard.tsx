@@ -80,13 +80,13 @@ const CoinCard = ({ coinId, rank, showBorder = false }: CoinCardProps) => {
                 </a>
               )}
             </div>
-            {dexData?.marketCap && (
+            {dexData?.marketCap !== undefined && (
               <div className="flex flex-row items-center gap-2 group-hover:animate-bounce">
                 <Typography variant="regularText" className="text-xs text-primary">
                   {t('coin:metadata.marketCap.label')}
                 </Typography>
                 <Typography variant="mutedText" className="text-xs text-primary">
-                  {`$${formatter.format(dexData?.marketCap)}`}
+                  {`$${formatter.format(dexData.marketCap)}`}
                 </Typography>
               </div>
             )}

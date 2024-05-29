@@ -9,6 +9,7 @@ import { DexData } from '../models/dex'
 import { erc20Abi, fomoFactoryAbi } from '../abi/generated'
 
 interface Pool {
+  id: string
   attributes: {
     base_token_price_usd: number
     base_token_price_native_currency: number
@@ -50,8 +51,19 @@ async function extractDexData(
   chainId: number,
   token: `0x${string}`,
   poolAddress: `0x${string}`,
-  poolData: Pool,
+  poolData?: Pool,
 ) {
+  if (
+    !poolData ||
+    !poolData.relationships.base_token.data ||
+    !poolData.relationships.quote_token.data
+  ) {
+    return {
+      address: token,
+      poolAddress,
+    } as DexData
+  }
+
   const [totalSupplyRaw, decimals, tokenBalanceRaw, wethBalanceRaw] = await multicall(config, {
     allowFailure: false,
     contracts: [
@@ -128,14 +140,27 @@ export async function fetchTokensDexData(
   const response = await fetch(
     `https://api.geckoterminal.com/api/v2/networks/base/pools/multi/${poolAddresses.join(',')}`,
   )
+
   const resp = (await response.json()) as DexResponse
-  if (!resp.data || resp.data.length !== tokens.length) {
+  if (!resp.data) {
     return tokens.map((address, idx) => ({ address, poolAddress: poolAddresses[idx] })) as DexData[]
   }
 
+  const pools = new Map(
+    resp.data.map((pool) => {
+      return [pool.id.toLowerCase(), pool]
+    }),
+  )
+
   return await Promise.all(
     tokens.map(async (token, idx) => {
-      return await extractDexData(config, chainId, token, poolAddresses[idx]!!, resp.data[idx]!!)
+      return await extractDexData(
+        config,
+        chainId,
+        token,
+        poolAddresses[idx]!!,
+        pools.get(`base_${poolAddresses[idx]!!.toLowerCase()}`),
+      )
     }),
   )
 }
