@@ -183,7 +183,7 @@ const claimFees = async (
   client: PublicClient | undefined,
   config: Config,
   chainId: number,
-  data: { positionId: number; recipient: `0x${string}` },
+  data: { positionId: bigint; recipient: `0x${string}` },
 ) => {
   if (!client) throw new Error('Failed to initialize client')
 
@@ -208,7 +208,7 @@ export const useClaimFees = (options?: {
   return useMutation({
     ...options,
     mutationKey: ['claimFees', { chainId }],
-    mutationFn: (data: { positionId: number; recipient: `0x${string}` }) =>
+    mutationFn: (data: { positionId: bigint; recipient: `0x${string}` }) =>
       claimFees(client, config, chainId, data),
   })
 }
