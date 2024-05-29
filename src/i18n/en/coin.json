@@ -48,7 +48,7 @@
     },
     "image": {
       "label": "Avatar",
-      "extra": "(max 100KB)",
+      "extra": "(max 1MB)",
       "preview": "Coin Avatar Preview"
     },
     "liquidity": {
