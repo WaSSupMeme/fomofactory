@@ -1,21 +1,21 @@
 import { useQuery } from '@tanstack/react-query'
 
 import { readContract } from '@wagmi/core'
-import { Abi, maxUint256 } from 'viem'
+import { maxUint256 } from 'viem'
 import { Config, useChainId, useConfig } from 'wagmi'
 
-import FomoFactoryABI from '../abi/FomoFactory.json'
 import { fetchTokensDexData } from './dex'
+import { fomoFactoryAbi } from '../abi/generated'
 
 const fetchTopTokens = async (config: Config, chainId: number) => {
-  const tokens = (await readContract(config, {
+  const tokens = await readContract(config, {
     address: import.meta.env[`VITE_FOMO_FACTORY_ADDRESS_${chainId}`],
-    abi: FomoFactoryABI as Abi,
+    abi: fomoFactoryAbi,
     functionName: 'queryMemecoins',
-    args: [0, maxUint256, false],
-  })) as `0x${string}`[]
+    args: [0n, maxUint256, false],
+  })
 
-  const dexData = (await fetchTokensDexData(config, chainId, tokens)).filter(
+  const dexData = (await fetchTokensDexData(config, chainId, tokens as `0x${string}`[])).filter(
     (token) => token.marketCap,
   )
 

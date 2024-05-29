@@ -1,12 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
 
 import { readContract, multicall } from '@wagmi/core'
-import { Abi, erc20Abi, formatEther, formatUnits } from 'viem'
+import { formatEther, formatUnits } from 'viem'
 import { Config, useChainId, useConfig } from 'wagmi'
 
 import { DexData } from '../models/dex'
 
-import FomoFactoryABI from '../abi/FomoFactory.json'
+import { erc20Abi, fomoFactoryAbi } from '../abi/generated'
 
 interface Pool {
   attributes: {
@@ -52,7 +52,7 @@ async function extractDexData(
   poolAddress: `0x${string}`,
   poolData: Pool,
 ) {
-  const [totalSupplyRaw, decimals, tokenBalanceRaw, wethBalanceRaw] = (await multicall(config, {
+  const [totalSupplyRaw, decimals, tokenBalanceRaw, wethBalanceRaw] = await multicall(config, {
     allowFailure: false,
     contracts: [
       {
@@ -78,7 +78,7 @@ async function extractDexData(
         args: [poolAddress],
       },
     ],
-  })) as [bigint, number, bigint, bigint]
+  })
 
   const totalSupply = Number(formatUnits(totalSupplyRaw, decimals))
   const tokenBalance = Number(formatUnits(tokenBalanceRaw, decimals))
@@ -115,12 +115,12 @@ export async function fetchTokensDexData(
 ): Promise<DexData[]> {
   const poolAddresses = await Promise.all(
     tokens.map(async (token) => {
-      const [poolAddress] = (await readContract(config, {
+      const [poolAddress] = await readContract(config, {
         address: import.meta.env[`VITE_FOMO_FACTORY_ADDRESS_${chainId}`],
-        abi: FomoFactoryABI as Abi,
+        abi: fomoFactoryAbi,
         functionName: 'poolMetadataOf',
         args: [token],
-      })) as [`0x${string}`]
+      })
       return poolAddress
     }),
   )

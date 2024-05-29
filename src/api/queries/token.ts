@@ -4,8 +4,6 @@ import { useQuery } from '@tanstack/react-query'
 
 import { readContract, multicall } from '@wagmi/core'
 import {
-  Abi,
-  erc20Abi,
   formatEther,
   formatUnits,
   maxUint256,
@@ -16,11 +14,10 @@ import {
 } from 'viem'
 import { Config, useAccount, useChainId, useConfig, usePublicClient } from 'wagmi'
 
-import FomoFactoryABI from '../abi/FomoFactory.json'
-import IQuoterV2ABI from '@uniswap/v3-periphery/artifacts/contracts/interfaces/IQuoterV2.sol/IQuoterV2.json'
 import { FeeAmount } from '@uniswap/v3-sdk'
 import { fetchEthUsdAmount } from './eth'
 import { useWallet } from '@/app/providers/Wallet'
+import { erc20Abi, fomoFactoryAbi, iQuoterV2Abi } from '../abi/generated'
 
 const fetchMetadata = async (address: `0x${string}`) => {
   const res = await fetch(
@@ -113,7 +110,7 @@ const fetchTokenUsdAmount = async (
 
   const quote = await client.simulateContract({
     address: import.meta.env[`VITE_UNISWAP_V3_QUOTER_ADDRESS_${chainId}`],
-    abi: IQuoterV2ABI.abi,
+    abi: iQuoterV2Abi,
     functionName: 'quoteExactOutputSingle',
     args: [
       {
@@ -121,7 +118,7 @@ const fetchTokenUsdAmount = async (
         tokenOut: import.meta.env[`VITE_WETH_ADDRESS_${chainId}`],
         amount: parseEther('0.0001'),
         fee: FeeAmount.HIGH,
-        sqrtPriceLimitX96: 0,
+        sqrtPriceLimitX96: 0n,
       },
     ],
   })
@@ -164,7 +161,7 @@ const fetchTokenAddress = async (
 
   const address = await readContract(config, {
     address: import.meta.env[`VITE_FOMO_FACTORY_ADDRESS_${chainId}`],
-    abi: FomoFactoryABI as Abi,
+    abi: fomoFactoryAbi,
     functionName: 'computeMemecoinAddress',
     args: [
       creator,
@@ -205,7 +202,7 @@ const fetchAccountTokens = async (config: Config, chainId: number, account?: `0x
 
   const tokens = await readContract(config, {
     address: import.meta.env[`VITE_FOMO_FACTORY_ADDRESS_${chainId}`],
-    abi: FomoFactoryABI as Abi,
+    abi: fomoFactoryAbi,
     functionName: 'memecoinsOf',
     args: [account],
   })
@@ -227,9 +224,9 @@ export const useAccountTokens = () => {
 const fetchTokens = async (config: Config, chainId: number) => {
   const tokens = await readContract(config, {
     address: import.meta.env[`VITE_FOMO_FACTORY_ADDRESS_${chainId}`],
-    abi: FomoFactoryABI as Abi,
+    abi: fomoFactoryAbi,
     functionName: 'queryMemecoins',
-    args: [0, maxUint256, false],
+    args: [0n, maxUint256, false],
   })
 
   return tokens as `0x${string}`[]

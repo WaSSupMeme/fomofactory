@@ -1,10 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 
-import AggregatorV3Interface from '@chainlink/abi/v0.7/interfaces/AggregatorV3Interface.json'
-
 import { multicall } from '@wagmi/core'
 import { Config, useChainId, useConfig } from 'wagmi'
-import { Abi, formatUnits } from 'viem'
+import { formatUnits } from 'viem'
+import { aggregatorV3InterfaceAbi } from '../abi/generated'
 
 export const fetchUsdEthAmount = async (config: Config, chainId: number, usdAmount: number) => {
   const [latestRoundData, decimals] = await multicall(config, {
@@ -12,18 +11,18 @@ export const fetchUsdEthAmount = async (config: Config, chainId: number, usdAmou
     contracts: [
       {
         address: import.meta.env[`VITE_ETH_USD_AGGREGATOR_ADDRESS_${chainId}`],
-        abi: AggregatorV3Interface.abi as Abi,
+        abi: aggregatorV3InterfaceAbi,
         functionName: 'latestRoundData',
       },
       {
         address: import.meta.env[`VITE_ETH_USD_AGGREGATOR_ADDRESS_${chainId}`],
-        abi: AggregatorV3Interface.abi as Abi,
+        abi: aggregatorV3InterfaceAbi,
         functionName: 'decimals',
       },
     ],
   })
 
-  const ethPrice = Number(formatUnits((latestRoundData as bigint[])[1]!, decimals as number))
+  const ethPrice = Number(formatUnits(latestRoundData[1], decimals))
   return usdAmount / ethPrice
 }
 
@@ -43,18 +42,18 @@ export const fetchEthUsdAmount = async (config: Config, chainId: number, ethAmou
     contracts: [
       {
         address: import.meta.env[`VITE_ETH_USD_AGGREGATOR_ADDRESS_${chainId}`],
-        abi: AggregatorV3Interface.abi as Abi,
+        abi: aggregatorV3InterfaceAbi,
         functionName: 'latestRoundData',
       },
       {
         address: import.meta.env[`VITE_ETH_USD_AGGREGATOR_ADDRESS_${chainId}`],
-        abi: AggregatorV3Interface.abi as Abi,
+        abi: aggregatorV3InterfaceAbi,
         functionName: 'decimals',
       },
     ],
   })
 
-  const ethPrice = Number(formatUnits((latestRoundData as bigint[])[1]!, decimals as number))
+  const ethPrice = Number(formatUnits(latestRoundData[1], decimals))
   return ethAmount * ethPrice
 }
 

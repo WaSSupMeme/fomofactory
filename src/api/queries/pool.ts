@@ -3,13 +3,14 @@ import { Pool } from '../models/pool'
 import { useQuery } from '@tanstack/react-query'
 
 import { readContract, multicall } from '@wagmi/core'
-import { Abi, formatEther, maxUint128, PublicClient } from 'viem'
+import { formatEther, maxUint128, PublicClient } from 'viem'
 import { Config, useChainId, useConfig, usePublicClient } from 'wagmi'
-
-import FomoFactoryABI from '../abi/FomoFactory.json'
-import LiquidityLockerABI from '../abi/LiquidityLocker.json'
-import IUniswapV3PoolABI from '@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json'
-import INonfungiblePositionManagerABI from '@uniswap/v3-periphery/artifacts/contracts/interfaces/INonfungiblePositionManager.sol/INonfungiblePositionManager.json'
+import {
+  fomoFactoryAbi,
+  iNonfungiblePositionManagerAbi,
+  iUniswapV3PoolAbi,
+  liquidityLockerAbi,
+} from '../abi/generated'
 
 const fetchPool = async (
   client: PublicClient | undefined,
@@ -19,30 +20,30 @@ const fetchPool = async (
 ) => {
   if (!client) throw new Error('Failed to initialize client')
 
-  const [address, positionId] = (await readContract(config, {
+  const [address, positionId] = await readContract(config, {
     address: import.meta.env[`VITE_FOMO_FACTORY_ADDRESS_${chainId}`],
-    abi: FomoFactoryABI as Abi,
+    abi: fomoFactoryAbi,
     functionName: 'poolMetadataOf',
     args: [tokenAddress],
-  })) as [`0x${string}`, number]
+  })
 
   const [owner, token0, token1] = await multicall(config, {
     allowFailure: false,
     contracts: [
       {
         address: import.meta.env[`VITE_LIQUIDITY_LOCKER_ADDRESS_${chainId}`],
-        abi: LiquidityLockerABI as Abi,
+        abi: liquidityLockerAbi,
         functionName: 'ownerOf',
         args: [positionId],
       },
       {
         address: address,
-        abi: IUniswapV3PoolABI.abi as Abi,
+        abi: iUniswapV3PoolAbi,
         functionName: 'token0',
       },
       {
         address: address,
-        abi: IUniswapV3PoolABI.abi as Abi,
+        abi: iUniswapV3PoolAbi,
         functionName: 'token1',
       },
     ],
@@ -50,7 +51,7 @@ const fetchPool = async (
 
   const fees = await client.simulateContract({
     address: import.meta.env[`VITE_UNISWAP_V3_NONFUNGIBLE_POSITION_MANAGER_ADDRESS_${chainId}`],
-    abi: INonfungiblePositionManagerABI.abi,
+    abi: iNonfungiblePositionManagerAbi,
     functionName: 'collect',
     args: [
       {
