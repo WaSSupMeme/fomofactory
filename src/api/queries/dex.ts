@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { readContract, readContracts } from '@wagmi/core'
+import { readContract, multicall } from '@wagmi/core'
 import { Abi, erc20Abi, formatEther, formatUnits } from 'viem'
 import { Config, useChainId, useConfig } from 'wagmi'
 
@@ -52,7 +52,7 @@ async function extractDexData(
   poolAddress: `0x${string}`,
   poolData: Pool,
 ) {
-  const [totalSupplyRaw, decimals, tokenBalanceRaw, wethBalanceRaw] = (await readContracts(config, {
+  const [totalSupplyRaw, decimals, tokenBalanceRaw, wethBalanceRaw] = (await multicall(config, {
     allowFailure: false,
     contracts: [
       {

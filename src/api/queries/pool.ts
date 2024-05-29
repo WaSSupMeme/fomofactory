@@ -2,7 +2,7 @@ import { Pool } from '../models/pool'
 
 import { useQuery } from '@tanstack/react-query'
 
-import { readContract, readContracts } from '@wagmi/core'
+import { readContract, multicall } from '@wagmi/core'
 import { Abi, formatEther, maxUint128, PublicClient } from 'viem'
 import { Config, useChainId, useConfig, usePublicClient } from 'wagmi'
 
@@ -26,16 +26,15 @@ const fetchPool = async (
     args: [tokenAddress],
   })) as [`0x${string}`, number]
 
-  const owner = (await readContract(config, {
-    address: import.meta.env[`VITE_LIQUIDITY_LOCKER_ADDRESS_${chainId}`],
-    abi: LiquidityLockerABI as Abi,
-    functionName: 'ownerOf',
-    args: [positionId],
-  })) as `0x${string}`
-
-  const [token0, token1] = await readContracts(config, {
+  const [owner, token0, token1] = await multicall(config, {
     allowFailure: false,
     contracts: [
+      {
+        address: import.meta.env[`VITE_LIQUIDITY_LOCKER_ADDRESS_${chainId}`],
+        abi: LiquidityLockerABI as Abi,
+        functionName: 'ownerOf',
+        args: [positionId],
+      },
       {
         address: address,
         abi: IUniswapV3PoolABI.abi as Abi,

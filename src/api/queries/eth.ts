@@ -2,12 +2,12 @@ import { useQuery } from '@tanstack/react-query'
 
 import AggregatorV3Interface from '@chainlink/abi/v0.7/interfaces/AggregatorV3Interface.json'
 
-import { readContracts } from '@wagmi/core'
+import { multicall } from '@wagmi/core'
 import { Config, useChainId, useConfig } from 'wagmi'
 import { Abi, formatUnits } from 'viem'
 
 export const fetchUsdEthAmount = async (config: Config, chainId: number, usdAmount: number) => {
-  const [latestRoundData, decimals] = await readContracts(config, {
+  const [latestRoundData, decimals] = await multicall(config, {
     allowFailure: false,
     contracts: [
       {
@@ -38,7 +38,7 @@ export const useUsdEthAmount = (usdAmount: number) => {
 }
 
 export const fetchEthUsdAmount = async (config: Config, chainId: number, ethAmount: number) => {
-  const [latestRoundData, decimals] = await readContracts(config, {
+  const [latestRoundData, decimals] = await multicall(config, {
     allowFailure: false,
     contracts: [
       {

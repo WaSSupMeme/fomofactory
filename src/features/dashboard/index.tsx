@@ -2,7 +2,7 @@ import { Suspense } from 'react'
 import { Navigate, Outlet, Route, Routes } from 'react-router-dom'
 
 import { Loading, Layout } from '@/common/components'
-import ThemeDropdown from '@/common/components/ThemeDropdown'
+import ThemeButton from '@/common/components/ThemeButton'
 import ConnectButton from '@/common/components/ConnectButton'
 import { APP_ROUTES } from '@/app/routes/app'
 import { useAuth } from '@/common/auth'
@@ -46,7 +46,7 @@ const Dashboard = () => {
                 ],
                 endSlot: (
                   <>
-                    <ThemeDropdown />
+                    <ThemeButton />
                     <ConnectButton />
                   </>
                 ),

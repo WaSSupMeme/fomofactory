@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 
-import { readContracts, writeContract } from '@wagmi/core'
+import { multicall, writeContract } from '@wagmi/core'
 import {
   Abi,
   formatEther,
@@ -71,7 +71,7 @@ async function prepareCreateToken(
     initialBuy?: number
   },
 ) {
-  const [protocolFeeEth, tickSpacing] = await readContracts(config, {
+  const [protocolFeeEth, tickSpacing] = await multicall(config, {
     allowFailure: false,
     contracts: [
       {

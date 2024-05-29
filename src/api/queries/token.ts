@@ -2,7 +2,7 @@ import { Token } from '../models/token'
 
 import { useQuery } from '@tanstack/react-query'
 
-import { readContract, readContracts } from '@wagmi/core'
+import { readContract, multicall } from '@wagmi/core'
 import {
   Abi,
   erc20Abi,
@@ -48,7 +48,7 @@ const fetchMetadata = async (address: `0x${string}`) => {
 }
 
 const fetchToken = async (config: Config, address: `0x${string}`) => {
-  const token = await readContracts(config, {
+  const token = await multicall(config, {
     allowFailure: false,
     contracts: [
       {
