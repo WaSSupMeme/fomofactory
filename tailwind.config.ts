@@ -38,6 +38,10 @@ const config = {
       ],
     },
     extend: {
+      screens: {
+        '3xl': '2268px',
+        '4xl': '3024px',
+      },
       backgroundImage: {
         memes: "url('/img/memes.svg')",
       },
@@ -138,6 +142,7 @@ const config = {
       },
       scale: {
         '1025': '1.025',
+        '200': '2.0',
       },
     },
   },

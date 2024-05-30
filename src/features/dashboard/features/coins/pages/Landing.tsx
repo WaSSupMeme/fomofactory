@@ -8,6 +8,7 @@ import { InfiniteMovingCards } from '@/common/components/ui/infinite-moving-card
 import CoinCard from '../components/CoinCard'
 import { ReactElement, useEffect, useState } from 'react'
 import { useTopTokens } from '@/api/queries/leaderboard'
+import { BaseIcon } from '@/assets/svg/BaseIcon'
 
 const Landing = () => {
   const { t } = useTranslation()
@@ -42,20 +43,22 @@ const Landing = () => {
   }, [tokens, navigate])
 
   return (
-    <div className="flex w-full grow flex-col items-center justify-center">
+    <div className="3xl:scale-150 4xl:scale-200 flex w-full grow flex-col items-center justify-center 2xl:scale-125">
       <div className="flex h-full grow flex-col items-center justify-center gap-x-6 gap-y-6">
         <div className="flex w-dvw flex-col items-center justify-center overflow-hidden antialiased">
           <InfiniteMovingCards direction="left" speed="normal">
             {cards}
           </InfiniteMovingCards>
         </div>
-        <Typography variant="h1">{t('landing:message.title')}</Typography>
+        <div className="flex flex-row items-center justify-center space-x-3">
+          <Typography variant="h1">{t('landing:message.title')}</Typography>
+          <BaseIcon className="h-12 w-12" title={t('landing:message.imageTitle')} />
+        </div>
         <Typography variant="h3">{t('landing:message.subtitle')}</Typography>
         <Button
           variant="default"
           size="lg"
           disabled={false}
-          className="animate-beacon duration-1500 transition"
           onClick={() => {
             navigate({
               pathname: APP_ROUTES.newCoin.to,

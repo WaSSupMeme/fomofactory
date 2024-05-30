@@ -1,7 +1,8 @@
 {
   "message": {
     "subtitle": "Deploy a contract, add liquidity and bootstrap trading with one click",
-    "title": "Creating your own coin has never been easier!"
+    "title": "Create your memecoin on",
+    "imageTitle": "Create your memecoin on Base"
   },
   "action": {
     "start": {

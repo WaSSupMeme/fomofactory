@@ -54,6 +54,8 @@ const TailwindIndicator = () =>
       <div className="hidden md:block lg:hidden">md</div>
       <div className="hidden lg:block xl:hidden">lg</div>
       <div className="hidden xl:block 2xl:hidden">xl</div>
-      <div className="hidden 2xl:block">2xl</div>
+      <div className="3xl:hidden hidden 2xl:block">2xl</div>
+      <div className="3xl:block 4xl:hidden hidden">3xl</div>
+      <div className="4xl:block hidden">4xl</div>
     </div>
   )
