@@ -50,10 +50,13 @@ const Landing = () => {
             {cards}
           </InfiniteMovingCards>
         </div>
-        <div className="flex flex-row items-center justify-center space-x-3">
-          <Typography variant="h1">{t('landing:message.title')}</Typography>
-          <BaseIcon className="h-12 w-12" title={t('landing:message.imageTitle')} />
-        </div>
+        <Typography variant="h1">
+          {t('landing:message.title')}
+          <BaseIcon
+            className="mx-3 -mt-3 inline-flex h-12 w-12 items-center"
+            title={t('landing:message.imageTitle')}
+          />
+        </Typography>
         <Typography variant="h3">{t('landing:message.subtitle')}</Typography>
         <Button
           variant="default"
