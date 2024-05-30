@@ -215,7 +215,7 @@ const CoinDetails = () => {
                 <Typography variant="regularText">{token?.name}</Typography>
                 <Typography variant="mutedText">{token?.symbol}</Typography>
                 <div className="flex flex-row gap-1">
-                  {token?.metadata.telegram && (
+                  {token?.metadata?.telegram && (
                     <a
                       className="transition duration-300 ease-in-out hover:scale-105 active:scale-95"
                       href={`https://t.me/${token.metadata.telegram.substring(1)}`}
@@ -225,7 +225,7 @@ const CoinDetails = () => {
                       <TelegramIcon className="h-6 w-6" />
                     </a>
                   )}
-                  {token?.metadata.twitter && (
+                  {token?.metadata?.twitter && (
                     <a
                       className="transition duration-300 ease-in-out hover:scale-105 active:scale-95"
                       href={`https://twitter.com/${token.metadata.twitter.substring(1)}`}
@@ -235,7 +235,7 @@ const CoinDetails = () => {
                       <TwitterIcon className="h-6 w-6" />
                     </a>
                   )}
-                  {token?.metadata.website && (
+                  {token?.metadata?.website && (
                     <a
                       className="transition duration-300 ease-in-out hover:scale-105 active:scale-95 "
                       href={token.metadata.website}

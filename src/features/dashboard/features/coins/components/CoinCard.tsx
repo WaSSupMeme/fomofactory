@@ -1,22 +1,29 @@
 import { Loading, Typography } from '@/common/components'
 import { cn } from '@/common/styleUtils'
-import { useToken } from '@/api/queries/token'
 import { TelegramIcon } from '@/assets/svg/TelegramIcon'
 import { TwitterIcon } from '@/assets/svg/TwitterIcon'
 import { WebIcon } from '@/assets/svg/WebIcon'
 import { useTranslation } from 'react-i18next'
-import { useDexData } from '@/api/queries/dex'
+import { useTokenMetadata } from '@/api/queries/token'
+import { Loader2 } from 'lucide-react'
+
+interface Token {
+  address: `0x${string}`
+  name: string
+  symbol: string
+  marketCap?: number
+  rank?: number
+}
 
 interface CoinCardProps {
-  coinId: `0x${string}`
-  rank?: number
+  token: Token
   showBorder?: boolean
 }
 
-const CoinCard = ({ coinId, rank, showBorder = false }: CoinCardProps) => {
+const CoinCard = ({ token, showBorder = false }: CoinCardProps) => {
   const { t } = useTranslation()
-  const { data: token } = useToken(coinId)
-  const { data: dexData } = useDexData(coinId)
+
+  const { data: metadata } = useTokenMetadata(token.address)
 
   const formatter = Intl.NumberFormat('en', {
     notation: 'compact',
@@ -37,42 +44,42 @@ const CoinCard = ({ coinId, rank, showBorder = false }: CoinCardProps) => {
         </div>
       ) : (
         <div className="group relative flex w-full flex-row items-center">
-          {rank && (
+          {token.rank && (
             <Typography
               variant="regularText"
               className="absolute -left-4 -top-5 text-xl text-primary"
             >
-              {`#${rank}`}
+              {`#${token.rank}`}
             </Typography>
           )}
           <div className="flex w-32 flex-col gap-2">
-            <Typography variant="regularText">{token?.name}</Typography>
-            <Typography variant="mutedText">{token?.symbol}</Typography>
+            <Typography variant="regularText">{token.name}</Typography>
+            <Typography variant="mutedText">{token.symbol}</Typography>
             <div className="flex flex-row gap-1">
-              {token.metadata?.telegram && (
+              {metadata?.telegram && (
                 <a
                   className="transition duration-300 ease-in-out hover:scale-105 active:scale-95 "
-                  href={`https://t.me/${token.metadata.telegram.substring(1)}`}
+                  href={`https://t.me/${metadata.telegram.substring(1)}`}
                   target="_blank"
                   rel="noreferrer"
                 >
                   <TelegramIcon className="h-6 w-6" />
                 </a>
               )}
-              {token.metadata?.twitter && (
+              {metadata?.twitter && (
                 <a
                   className="transition duration-300 ease-in-out hover:scale-105 active:scale-95 "
-                  href={`https://twitter.com/${token.metadata.twitter.substring(1)}`}
+                  href={`https://twitter.com/${metadata.twitter.substring(1)}`}
                   target="_blank"
                   rel="noreferrer"
                 >
                   <TwitterIcon className="h-6 w-6" />
                 </a>
               )}
-              {token.metadata?.website && (
+              {metadata?.website && (
                 <a
                   className="transition duration-300 ease-in-out hover:scale-105 active:scale-95 "
-                  href={token.metadata.website}
+                  href={metadata.website}
                   target="_blank"
                   rel="noreferrer"
                 >
@@ -80,24 +87,28 @@ const CoinCard = ({ coinId, rank, showBorder = false }: CoinCardProps) => {
                 </a>
               )}
             </div>
-            {dexData?.marketCap !== undefined && (
+            {token?.marketCap !== undefined && (
               <div className="flex flex-row items-center gap-2 group-hover:animate-bounce">
                 <Typography variant="regularText" className="text-xs text-primary">
                   {t('coin:metadata.marketCap.label')}
                 </Typography>
                 <Typography variant="mutedText" className="text-xs text-primary">
-                  {`$${formatter.format(dexData.marketCap)}`}
+                  {`$${formatter.format(token.marketCap)}`}
                 </Typography>
               </div>
             )}
           </div>
           <div className="grow"></div>
-          <div className="flex">
-            <img
-              className="group-hover:animate-shake aspect-square h-32 w-32 rounded-lg object-cover shadow-lg shadow-primary group-hover:transition group-hover:duration-700"
-              src={token.avatar}
-              alt={token.name}
-            />
+          <div className="flex h-32 w-32 items-center justify-center">
+            {metadata?.avatar === undefined ? (
+              <Loader2 className="size-4 animate-spin " />
+            ) : (
+              <img
+                className="group-hover:animate-shake aspect-square h-full w-full rounded-lg object-cover shadow-lg shadow-primary group-hover:transition group-hover:duration-700"
+                src={metadata?.avatar}
+                alt={token.name}
+              />
+            )}
           </div>
         </div>
       )}

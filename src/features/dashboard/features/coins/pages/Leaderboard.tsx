@@ -33,17 +33,17 @@ const Leaderboard = () => {
 
           {tokens && (
             <div className="container m-auto grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
-              {tokens.map((coin) => (
+              {tokens.map((token) => (
                 <div
                   className="w-fit rounded-md"
                   onClick={() =>
                     navigate({
-                      pathname: APP_ROUTES.coinDetails.to(coin.address),
+                      pathname: APP_ROUTES.coinDetails.to(token.address),
                     })
                   }
-                  key={coin.address}
+                  key={token.address}
                 >
-                  <CoinCard showBorder coinId={coin.address} rank={coin.rank} />
+                  <CoinCard showBorder token={token} />
                 </div>
               ))}
             </div>

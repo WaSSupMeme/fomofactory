@@ -6,13 +6,15 @@ const tokenSchema = z.object({
   symbol: z.string(),
   decimals: z.number(),
   totalSupply: z.number(),
-  avatar: z.string(),
-  description: z.string(),
-  metadata: z.object({
-    twitter: z.string().optional(),
-    telegram: z.string().optional(),
-    website: z.string().optional(),
-  }),
+  avatar: z.string().optional(),
+  description: z.string().optional(),
+  metadata: z
+    .object({
+      twitter: z.string().optional(),
+      telegram: z.string().optional(),
+      website: z.string().optional(),
+    })
+    .optional(),
 })
 
 export type Token = z.infer<typeof tokenSchema>

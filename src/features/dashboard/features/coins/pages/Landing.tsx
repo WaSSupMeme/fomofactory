@@ -24,17 +24,17 @@ const Landing = () => {
       }
       t = t.slice(0, 10)
       setCards(
-        t.map((coin, tIdx) => (
+        t.map((token, tIdx) => (
           <div
             className="w-fit scale-75 rounded-md"
             onClick={() =>
               navigate({
-                pathname: APP_ROUTES.coinDetails.to(coin.address),
+                pathname: APP_ROUTES.coinDetails.to(token.address),
               })
             }
-            key={`${coin.address}-${tIdx}`}
+            key={`${token.address}-${tIdx}`}
           >
-            <CoinCard showBorder={false} coinId={coin.address} rank={coin.rank} />
+            <CoinCard showBorder={false} token={token} />
           </div>
         )),
       )

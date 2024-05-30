@@ -18,6 +18,7 @@ import { FeeAmount } from '@uniswap/v3-sdk'
 import { fetchEthUsdAmount } from './eth'
 import { useWallet } from '@/app/providers/Wallet'
 import { erc20Abi, fomoFactoryAbi, iQuoterV2Abi } from '../abi/generated'
+import { fetchTokensDexData } from './dex'
 
 const fetchMetadata = async (address: `0x${string}`) => {
   const res = await fetch(
@@ -44,49 +45,82 @@ const fetchMetadata = async (address: `0x${string}`) => {
   return undefined
 }
 
-const fetchToken = async (config: Config, address: `0x${string}`) => {
-  const token = await multicall(config, {
+export const fetchTokensData = async (
+  config: Config,
+  tokens: `0x${string}`[],
+  includeMetadata: boolean = true,
+) => {
+  const request = tokens.flatMap((token) => [
+    {
+      address: token,
+      abi: erc20Abi,
+      functionName: 'name',
+    },
+    {
+      address: token,
+      abi: erc20Abi,
+      functionName: 'symbol',
+    },
+    {
+      address: token,
+      abi: erc20Abi,
+      functionName: 'totalSupply',
+    },
+    {
+      address: token,
+      abi: erc20Abi,
+      functionName: 'decimals',
+    },
+  ])
+
+  const data = await multicall(config, {
     allowFailure: false,
-    contracts: [
-      {
-        address,
-        abi: erc20Abi,
-        functionName: 'name',
-      },
-      {
-        address,
-        abi: erc20Abi,
-        functionName: 'symbol',
-      },
-      {
-        address,
-        abi: erc20Abi,
-        functionName: 'totalSupply',
-      },
-      {
-        address,
-        abi: erc20Abi,
-        functionName: 'decimals',
-      },
-    ],
+    contracts: request,
   })
 
-  const metadata = await fetchMetadata(address)
+  let tokensMetadataMap: Map<`0x${string}`, any> = new Map()
 
-  if (!metadata) {
-    throw new Error('Token metadata not found')
+  if (includeMetadata) {
+    const tokensMetadata = await Promise.all(
+      tokens.map(async (token) => await fetchMetadata(token)),
+    )
+    tokensMetadataMap = new Map(
+      tokensMetadata.map((metadata, idx) => {
+        return [tokens[idx]!!, metadata]
+      }),
+    )
   }
 
-  return {
-    address,
-    name: token[0],
-    symbol: token[1],
-    totalSupply: Number(formatEther(token[2])),
-    decimals: token[3],
-    avatar: metadata.avatar,
-    description: metadata.description,
-    metadata,
-  } as Token
+  const tokensData = data.reduce((acc: Token[], _, idx) => {
+    if (idx % 4 === 0) {
+      const address = tokens[acc.length]!!
+      const metadata = tokensMetadataMap.get(address)
+      if (!metadata && includeMetadata) return acc
+
+      acc.push({
+        address,
+        name: data[idx] as string,
+        symbol: data[idx + 1] as string,
+        totalSupply: Number(formatEther(data[idx + 2] as bigint)),
+        decimals: data[idx + 3] as number,
+        avatar: metadata?.avatar,
+        description: metadata?.description,
+        metadata,
+      })
+    }
+    return acc
+  }, [])
+
+  return tokensData
+}
+
+const fetchToken = async (config: Config, address: `0x${string}`) => {
+  const tokens = await fetchTokensData(config, [address])
+  if (tokens.length !== 1) {
+    throw new Error('Token not found')
+  }
+
+  return tokens[0]
 }
 
 export const useToken = (address: `0x${string}`) => {
@@ -175,6 +209,54 @@ const fetchTokenAddress = async (
   return address as `0x${string}`
 }
 
+const fetchAccountTokens = async (config: Config, chainId: number, account?: `0x${string}`) => {
+  if (!account) {
+    throw new Error('Missing account address')
+  }
+
+  const tokens = await readContract(config, {
+    address: import.meta.env[`VITE_FOMO_FACTORY_ADDRESS_${chainId}`],
+    abi: fomoFactoryAbi,
+    functionName: 'memecoinsOf',
+    args: [account],
+  })
+
+  const tokensData = await fetchTokensData(config, tokens as `0x${string}`[], false)
+  const tokensDataMap = new Map(tokensData.map((token) => [token.address, token]))
+
+  const dexData = (await fetchTokensDexData(config, chainId, tokens as `0x${string}`[]))
+    .filter((token) => token.marketCap)
+    .map((token) => {
+      return {
+        ...tokensDataMap.get(token.address)!!,
+        ...token,
+      }
+    })
+  return dexData
+}
+
+const fetchTokens = async (config: Config, chainId: number) => {
+  const tokens = await readContract(config, {
+    address: import.meta.env[`VITE_FOMO_FACTORY_ADDRESS_${chainId}`],
+    abi: fomoFactoryAbi,
+    functionName: 'queryMemecoins',
+    args: [0n, maxUint256, false],
+  })
+
+  const tokensData = await fetchTokensData(config, tokens as `0x${string}`[], false)
+  const tokensDataMap = new Map(tokensData.map((token) => [token.address, token]))
+
+  const dexData = (await fetchTokensDexData(config, chainId, tokens as `0x${string}`[]))
+    .filter((token) => token.marketCap)
+    .map((token) => {
+      return {
+        ...tokensDataMap.get(token.address)!!,
+        ...token,
+      }
+    })
+  return dexData
+}
+
 export const useTokenAddress = (
   name: string,
   symbol: string,
@@ -195,19 +277,13 @@ export const useTokenAddress = (
   })
 }
 
-const fetchAccountTokens = async (config: Config, chainId: number, account?: `0x${string}`) => {
-  if (!account) {
-    throw new Error('Missing account address')
-  }
-
-  const tokens = await readContract(config, {
-    address: import.meta.env[`VITE_FOMO_FACTORY_ADDRESS_${chainId}`],
-    abi: fomoFactoryAbi,
-    functionName: 'memecoinsOf',
-    args: [account],
+export const useTokenMetadata = (address: `0x${string}`) => {
+  return useQuery({
+    queryKey: ['tokenMetadata', { address }],
+    queryFn: () => fetchMetadata(address),
+    retry: 10,
+    retryDelay: 1000,
   })
-
-  return tokens as `0x${string}`[]
 }
 
 export const useAccountTokens = () => {
@@ -219,17 +295,6 @@ export const useAccountTokens = () => {
     queryKey: ['accountTokens', { chainId, account: account?.address }],
     queryFn: () => fetchAccountTokens(config, chainId, account?.address),
   })
-}
-
-const fetchTokens = async (config: Config, chainId: number) => {
-  const tokens = await readContract(config, {
-    address: import.meta.env[`VITE_FOMO_FACTORY_ADDRESS_${chainId}`],
-    abi: fomoFactoryAbi,
-    functionName: 'queryMemecoins',
-    args: [0n, maxUint256, false],
-  })
-
-  return tokens as `0x${string}`[]
 }
 
 export const useTokens = () => {

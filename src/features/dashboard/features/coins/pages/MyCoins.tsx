@@ -29,17 +29,17 @@ const MyCoins = () => {
 
           {tokens && (
             <div className="container m-auto grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
-              {tokens.map((coinId) => (
+              {tokens.map((token) => (
                 <div
                   className="w-fit rounded-md"
                   onClick={() =>
                     navigate({
-                      pathname: APP_ROUTES.coinDetails.to(coinId),
+                      pathname: APP_ROUTES.coinDetails.to(token.address),
                     })
                   }
-                  key={coinId}
+                  key={token.address}
                 >
-                  <CoinCard showBorder coinId={coinId} />
+                  <CoinCard showBorder token={token} />
                 </div>
               ))}
             </div>

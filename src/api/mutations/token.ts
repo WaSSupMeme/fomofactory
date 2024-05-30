@@ -24,7 +24,7 @@ import { fetchUsdEthAmount } from '../queries/eth'
 
 async function addTokenToWallet(
   client: WalletClient | undefined,
-  data: { address: `0x${string}`; symbol: string; decimals: number; image: string },
+  data: { address: `0x${string}`; symbol: string; decimals: number; image?: string },
 ) {
   if (!client) throw new Error('Failed to initialize client')
 
@@ -55,7 +55,7 @@ export const useAddTokenToWallet = (options?: {
       address: `0x${string}`
       symbol: string
       decimals: number
-      image: string
+      image?: string
     }) => addTokenToWallet(client, data),
   })
 }

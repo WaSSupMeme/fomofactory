@@ -6,6 +6,7 @@ import { Config, useChainId, useConfig } from 'wagmi'
 
 import { fetchTokensDexData } from './dex'
 import { fomoFactoryAbi } from '../abi/generated'
+import { fetchTokensData } from './token'
 
 const fetchTopTokens = async (config: Config, chainId: number) => {
   const tokens = await readContract(config, {
@@ -15,14 +16,22 @@ const fetchTopTokens = async (config: Config, chainId: number) => {
     args: [0n, maxUint256, false],
   })
 
-  const dexData = (await fetchTokensDexData(config, chainId, tokens as `0x${string}`[])).filter(
-    (token) => token.marketCap,
-  )
+  const tokensData = await fetchTokensData(config, tokens as `0x${string}`[], false)
+  const tokensDataMap = new Map(tokensData.map((token) => [token.address, token]))
+
+  const dexData = (await fetchTokensDexData(config, chainId, tokens as `0x${string}`[]))
+    .filter((token) => token.marketCap)
+    .map((token) => {
+      return {
+        ...tokensDataMap.get(token.address)!!,
+        ...token,
+      }
+    })
 
   const dexDataSorted = dexData.sort((t1, t2) => t2.marketCap!! - t1.marketCap!!)
 
   return dexDataSorted.map((token, idx) => {
-    return { rank: idx + 1, address: token.address }
+    return { rank: idx + 1, ...token }
   })
 }
 
