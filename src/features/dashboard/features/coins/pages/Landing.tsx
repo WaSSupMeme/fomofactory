@@ -30,7 +30,7 @@ const Landing = () => {
   return (
     <div className="flex flex-col items-center justify-center gap-36 2xl:scale-125 3xl:scale-150 4xl:scale-200">
       <div className="m-auto grid auto-cols-max grid-cols-1 gap-24 lg:grid-cols-3 xl:grid-cols-6 xl:px-12 ">
-        <div className="flex h-full grow flex-col items-center justify-center gap-y-6 lg:col-span-2 xl:col-span-4 ">
+        <div className="flex h-full grow flex-col items-center justify-center gap-y-6 lg:col-span-2 lg:my-8 xl:col-span-4 xl:my-4">
           <Typography
             variant="h1"
             className="text-balance leading-tight lg:text-6xl xl:text-left xl:text-7xl"
