@@ -4,12 +4,9 @@ import { Typography } from '@/common/components'
 import { Button } from '@/common/components/ui/button'
 import { useNavigate } from 'react-router-dom'
 import { APP_ROUTES } from '@/app/routes'
-import { useEffect, useState } from 'react'
 import { useTopTokens } from '@/api/queries/leaderboard'
 import { BaseIcon } from '@/assets/svg/BaseIcon'
 import CoinCardMax from '../components/CoinCardMax'
-import { useToken } from '@/api/queries/token'
-import { useDexData } from '@/api/queries/dex'
 import CoinCard from '../components/CoinCard'
 
 const Landing = () => {
@@ -17,20 +14,11 @@ const Landing = () => {
   const navigate = useNavigate()
 
   const { data: tokens } = useTopTokens()
-  const [topTokenAddress, setTopTokenAddress] = useState<`0x${string}`>()
-  const { data: topToken } = useToken(topTokenAddress || '0x0')
-  const { data: topDexData } = useDexData(topTokenAddress || '0x0')
-
-  useEffect(() => {
-    if (tokens && tokens.length > 0) {
-      setTopTokenAddress(tokens[0]!!.address)
-    }
-  }, [tokens, navigate])
 
   return (
     <div className="flex flex-col items-center justify-center gap-36 2xl:scale-125 3xl:scale-150 4xl:scale-200">
       <div className="m-auto grid auto-cols-max grid-cols-1 gap-24 lg:grid-cols-3 xl:grid-cols-6 xl:px-12 ">
-        <div className="flex h-full grow flex-col items-center justify-center gap-y-6 lg:col-span-2 lg:my-8 xl:col-span-4 xl:my-4">
+        <div className="flex h-full grow flex-col items-center justify-center gap-y-6 pt-0 lg:col-span-2 lg:pt-16 xl:col-span-4 xl:pt-24">
           <Typography
             variant="h1"
             className="text-balance leading-tight lg:text-6xl xl:text-left xl:text-7xl"
@@ -62,17 +50,17 @@ const Landing = () => {
           </div>
         </div>
         <div className="flex h-full w-full flex-col items-center justify-center xl:col-span-2">
-          {topToken && topDexData && (
+          {tokens && tokens.length > 0 && (
             <div
               className="w-fit"
               onClick={() =>
                 navigate({
-                  pathname: APP_ROUTES.coinDetails.to(topToken.address),
+                  pathname: APP_ROUTES.coinDetails.to(tokens[0]!!.address),
                 })
               }
-              key={topToken.address}
+              key={tokens[0]!!.address}
             >
-              <CoinCardMax token={{ ...topToken, ...topDexData, rank: 1 }} />
+              <CoinCardMax token={tokens[0]!!} />
             </div>
           )}
         </div>

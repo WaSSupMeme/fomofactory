@@ -12,7 +12,6 @@ interface Token {
   address: `0x${string}`
   name: string
   symbol: string
-  description?: string
   marketCap?: number
   volume?: {
     h24: number
@@ -40,7 +39,7 @@ const CoinCardMax = ({ token, showBorder = false }: CoinCardMaxProps) => {
   return (
     <div
       className={cn(
-        'flex w-96 cursor-pointer flex-row items-center gap-4 rounded-md bg-card px-5 py-5 text-card-foreground transition duration-300 ease-in-out hover:rounded-md hover:shadow-lg hover:shadow-primary hover:outline-none hover:ring-2 hover:ring-ring md:w-fit',
+        'flex w-96 cursor-pointer flex-row items-center gap-4 rounded-md bg-card px-5 py-5 text-card-foreground transition duration-300 ease-in-out hover:rounded-md hover:shadow-lg hover:shadow-primary hover:outline-none hover:ring-2 hover:ring-ring md:w-fit lg:w-full xl:w-96',
         showBorder && 'border',
       )}
     >
@@ -104,8 +103,8 @@ const CoinCardMax = ({ token, showBorder = false }: CoinCardMaxProps) => {
           </div>
         </div>
         <div className="flex w-full flex-col gap-2">
-          {token?.description !== undefined && (
-            <Typography variant="regularText">{token.description}</Typography>
+          {metadata?.description !== undefined && (
+            <Typography variant="regularText">{metadata.description}</Typography>
           )}
           {token.liquidity !== undefined && token.liquidity !== 0 && (
             <div className="flex flex-row items-center gap-0">
