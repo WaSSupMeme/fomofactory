@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next'
 import { useTokenMetadata } from '@/api/queries/token'
 import { Loader2 } from 'lucide-react'
 import { LockIcon } from '@/assets/svg/LockIcon'
+import { CrownIcon } from '@/assets/svg/CrownIcon'
 
 interface Token {
   address: `0x${string}`
@@ -44,14 +45,7 @@ const CoinCardMax = ({ token, showBorder = false }: CoinCardMaxProps) => {
       )}
     >
       <div className="group relative flex w-full flex-col items-center gap-8 md:flex-row lg:flex-col">
-        {token.rank && (
-          <Typography
-            variant="regularText"
-            className="absolute -left-4 -top-5 text-xl text-primary"
-          >
-            {`#${token.rank}`}
-          </Typography>
-        )}
+        {token.rank === 1 && <CrownIcon className="absolute -left-1.5  h-5 w-5 fill-primary" />}
         <div className="flex w-full flex-row items-center">
           <div className="flex w-32 flex-col gap-2">
             <Typography variant="regularText">{token.name}</Typography>
