@@ -57,6 +57,9 @@
     "marketCap": {
       "label": "Market Cap"
     },
+    "marketCapMini": {
+      "label": "MCap"
+    },
     "volume": {
       "label": "Volume (24h)"
     },

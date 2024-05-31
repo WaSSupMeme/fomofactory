@@ -15,8 +15,9 @@ const Layout = ({ children, headerProps }: Props) => (
         baseUrl={headerProps.baseUrl}
         links={headerProps.links}
         endSlot={headerProps.endSlot}
+        topContent={headerProps.topContent}
       />
-      <main className="container relative mb-auto flex h-full grow py-8">{children}</main>
+      <main className="container relative mb-auto flex h-full w-full grow py-8">{children}</main>
       <Footer />
     </div>
   </>

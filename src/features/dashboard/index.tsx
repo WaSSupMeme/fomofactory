@@ -1,9 +1,10 @@
-import { Suspense } from 'react'
-import { Navigate, Outlet, Route, Routes } from 'react-router-dom'
+import { ReactElement, Suspense, useEffect, useState } from 'react'
+import { Navigate, Outlet, Route, Routes, useNavigate } from 'react-router-dom'
 
 import { Loading, Layout } from '@/common/components'
 import ThemeButton from '@/common/components/ThemeButton'
 import ConnectButton from '@/common/components/ConnectButton'
+import { InfiniteMovingCards } from '@/common/components/ui/infinite-moving-cards'
 import { APP_ROUTES } from '@/app/routes/app'
 import { useAuth } from '@/common/auth'
 import NewCoin from './features/coins/pages/NewCoin'
@@ -16,10 +17,41 @@ import Landing from './features/coins/pages/Landing'
 import Leaderboard from './features/coins/pages/Leaderboard'
 import preview from '@/assets/png/preview.png'
 import SEO from '@/common/components/SEO'
+import CoinCardMini from './features/coins/components/CoinCardMini'
+import { useTopTokens } from '@/api/queries/leaderboard'
 
 const Dashboard = () => {
   const { isLoggedIn } = useAuth()
   const { t } = useTranslation()
+  const navigate = useNavigate()
+
+  const { data: tokens } = useTopTokens()
+  const [cards, setCards] = useState<ReactElement[]>([])
+
+  useEffect(() => {
+    if (tokens) {
+      var t = tokens
+      while (t.length < 10) {
+        t = t.concat(tokens)
+      }
+      t = t.slice(0, 10)
+      setCards(
+        t.map((token, tIdx) => (
+          <div
+            className="mx-6 w-fit"
+            onClick={() =>
+              navigate({
+                pathname: APP_ROUTES.coinDetails.to(token.address),
+              })
+            }
+            key={`${token.address}-${tIdx}`}
+          >
+            <CoinCardMini showBorder={false} token={token} />
+          </div>
+        )),
+      )
+    }
+  }, [tokens, navigate])
 
   return (
     <>
@@ -49,6 +81,13 @@ const Dashboard = () => {
                     <ThemeButton />
                     <ConnectButton />
                   </>
+                ),
+                topContent: (
+                  <div className="flex w-dvw flex-col items-center justify-center overflow-hidden pt-1 antialiased">
+                    <InfiniteMovingCards direction="left" speed="normal">
+                      {cards}
+                    </InfiniteMovingCards>
+                  </div>
                 ),
               }}
             >

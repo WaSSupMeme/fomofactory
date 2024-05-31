@@ -7,9 +7,10 @@ export interface HeaderProps {
   baseUrl: string
   endSlot?: React.ReactNode
   links: { to: string; label: string }[]
+  topContent?: React.ReactNode
 }
 
-const Header = ({ baseUrl, links = [], endSlot }: HeaderProps) => {
+const Header = ({ baseUrl, links = [], endSlot, topContent }: HeaderProps) => {
   const { pathname } = useLocation()
 
   const items = useMemo(
@@ -27,6 +28,7 @@ const Header = ({ baseUrl, links = [], endSlot }: HeaderProps) => {
       drawer={<StickyHeader.Drawer headerSlot={<Logo to={baseUrl} />} items={items} />}
       middleSlot={<StickyHeader.Nav items={items} />}
       endSlot={endSlot}
+      topContent={topContent}
     />
   )
 }

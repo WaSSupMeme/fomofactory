@@ -2,8 +2,7 @@ import { Loading, SEO, Typography } from '@/common/components'
 
 import { useTranslation } from 'react-i18next'
 import { useCoinDetailsParams } from '@/app/routes'
-import { useAccount, useBalance, useChainId, useConfig } from 'wagmi'
-import { waitForTransactionReceipt } from '@wagmi/core'
+import { useAccount, useBalance } from 'wagmi'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/common/components/ui/tooltip'
 import { truncateEthAddress } from '@/common/utils'
 
@@ -17,18 +16,9 @@ import { EthRoundIcon } from '@/assets/svg/EthRoundIcon'
 
 import { toast } from 'sonner'
 
-import {
-  darkTheme,
-  lightTheme,
-  SwapWidget,
-  SwapWidgetProps,
-  SwapWidgetSkeleton,
-} from '@uniswap/widgets'
-
 import { Theme, useTheme } from '@/app/providers/Theme'
 
 import { useShowError } from '@/common/hooks/usePrintErrorMessage.js'
-import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { Button } from '@/common/components/ui/button'
 import { Card } from '@/common/components/ui/card'
 import { useToken, useTokenUsdAmount } from '@/api/queries/token'
@@ -38,7 +28,7 @@ import { useEthUsdAmount } from '@/api/queries/eth'
 import { useEffect, useState } from 'react'
 import { useAddTokenToWallet, useClaimFees } from '@/api/mutations/token'
 import { formatUnits } from 'viem'
-import { useEthersSigner } from '@/common/utils/ethers'
+import Swap from '../components/Swap'
 
 const CoinDetails = () => {
   const { t } = useTranslation()
@@ -47,11 +37,7 @@ const CoinDetails = () => {
 
   const { coinId } = useCoinDetailsParams()
 
-  const { openConnectModal } = useConnectModal()
-  const chainId = useChainId()
   const account = useAccount()
-  const signer = useEthersSigner()
-  const config = useConfig()
 
   const { data: token, isLoading: isTokenLoading } = useToken(coinId)
   const { data: pool, refetch: refetchPool } = usePool(coinId)
@@ -103,97 +89,6 @@ const CoinDetails = () => {
     maximumFractionDigits: 2,
     minimumFractionDigits: 2,
   })
-
-  // hack to fix uniswap widget
-  useEffect(() => {
-    ;(window as any).Browser = {
-      T: () => {},
-    }
-  }, [])
-
-  const fontFamily = [
-    'SFRounded',
-    'ui-rounded',
-    'SF Pro Rounded',
-    '-apple-system',
-    'BlinkMacSystemFont',
-    'Segoe UI',
-    'Roboto',
-    'Helvetica',
-    'Arial',
-    'sans-serif',
-    'Apple Color Emoji',
-    'Segoe UI Emoji',
-    'Segoe UI Symbol',
-  ]
-  const borderRadius = { large: 1, medium: 0.75, small: 0.5, xsmall: 0.375 }
-
-  const lightWidgetTheme = {
-    ...lightTheme,
-    fontFamily: fontFamily.join(','),
-    borderRadius,
-    container: 'hsl(0,0%,100%)',
-    dialog: 'hsl(0,0%,100%)',
-    module: 'hsl(0,0%,100%)',
-    outline: 'hsl(0,0%,89.8%)',
-    border: 'hsl(0,0%,100%)',
-    accent: 'hsl(233,65%,48%)',
-    onAccent: 'hsl(0,0%,100%)',
-    interactive: 'hsl(0,0%,96.1%)',
-    action: 'hsl(233,65%,48%)',
-    onAction: 'hsl(0,0%,100%)',
-    onInteractive: 'hsl(0,0%,30.1%)',
-    focus: 'hsl(233,65%,48%)',
-    primary: 'hsl(0,0%,9%)',
-    secondary: 'hsl(0,0%,65%)',
-    deepShadow: 'hsl(0,0%,100%)',
-    networkDefaultShadow: 'hsl(0,0%,100%)',
-  }
-  const darkWidgetTheme = {
-    ...darkTheme,
-    fontFamily: fontFamily.join(','),
-    borderRadius,
-    container: 'hsl(0,0%,8%)',
-    dialog: 'hsl(0,0%,8%)',
-    module: 'hsl(0,0%,8%)',
-    outline: 'hsl(0,0%,14.9%)',
-    border: 'hsl(0,0%,8%)',
-    accent: 'hsl(233,65%,48%)',
-    onAccent: 'hsl(0,0%,100%)',
-    interactive: 'hsl(0,0%,14.9%)',
-    action: 'hsl(233,65%,48%)',
-    onAction: 'hsl(0,0%,100%)',
-    onInteractive: 'hsl(0,0%,63.9%)',
-    focus: 'hsl(233,65%,48%)',
-    primary: 'hsl(0,0%,98%)',
-    secondary: 'hsl(0,0%,35%)',
-    deepShadow: 'hsl(0,0%,8%)',
-    networkDefaultShadow: 'hsl(0,0%,8%)',
-  }
-
-  const widgetConfig: SwapWidgetProps = {
-    hideConnectionUI: true,
-    provider: signer?.provider || null,
-    onConnectWalletClick: () => {
-      openConnectModal!()
-      return false
-    },
-    onSwapSend: async (_, transaction) => {
-      const tx = await transaction
-      await waitForTransactionReceipt(config, {
-        hash: tx.response.hash as `0x${string}`,
-      })
-      refetchPool()
-      refetchDexData()
-      refetchBalance()
-    },
-    theme: theme === Theme.LIGHT ? lightWidgetTheme : darkWidgetTheme,
-    defaultInputTokenAddress: 'NATIVE',
-    defaultOutputTokenAddress: coinId,
-    disableTokenSelection: true,
-    brandedFooter: false,
-    permit2: true,
-  }
 
   return (
     <>
@@ -466,20 +361,15 @@ const CoinDetails = () => {
             {!pool && <Loading />}
           </div>
         </div>
-        <div className="flex h-fit w-96 flex-row  justify-center px-4 ">
-          {token && account.address && (
-            <SwapWidget
-              {...widgetConfig}
-              tokenList={[
-                {
-                  name: token.name,
-                  address: coinId,
-                  symbol: token.symbol,
-                  decimals: token.decimals,
-                  chainId: chainId,
-                  logoURI: token.avatar,
-                },
-              ]}
+        <div className="flex h-fit w-96 flex-row justify-center px-4 ">
+          {token && (
+            <Swap
+              token={token}
+              onSwap={() => {
+                refetchBalance()
+                refetchDexData()
+                refetchPool()
+              }}
             />
           )}
           {!token && (
@@ -487,7 +377,6 @@ const CoinDetails = () => {
               <Loading />
             </div>
           )}
-          {!account.address && <SwapWidgetSkeleton theme={widgetConfig.theme} />}
         </div>
       </div>
     </>

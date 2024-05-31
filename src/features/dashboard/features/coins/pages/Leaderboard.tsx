@@ -32,7 +32,7 @@ const Leaderboard = () => {
           )}
 
           {tokens && (
-            <div className="container m-auto grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
+            <div className="container m-auto grid auto-cols-max grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 ">
               {tokens.map((token) => (
                 <div
                   className="w-fit rounded-md"

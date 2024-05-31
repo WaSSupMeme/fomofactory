@@ -19,10 +19,12 @@ interface Props {
   drawer: ReactNode
   middleSlot: ReactNode
   endSlot?: ReactNode
+  topContent?: ReactNode
 }
 
-const StickyHeader = ({ logo, drawer, middleSlot, endSlot }: Props) => (
+const StickyHeader = ({ logo, drawer, middleSlot, endSlot, topContent }: Props) => (
   <header className="sticky top-0 z-40 w-full border-b bg-background">
+    {topContent}
     <div className="container flex h-14 items-center gap-6">
       <div className="hidden xl:block">{logo}</div>
       <div className="xl:hidden">{drawer}</div>
@@ -43,7 +45,7 @@ const Nav = ({ items }: NavProps) => (
         key={to}
         to={to}
         className={cn(
-          'text hover:scale-1025 flex h-10 items-center text-muted-foreground underline-offset-4 transition-colors active:scale-95',
+          'text flex h-10 items-center text-muted-foreground underline-offset-4 transition-colors hover:scale-1025 active:scale-95',
           { 'text-foreground': isActive },
         )}
       >

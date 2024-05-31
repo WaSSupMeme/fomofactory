@@ -22,7 +22,7 @@ export const typographyVariants = cva('text-foreground', {
       blockquote: 'mt-6 border-l-2 pl-6 italic',
       ul: 'my-6 ml-6 list-disc [&>li]:mt-2',
       inlineCode:
-        'relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold',
+        'font-mono relative rounded bg-muted px-[0.3rem] py-[0.2rem] text-sm font-semibold',
       lead: 'text-xl text-muted-foreground',
       regularText: 'text-base',
       largeText: 'text-lg font-semibold',
