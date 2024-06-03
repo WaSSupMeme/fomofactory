@@ -57,12 +57,13 @@ const Swap = ({ token, onSwap }: Props) => {
     'Segoe UI Emoji',
     'Segoe UI Symbol',
   ]
-  const borderRadius = { large: 1, medium: 0.75, small: 0.5, xsmall: 0.375 }
+  const borderRadius = { large: 1, medium: 10, small: 0.5, xsmall: 0.375 }
 
   const lightWidgetTheme = {
     ...lightTheme,
     fontFamily: fontFamily.join(','),
     borderRadius,
+    zIndex: { modal: 100 },
     container: 'hsl(0,0%,100%)',
     dialog: 'hsl(0,0%,100%)',
     module: 'hsl(0,0%,100%)',
@@ -84,6 +85,7 @@ const Swap = ({ token, onSwap }: Props) => {
     ...darkTheme,
     fontFamily: fontFamily.join(','),
     borderRadius,
+    zIndex: { modal: 100 },
     container: 'hsl(0,0%,8%)',
     dialog: 'hsl(0,0%,8%)',
     module: 'hsl(0,0%,8%)',

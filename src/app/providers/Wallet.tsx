@@ -27,12 +27,12 @@ const WalletProvider = ({ children }: Props) => {
   })
 
   const light = lightTheme({
-    accentColor: '#2B3DCA',
+    accentColor: '#0050FF',
     accentColorForeground: '#f5f5f5',
     overlayBlur: 'none',
   })
   const dark = darkTheme({
-    accentColor: '#2B3DCA',
+    accentColor: '#0050FF',
     accentColorForeground: '#f5f5f5',
     overlayBlur: 'none',
   })
@@ -44,7 +44,7 @@ const WalletProvider = ({ children }: Props) => {
           dangerouslySetInnerHTML={{
             __html: `
               :root {
-                ${cssStringFromTheme(light)}
+                ${cssStringFromTheme({ ...light, radii: { ...light.radii, connectButton: '9999px', menuButton: '9999px' } })}
               }
   
               .dark {

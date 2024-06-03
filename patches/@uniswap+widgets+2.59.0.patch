@@ -1,5 +1,5 @@
 diff --git a/node_modules/@uniswap/widgets/dist/index-53ec290b.js b/node_modules/@uniswap/widgets/dist/index-53ec290b.js
-index e7da428..a09b25b 100644
+index e7da428..226c985 100644
 --- a/node_modules/@uniswap/widgets/dist/index-53ec290b.js
 +++ b/node_modules/@uniswap/widgets/dist/index-53ec290b.js
 @@ -1230,7 +1230,7 @@ function H1(props) {
@@ -169,6 +169,15 @@ index e7da428..a09b25b 100644
    deepShadow: 'hsla(0, 0%, 0%, 0.32), hsla(0, 0%, 0%, 0.24), hsla(0, 0%, 0%, 0.24)',
    networkDefaultShadow: 'hsla(221, 96%, 64%, 0.16)'
  }, stateColors), {}, {
+@@ -1462,7 +1468,7 @@ function Provider$8(_ref) {
+ 
+ function toDefaultTheme(theme) {
+   return _objectSpread$k(_objectSpread$k({}, theme), {}, {
+-    borderRadius: clamp(theme.borderRadius ? theme.borderRadius : defaultBorderRadius),
++    borderRadius: theme.borderRadius ? theme.borderRadius : defaultBorderRadius,
+     onHover: function onHover(color) {
+       return color === theme.primary ? transparentize(0.4, theme.primary) : mix(0.06, theme.primary, color);
+     }
 @@ -1794,17 +1800,17 @@ var Button$1 = _styled(BaseButton).withConfig({
    componentId: "sc-1soikk5-1"
  })(["background-color:", ";border:1px solid transparent;color:", ";:enabled:hover{background-color:", ";}"], function (_ref) {
@@ -233,6 +242,15 @@ index e7da428..a09b25b 100644
      }
  
      switch (color) {
+@@ -12297,7 +12303,7 @@ var StyledWrapper = /*#__PURE__*/_styled(Column).withConfig({
+   return theme.module;
+ }, function (_ref2) {
+   var theme = _ref2.theme;
+-  return theme.borderRadius.medium;
++  return theme.borderRadius.large;
+ });
+ 
+ var TitleRow = /*#__PURE__*/_styled(Row).withConfig({
 @@ -14482,7 +14488,7 @@ function Header(_ref) {
    }, title && /*#__PURE__*/React.createElement(Row, {
      gap: 0.5,
@@ -254,6 +272,15 @@ index e7da428..a09b25b 100644
      }),
      closeButton: /*#__PURE__*/React.createElement(StyledXButton$1, null)
    }), children))));
+@@ -15133,7 +15136,7 @@ function ResponsiveDialog(_ref) {
+       showArrow: false,
+       offset: 10,
+       show: open,
+-      placement: "top-end",
++      placement: "bottom",
+       content: children
+     }, anchor !== null && anchor !== void 0 ? anchor : /*#__PURE__*/React.createElement(IconButton, {
+       icon: Info
 @@ -15398,9 +15401,9 @@ function TokenButton$1(_ref4) {
    }, value ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(Logo, {
      currency: value,
@@ -279,6 +306,15 @@ index e7da428..a09b25b 100644
  }
  
  function useNativeEvent(element, type, listener, options) {
+@@ -15815,7 +15818,7 @@ var TokenSelectContainer = /*#__PURE__*/_styled.div.withConfig({
+   componentId: "sc-1krctvh-1"
+ })(["border-radius:", "rem;min-height:", ";min-width:", ";overflow:hidden;padding:0.5rem 0 0;@supports (overflow:clip){overflow:'clip';}"], function (_ref) {
+   var theme = _ref.theme;
+-  return theme.borderRadius.medium;
++  return theme.borderRadius.large;
+ }, function ($pageCentered) {
+   return $pageCentered ? 'unset' : '100%';
+ }, function (_ref2) {
 @@ -16051,6 +16054,7 @@ var TokenInput = /*#__PURE__*/forwardRef(function TokenInput(_ref2, ref) {
        approved = _ref2.approved,
        loading = _ref2.loading,
@@ -296,7 +332,7 @@ index e7da428..a09b25b 100644
      onSelect: onSelect
    })), children);
  });
-@@ -16112,7 +16116,7 @@ var Balance = /*#__PURE__*/_styled(Body2).withConfig({
+@@ -16112,25 +16116,26 @@ var Balance = /*#__PURE__*/_styled(Body2).withConfig({
  var InputColumn$1 = /*#__PURE__*/_styled(Column).withConfig({
    displayName: "Input__InputColumn",
    componentId: "sc-ud81g8-2"
@@ -305,7 +341,12 @@ index e7da428..a09b25b 100644
    var theme = _ref.theme;
    return theme.module;
  }, function (_ref2) {
-@@ -16124,13 +16128,14 @@ var InputColumn$1 = /*#__PURE__*/_styled(Column).withConfig({
+   var theme = _ref2.theme;
+-  return theme.borderRadius.medium;
++  return theme.borderRadius.large;
+ }, function (_ref3) {
+   var isWide = _ref3.isWide;
+   return isWide ? '1rem 0' : '1rem 0 1.5rem';
  }, function (_ref4) {
    var theme = _ref4.theme,
        disableHover = _ref4.disableHover;
@@ -363,7 +404,7 @@ index e7da428..a09b25b 100644
      subheader:
      /*i18n*/
      i18n._("You receive")
-@@ -16298,7 +16306,7 @@ function Output() {
+@@ -16298,26 +16306,29 @@ function Output() {
  var Underlayer = /*#__PURE__*/_styled.div.withConfig({
    displayName: "ReverseButton__Underlayer",
    componentId: "sc-d3cn9-0"
@@ -372,7 +413,11 @@ index e7da428..a09b25b 100644
    var theme = _ref.theme;
    return theme.container;
  }, function (_ref2) {
-@@ -16309,15 +16317,18 @@ var Underlayer = /*#__PURE__*/_styled.div.withConfig({
+   var theme = _ref2.theme;
+-  return theme.borderRadius.medium;
++  return theme.borderRadius.large;
+ }, Layer.OVERLAY);
+ 
  var StyledReverseButton = /*#__PURE__*/_styled(Button$1).withConfig({
    displayName: "ReverseButton__StyledReverseButton",
    componentId: "sc-d3cn9-1"
@@ -432,6 +477,15 @@ index e7da428..a09b25b 100644
    })), trade && /*#__PURE__*/React.createElement(ResponsiveDialog, {
      open: open,
      setOpen: setOpen
+@@ -20483,7 +20494,7 @@ var StyledExpando = /*#__PURE__*/_styled(Expando).withConfig({
+   return theme.outline;
+ }, function (_ref2) {
+   var theme = _ref2.theme;
+-  return theme.borderRadius.medium;
++  return theme.borderRadius.large;
+ });
+ 
+ var COLLAPSED_TOOLBAR_HEIGHT_REM = 3;
 @@ -20824,7 +20835,11 @@ function Swap(props) {
      ref: setWrapper
    }, /*#__PURE__*/React.createElement(PopoverBoundaryProvider, {
@@ -454,7 +508,7 @@ index e7da428..a09b25b 100644
  }, function (_ref3) {
    var theme = _ref3.theme;
    return theme.borderRadius.large;
-@@ -21454,7 +21469,7 @@ var TitleColumn = /*#__PURE__*/_styled(Column).withConfig({
+@@ -21454,12 +21469,12 @@ var TitleColumn = /*#__PURE__*/_styled(Column).withConfig({
  var InputColumn = /*#__PURE__*/_styled(Column).withConfig({
    displayName: "Skeleton__InputColumn",
    componentId: "sc-1ra2yb8-4"
@@ -463,6 +517,12 @@ index e7da428..a09b25b 100644
    var theme = _ref5.theme;
    return theme.module;
  }, function (_ref6) {
+   var theme = _ref6.theme;
+-  return theme.borderRadius.medium;
++  return theme.borderRadius.large;
+ });
+ 
+ var OutputColumn = /*#__PURE__*/_styled(InputColumn).withConfig({
 diff --git a/node_modules/@uniswap/widgets/dist/index.d.ts b/node_modules/@uniswap/widgets/dist/index.d.ts
 index 07faa29..c9639d6 100644
 --- a/node_modules/@uniswap/widgets/dist/index.d.ts
