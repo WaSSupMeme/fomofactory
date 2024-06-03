@@ -211,7 +211,7 @@ const fetchTokenAddress = async (
 
 const fetchAccountTokens = async (config: Config, chainId: number, account?: `0x${string}`) => {
   if (!account) {
-    throw new Error('Missing account address')
+    return []
   }
 
   const tokens = await readContract(config, {

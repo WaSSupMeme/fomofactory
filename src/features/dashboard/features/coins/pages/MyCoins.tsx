@@ -12,7 +12,7 @@ const MyCoins = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
 
-  const { data: tokens } = useAccountTokens()
+  const { data: tokens, isLoading } = useAccountTokens()
 
   return (
     <>
@@ -21,7 +21,7 @@ const MyCoins = () => {
         <aside className="w-fit justify-center space-y-4">
           <Typography variant="h3">{t('coin:my.title')}</Typography>
 
-          {!tokens && (
+          {isLoading && (
             <div className="h-72 w-full">
               <Loading />
             </div>
@@ -44,7 +44,7 @@ const MyCoins = () => {
               ))}
             </div>
           )}
-          {tokens !== undefined && tokens.length === 0 && (
+          {!isLoading && (!tokens || tokens.length === 0) && (
             <ShrugIcon className="h-72 w-72 fill-muted-foreground" />
           )}
         </aside>
