@@ -13,7 +13,7 @@ import { ENTRYPOINT_ADDRESS_V06, UserOperation } from 'permissionless'
 import { paymasterActionsEip7677 } from 'permissionless/experimental'
 import { coinbaseSmartWalletAbi } from '@/client/abi/generated'
 
-import { NextFunction, type Request, type Response } from 'express'
+import type { VercelRequest, VercelResponse } from '@vercel/node'
 
 const willSponsor = async ({
   chainId,
@@ -24,6 +24,9 @@ const willSponsor = async ({
   entrypoint: string
   userOp: UserOperation<'v0.6'>
 }) => {
+  const env = process.env
+  if (!env) return false
+
   // check chain id
   if (chainId !== base.id) return false
   // check entrypoint
@@ -33,7 +36,7 @@ const willSponsor = async ({
   try {
     const client = createPublicClient({
       chain: base,
-      transport: http(),
+      transport: http(process.env['VITE_RPC_PROVIDER_URL']!!),
     })
 
     // check the userOp.sender is a proxy with the expected bytecode
@@ -45,7 +48,7 @@ const willSponsor = async ({
       const factoryAddress = userOp.initCode.slice(0, 42)
       if (
         factoryAddress.toLowerCase() !==
-        import.meta.env[`VITE_COINBASE_SMART_WALLET_FACTORY_ADDRESS_${chainId}`].toLowerCase()
+        env[`VITE_COINBASE_SMART_WALLET_FACTORY_ADDRESS_${chainId}`]!!.toLowerCase()
       )
         return false
     } else {
@@ -60,14 +63,14 @@ const willSponsor = async ({
         method: 'eth_getStorageAt',
         params: [
           userOp.sender,
-          import.meta.env['VITE_ERC1967_PROXY_IMPLEMENTATION_SLOT'],
+          env['VITE_ERC1967_PROXY_IMPLEMENTATION_SLOT']!! as `0x${string}`,
           'latest',
         ],
       })
       const implementationAddress = decodeAbiParameters([{ type: 'address' }], implementation)[0]
       if (
         implementationAddress !==
-        import.meta.env[`VITE_COINBASE_SMART_WALLET_V1_INPLEMENTATION_ADDRESS_${chainId}`]
+        env[`VITE_COINBASE_SMART_WALLET_V1_INPLEMENTATION_ADDRESS_${chainId}`]!!
       )
         return false
     }
@@ -94,7 +97,7 @@ const willSponsor = async ({
       // if there is more than one call, check if the first is a magic spend call
       if (
         calls[0]!!.target.toLowerCase() !==
-        import.meta.env[`VITE_COINBASE_MAGIC_SPEND_ADDRESS_${chainId}`].toLowerCase()
+        env[`VITE_COINBASE_MAGIC_SPEND_ADDRESS_${chainId}`]!!.toLowerCase()
       )
         return false
     }
@@ -106,8 +109,8 @@ const willSponsor = async ({
   }
 }
 
-export const POST = async (req: Request, res: Response, _next: NextFunction) => {
-  const paymasterService = import.meta.env.VITE_PAYMASTER_SERVICE_URL
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  const paymasterService = process.env['VITE_PAYMASTER_SERVICE_URL']!!
 
   const paymasterClient = createClient({
     chain: base,

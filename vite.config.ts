@@ -4,10 +4,10 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import svgr from 'vite-plugin-svgr'
+import vercel from 'vite-plugin-vercel'
 import { checker } from 'vite-plugin-checker'
 import { ValidateEnv } from '@julr/vite-plugin-validate-env'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
-import { pluginAPIRoutes } from 'vite-plugin-api-routes'
 import { z } from 'zod'
 import path from 'path'
 
@@ -21,10 +21,10 @@ export default defineConfig(({ mode }) => ({
       },
     }),
     react(),
+    vercel(),
     tsconfigPaths(),
     nodePolyfills(),
     svgr(),
-    pluginAPIRoutes(),
     mode !== 'test' &&
       checker({
         enableBuild: false,
@@ -56,5 +56,13 @@ export default defineConfig(({ mode }) => ({
       '~@fontsource/ibm-plex-mono': '@fontsource/ibm-plex-mono',
       '~@fontsource/inter': '@fontsource/inter',
     },
+  },
+  vercel: {
+    additionalEndpoints: [
+      {
+        source: './src/api/paymaster/index.ts',
+        destination: '/api/paymaster',
+      },
+    ],
   },
 }))

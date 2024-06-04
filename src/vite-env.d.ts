@@ -1,6 +1,5 @@
 /// <reference types="vite/client" />
 /// <reference types="vite-plugin-svgr/client" />
-/// <reference types="../.api/types.d.ts" />
 
 interface ImportMetaEnv {
   readonly VITE_APP_NAME: string
