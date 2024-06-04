@@ -117,12 +117,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     transport: http(paymasterService),
   }).extend(paymasterActionsEip7677(ENTRYPOINT_ADDRESS_V06))
 
-  const method = req.method
-  const { userOp, entrypoint, chainId } = req.body as {
-    userOp: UserOperation<'v0.6'>
-    entrypoint: string
-    chainId: string
+  const { method, params } = req.body as {
+    method: string
+    params: any[]
   }
+  const [userOp, entrypoint, chainId] = params
   if (!willSponsor({ chainId: parseInt(chainId), entrypoint, userOp })) {
     return res.json({ error: 'Not a sponsorable operation' })
   }
