@@ -7,6 +7,7 @@ import {
   darkTheme,
   cssStringFromTheme,
 } from '@rainbow-me/rainbowkit'
+import { coinbaseWallet } from '@rainbow-me/rainbowkit/wallets'
 import { WagmiProvider, http, useWalletClient } from 'wagmi'
 import { base, baseSepolia } from 'wagmi/chains'
 
@@ -15,14 +16,23 @@ interface Props {
 }
 
 const WalletProvider = ({ children }: Props) => {
+  // Enable Coinbase Smart Wallet
+  coinbaseWallet.preference = 'all'
+
   const config = getDefaultConfig({
     appName: import.meta.env.VITE_APP_NAME,
     projectId: import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID,
-    chains: import.meta.env.DEV ? [base, baseSepolia] : [base],
+    chains: import.meta.env.DEV ? [base] : [base],
     transports: {
       [base.id]: http(import.meta.env.VITE_RPC_PROVIDER_URL),
       [baseSepolia.id]: http(),
     },
+    wallets: [
+      {
+        groupName: 'Popular',
+        wallets: [coinbaseWallet],
+      },
+    ],
     ssr: import.meta.env.SSR,
   })
 

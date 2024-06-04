@@ -7,6 +7,7 @@ import svgr from 'vite-plugin-svgr'
 import { checker } from 'vite-plugin-checker'
 import { ValidateEnv } from '@julr/vite-plugin-validate-env'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
+import { pluginAPIRoutes } from 'vite-plugin-api-routes'
 import { z } from 'zod'
 import path from 'path'
 
@@ -23,6 +24,7 @@ export default defineConfig(({ mode }) => ({
     tsconfigPaths(),
     nodePolyfills(),
     svgr(),
+    pluginAPIRoutes(),
     mode !== 'test' &&
       checker({
         enableBuild: false,

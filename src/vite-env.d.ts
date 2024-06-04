@@ -1,5 +1,6 @@
 /// <reference types="vite/client" />
 /// <reference types="vite-plugin-svgr/client" />
+/// <reference types="../.api/types.d.ts" />
 
 interface ImportMetaEnv {
   readonly VITE_APP_NAME: string
@@ -8,6 +9,7 @@ interface ImportMetaEnv {
   readonly VITE_PINATA_JWT: string
   readonly VITE_GATEWAY_URL: string
   readonly VITE_RPC_PROVIDER_URL: string
+  readonly VITE_PAYMASTER_SERVICE_URL: string
 
   readonly VITE_USD_MARKET_CAP: number
 

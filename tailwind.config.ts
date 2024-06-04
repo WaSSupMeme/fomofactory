@@ -144,6 +144,15 @@ const config = {
         '1025': '1.025',
         '200': '2.0',
       },
+      borderWidth: {
+        '1': '1px',
+      },
+      transitionTimingFunction: {
+        'in-rotate': 'cubic-bezier(0.27, 0, 0.24, 0.99)',
+      },
+      transitionDuration: {
+        '2000': '2000ms',
+      },
     },
   },
 } satisfies Config

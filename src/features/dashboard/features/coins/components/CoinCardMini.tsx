@@ -1,7 +1,7 @@
 import { Typography } from '@/common/components'
 import { cn } from '@/common/styleUtils'
 import { useTranslation } from 'react-i18next'
-import { useTokenMetadata } from '@/api/queries/token'
+import { useTokenMetadata } from '@/client/queries/token'
 import { Loader2 } from 'lucide-react'
 
 interface Token {

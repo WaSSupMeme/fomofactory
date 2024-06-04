@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 
 import { multicall, writeContract } from '@wagmi/core'
+import { writeContracts } from '@wagmi/core/experimental'
 import {
   Abi,
   formatEther,
@@ -13,6 +14,7 @@ import {
 } from 'viem'
 import { waitForTransactionReceipt } from 'viem/actions'
 import { Config, useAccount, useChainId, useConfig, usePublicClient, useWalletClient } from 'wagmi'
+import { useCapabilities } from 'wagmi/experimental'
 import { publicActionsL2 } from 'viem/op-stack'
 
 import IUniswapV3FactoryABI from '@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Factory.sol/IUniswapV3Factory.json'
@@ -21,6 +23,7 @@ import LiquidityLockerABI from '../abi/LiquidityLocker.json'
 import { FeeAmount } from '@uniswap/v3-sdk'
 import { calculateInitialTick } from '@/common/utils'
 import { fetchUsdEthAmount } from '../queries/eth'
+import { useMemo } from 'react'
 
 async function addTokenToWallet(
   client: WalletClient | undefined,
@@ -143,6 +146,27 @@ export const useCreateToken = (options?: {
   const chainId = useChainId()
   const config = useConfig()
   const client = usePublicClient()
+  const account = useAccount()
+  const { data: availableCapabilities } = useCapabilities({
+    account: account.address,
+  })
+  console.log(`${document.location.origin}/api/paymaster`)
+  const capabilities = useMemo(() => {
+    if (!availableCapabilities || !account.chainId) return {}
+    const capabilitiesForChain = availableCapabilities[account.chainId]
+    if (
+      capabilitiesForChain &&
+      capabilitiesForChain['paymasterService'] &&
+      capabilitiesForChain['paymasterService'].supported
+    ) {
+      return {
+        paymasterService: {
+          url: `${document.location.origin}/api/paymaster`,
+        },
+      }
+    }
+    return {}
+  }, [availableCapabilities, account])
 
   return useMutation({
     ...options,
@@ -157,7 +181,10 @@ export const useCreateToken = (options?: {
       if (!client) throw new Error('Failed to initialize client')
 
       const args = await prepareCreateToken(config, chainId, data)
-      const hash = await writeContract(config, args)
+      const hash = (await writeContracts(config, {
+        contracts: [args],
+        capabilities,
+      })) as `0x${string}`
       const receipt = await waitForTransactionReceipt(client, { hash })
 
       const logs = parseEventLogs({

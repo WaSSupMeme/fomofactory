@@ -2,7 +2,7 @@ import { Loading, Typography } from '@/common/components'
 
 import { useTranslation } from 'react-i18next'
 import CoinCard from '../components/CoinCard'
-import { useAccountTokens } from '@/api/queries/token'
+import { useAccountTokens } from '@/client/queries/token'
 import { useNavigate } from 'react-router-dom'
 import { APP_ROUTES } from '@/app/routes'
 import { ShrugIcon } from '@/assets/svg/ShrugIcon'

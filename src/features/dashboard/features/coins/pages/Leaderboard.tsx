@@ -5,7 +5,7 @@ import CoinCard from '../components/CoinCard'
 import { useNavigate } from 'react-router-dom'
 import { APP_ROUTES } from '@/app/routes'
 import { ShrugIcon } from '@/assets/svg/ShrugIcon'
-import { useTopTokens } from '@/api/queries/leaderboard'
+import { useTopTokens } from '@/client/queries/leaderboard'
 import SEO from '@/common/components/SEO'
 
 const Leaderboard = () => {
