@@ -147,10 +147,9 @@ export const useCreateToken = (options?: {
   const config = useConfig()
   const client = usePublicClient()
   const account = useAccount()
-  const { data: availableCapabilities } = useCapabilities({
+  const { data: availableCapabilities, isSuccess: capabilitiesSupported } = useCapabilities({
     account: account.address,
   })
-  console.log(`${document.location.origin}/api/paymaster`)
   const capabilities = useMemo(() => {
     if (!availableCapabilities || !account.chainId) return {}
     const capabilitiesForChain = availableCapabilities[account.chainId]
@@ -181,10 +180,12 @@ export const useCreateToken = (options?: {
       if (!client) throw new Error('Failed to initialize client')
 
       const args = await prepareCreateToken(config, chainId, data)
-      const hash = (await writeContracts(config, {
-        contracts: [args],
-        capabilities,
-      })) as `0x${string}`
+      const hash = capabilitiesSupported
+        ? ((await writeContracts(config, {
+            contracts: [args],
+            capabilities,
+          })) as `0x${string}`)
+        : await writeContract(config, args)
       const receipt = await waitForTransactionReceipt(client, { hash })
 
       const logs = parseEventLogs({
