@@ -1,17 +1,14 @@
-import {
-  Address,
-  BlockTag,
-  createClient,
-  Hex,
-  http,
-  decodeAbiParameters,
-  decodeFunctionData,
-  createPublicClient,
-} from 'viem'
+import { Address, createClient, Hex, http, decodeFunctionData } from 'viem'
 import { base } from 'viem/chains'
 import { ENTRYPOINT_ADDRESS_V06, UserOperation } from 'permissionless'
 import { paymasterActionsEip7677 } from 'permissionless/experimental'
-import { coinbaseSmartWalletAbi } from '@/client/abi/generated'
+import {
+  smartWalletAbi,
+  fomoFactoryAbi,
+  liquidityLockerAbi,
+  iUniversalRouterAbi,
+  erc20Abi,
+} from '@/client/abi/generated'
 
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
@@ -29,70 +26,44 @@ const willSponsor = async ({
 
   // check chain id
   if (chainId !== base.id) return false
+
   // check entrypoint
-  // not strictly needed given below check on implementation address, but leaving as example
   if (entrypoint.toLowerCase() !== ENTRYPOINT_ADDRESS_V06.toLowerCase()) return false
 
   try {
-    const client = createPublicClient({
-      chain: base,
-      transport: http(process.env['VITE_RPC_PROVIDER_URL']!!),
-    })
-
-    // check the userOp.sender is a proxy with the expected bytecode
-    const code = await client.getBytecode({ address: userOp.sender })
-
-    if (!code) {
-      // no code at address, check that the initCode is deploying a Coinbase Smart Wallet
-      // factory address is first 20 bytes of initCode after '0x'
-      const factoryAddress = userOp.initCode.slice(0, 42)
-      if (
-        factoryAddress.toLowerCase() !==
-        env[`VITE_COINBASE_SMART_WALLET_FACTORY_ADDRESS_${chainId}`]!!.toLowerCase()
-      )
-        return false
-    } else {
-      // code at address, check that it is a proxy to the expected implementation
-      if (code !== import.meta.env['VITE_COINBASE_SMART_WALLET_BYTECODE']) return false
-
-      // check that userOp.sender proxies to expected implementation
-      const implementation = await client.request<{
-        Parameters: [Address, Hex, BlockTag]
-        ReturnType: Hex
-      }>({
-        method: 'eth_getStorageAt',
-        params: [
-          userOp.sender,
-          env['VITE_ERC1967_PROXY_IMPLEMENTATION_SLOT']!! as `0x${string}`,
-          'latest',
-        ],
-      })
-      const implementationAddress = decodeAbiParameters([{ type: 'address' }], implementation)[0]
-      if (
-        implementationAddress !==
-        env[`VITE_COINBASE_SMART_WALLET_V1_INPLEMENTATION_ADDRESS_${chainId}`]!!
-      )
-        return false
-    }
-
     // check that userOp.callData is making a call we want to sponsor
     const calldata = decodeFunctionData({
-      abi: coinbaseSmartWalletAbi,
+      abi: smartWalletAbi,
       data: userOp.callData,
     })
 
-    // keys.coinbase.com always uses executeBatch
-    if (calldata.functionName !== 'executeBatch') return false
-    if (!calldata.args || !calldata.args.length) return false
-
-    const calls = calldata.args[0] as {
+    let calls = [] as {
       target: Address
       value: bigint
       data: Hex
     }[]
-    // modify if want to allow batch calls to your contract
+    if (calldata.functionName === 'execute') {
+      if (!calldata.args || calldata.args.length !== 3) return false
+      calls = [
+        {
+          target: calldata.args[0] as Address,
+          value: calldata.args[1] as bigint,
+          data: calldata.args[2] as Hex,
+        },
+      ]
+    } else if (calldata.functionName === 'executeBatch') {
+      if (!calldata.args || calldata.args.length !== 1) return false
+      calls = calldata.args[0] as {
+        target: Address
+        value: bigint
+        data: Hex
+      }[]
+    }
+
+    // disallow batch calls
     if (calls.length > 2) return false
 
+    let callToCheckIndex = 0
     if (calls.length > 1) {
       // if there is more than one call, check if the first is a magic spend call
       if (
@@ -100,9 +71,50 @@ const willSponsor = async ({
         env[`VITE_COINBASE_MAGIC_SPEND_ADDRESS_${chainId}`]!!.toLowerCase()
       )
         return false
+      callToCheckIndex = 1
     }
 
-    return true
+    if (
+      calls[callToCheckIndex]!!.target.toLowerCase() ===
+      env[`VITE_FOMO_FACTORY_ADDRESS_${chainId}`]!!.toLowerCase()
+    ) {
+      const innerCalldata = decodeFunctionData({
+        abi: fomoFactoryAbi,
+        data: calls[callToCheckIndex]!!.data,
+      })
+      if (innerCalldata.functionName === 'createMemecoin') return true
+    }
+
+    if (
+      calls[callToCheckIndex]!!.target.toLowerCase() ===
+      env[`VITE_LIQUIDITY_LOCKER_ADDRESS_${chainId}`]!!.toLowerCase()
+    ) {
+      const innerCalldata = decodeFunctionData({
+        abi: liquidityLockerAbi,
+        data: calls[callToCheckIndex]!!.data,
+      })
+      if (innerCalldata.functionName === 'claimFees') return true
+    }
+
+    if (
+      calls[callToCheckIndex]!!.target.toLowerCase() ===
+      env[`VITE_UNISWAP_V3_UNIVERSAL_ROUTER_ADDRESS_${chainId}`]!!.toLowerCase()
+    ) {
+      const innerCalldata = decodeFunctionData({
+        abi: iUniversalRouterAbi,
+        data: calls[callToCheckIndex]!!.data,
+      })
+      if (innerCalldata.functionName === 'execute') return true
+    }
+
+    // if we got here, the only other valid call is an ERC20 approve
+    const innerCalldata = decodeFunctionData({
+      abi: erc20Abi,
+      data: calls[callToCheckIndex]!!.data,
+    })
+    if (innerCalldata.functionName === 'approve') return true
+
+    return false
   } catch (e) {
     console.error(`willSponsor check failed: ${e}`)
     return false

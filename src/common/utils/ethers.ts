@@ -1,7 +1,8 @@
 import { providers } from 'ethers'
 import { useMemo } from 'react'
-import type { Account, Chain, Client, Transport } from 'viem'
-import { Config, useClient, useConnectorClient } from 'wagmi'
+import type { Account, Chain, Client, Transport, WalletCapabilities } from 'viem'
+import { Config, useClient, useConfig, useConnectorClient } from 'wagmi'
+import { clientToSmartWalletSigner, useSmartWallet } from './smartWallet'
 
 export function clientToProvider(client: Client<Transport, Chain>) {
   const { chain, transport } = client
@@ -40,5 +41,15 @@ export function clientToSigner(client: Client<Transport, Chain, Account>) {
 /** Hook to convert a Viem Client to an ethers.js Signer. */
 export function useEthersSigner({ chainId }: { chainId?: number } = {}) {
   const { data: client } = useConnectorClient<Config>({ chainId })
-  return useMemo(() => (client ? clientToSigner(client) : undefined), [client])
+  const config = useConfig()
+  const { capabilities, isSmartWallet } = useSmartWallet()
+
+  return useMemo(() => {
+    if (isSmartWallet && client) {
+      return clientToSmartWalletSigner(config, client, capabilities as WalletCapabilities)
+    } else if (client) {
+      return clientToSigner(client)
+    }
+    return undefined
+  }, [client, capabilities, isSmartWallet, config])
 }

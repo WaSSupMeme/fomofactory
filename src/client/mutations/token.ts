@@ -1,7 +1,6 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 
-import { multicall, writeContract } from '@wagmi/core'
-import { writeContracts } from '@wagmi/core/experimental'
+import { multicall } from '@wagmi/core'
 import {
   Abi,
   formatEther,
@@ -10,11 +9,9 @@ import {
   parseEventLogs,
   WalletClient,
   numberToHex,
-  PublicClient,
 } from 'viem'
 import { waitForTransactionReceipt } from 'viem/actions'
 import { Config, useAccount, useChainId, useConfig, usePublicClient, useWalletClient } from 'wagmi'
-import { useCapabilities } from 'wagmi/experimental'
 import { publicActionsL2 } from 'viem/op-stack'
 
 import IUniswapV3FactoryABI from '@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Factory.sol/IUniswapV3Factory.json'
@@ -23,7 +20,7 @@ import LiquidityLockerABI from '../abi/LiquidityLocker.json'
 import { FeeAmount } from '@uniswap/v3-sdk'
 import { calculateInitialTick } from '@/common/utils'
 import { fetchUsdEthAmount } from '../queries/eth'
-import { useMemo } from 'react'
+import { useWriteContract } from '@/common/utils/smartWallet'
 
 async function addTokenToWallet(
   client: WalletClient | undefined,
@@ -109,6 +106,7 @@ async function prepareCreateToken(
       numberToHex(data.salt, { size: 32 }),
     ],
     value,
+    chain: undefined,
   }
 }
 
@@ -146,26 +144,7 @@ export const useCreateToken = (options?: {
   const chainId = useChainId()
   const config = useConfig()
   const client = usePublicClient()
-  const account = useAccount()
-  const { data: availableCapabilities, isSuccess: capabilitiesSupported } = useCapabilities({
-    account: account.address,
-  })
-  const capabilities = useMemo(() => {
-    if (!availableCapabilities || !account.chainId) return {}
-    const capabilitiesForChain = availableCapabilities[account.chainId]
-    if (
-      capabilitiesForChain &&
-      capabilitiesForChain['paymasterService'] &&
-      capabilitiesForChain['paymasterService'].supported
-    ) {
-      return {
-        paymasterService: {
-          url: `${document.location.origin}/api/paymaster`,
-        },
-      }
-    }
-    return {}
-  }, [availableCapabilities, account])
+  const { writeContract } = useWriteContract()
 
   return useMutation({
     ...options,
@@ -180,12 +159,7 @@ export const useCreateToken = (options?: {
       if (!client) throw new Error('Failed to initialize client')
 
       const args = await prepareCreateToken(config, chainId, data)
-      const hash = capabilitiesSupported
-        ? ((await writeContracts(config, {
-            contracts: [args],
-            capabilities,
-          })) as `0x${string}`)
-        : await writeContract(config, args)
+      const hash = await writeContract(config, args)
       const receipt = await waitForTransactionReceipt(client, { hash })
 
       const logs = parseEventLogs({
@@ -207,24 +181,6 @@ export const useCreateToken = (options?: {
   })
 }
 
-const claimFees = async (
-  client: PublicClient | undefined,
-  config: Config,
-  chainId: number,
-  data: { positionId: bigint; recipient: `0x${string}` },
-) => {
-  if (!client) throw new Error('Failed to initialize client')
-
-  const hash = await writeContract(config, {
-    address: import.meta.env[`VITE_LIQUIDITY_LOCKER_ADDRESS_${chainId}`],
-    abi: LiquidityLockerABI as Abi,
-    functionName: 'claimFees',
-    args: [data.positionId, data.recipient],
-  })
-
-  await waitForTransactionReceipt(client, { hash })
-}
-
 export const useClaimFees = (options?: {
   onError?: (error: unknown) => void
   onSuccess?: () => void
@@ -232,11 +188,22 @@ export const useClaimFees = (options?: {
   const chainId = useChainId()
   const config = useConfig()
   const client = usePublicClient()
+  const { writeContract } = useWriteContract()
 
   return useMutation({
     ...options,
     mutationKey: ['claimFees', { chainId }],
-    mutationFn: (data: { positionId: bigint; recipient: `0x${string}` }) =>
-      claimFees(client, config, chainId, data),
+    mutationFn: async (data: { positionId: bigint; recipient: `0x${string}` }) => {
+      if (!client) throw new Error('Failed to initialize client')
+
+      const hash = await writeContract(config, {
+        address: import.meta.env[`VITE_LIQUIDITY_LOCKER_ADDRESS_${chainId}`],
+        abi: LiquidityLockerABI as Abi,
+        functionName: 'claimFees',
+        args: [data.positionId, data.recipient],
+      })
+
+      await waitForTransactionReceipt(client, { hash })
+    },
   })
 }
