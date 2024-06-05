@@ -10,7 +10,8 @@ import {
 } from '@rainbow-me/rainbowkit'
 import { coinbaseWallet } from '@rainbow-me/rainbowkit/wallets'
 import { WagmiProvider, http, useWalletClient } from 'wagmi'
-import { base, baseSepolia } from 'wagmi/chains'
+import { base } from 'wagmi/chains'
+import { defineChain } from 'viem'
 
 const Disclaimer: DisclaimerComponent = ({ Text, Link }) => (
   <Text>
@@ -28,13 +29,22 @@ const WalletProvider = ({ children }: Props) => {
   // Enable Coinbase Smart Wallet
   coinbaseWallet.preference = 'all'
 
+  const baseWithEns = defineChain({
+    ...base,
+    contracts: {
+      ...base.contracts,
+      ensRegistry: {
+        address: import.meta.env[`VITE_ENS_REGISTRY_ADDRESS_${base.id}`],
+      },
+    },
+  })
+
   const config = getDefaultConfig({
     appName: import.meta.env.VITE_APP_NAME,
     projectId: import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID,
-    chains: import.meta.env.DEV ? [base] : [base],
+    chains: [baseWithEns],
     transports: {
-      [base.id]: http(import.meta.env.VITE_RPC_PROVIDER_URL),
-      [baseSepolia.id]: http(),
+      [baseWithEns.id]: http(import.meta.env.VITE_RPC_PROVIDER_URL),
     },
     wallets: [
       {
