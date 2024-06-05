@@ -13,6 +13,9 @@ import { WagmiProvider, http, useWalletClient } from 'wagmi'
 import { base } from 'wagmi/chains'
 import { defineChain } from 'viem'
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import circle from '@/assets/png/circle.png'
+
 const Disclaimer: DisclaimerComponent = ({ Text, Link }) => (
   <Text>
     By connecting your wallet, you agree to the{' '}

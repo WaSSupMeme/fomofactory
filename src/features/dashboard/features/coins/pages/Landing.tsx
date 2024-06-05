@@ -8,6 +8,7 @@ import { useTopTokens } from '@/client/queries/leaderboard'
 import { BaseIcon } from '@/assets/svg/BaseIcon'
 import CoinCardMax from '../components/CoinCardMax'
 import CoinCard from '../components/CoinCard'
+import { CrownIcon } from '@/assets/svg/CrownIcon'
 
 const Landing = () => {
   const { t } = useTranslation()
@@ -30,8 +31,8 @@ const Landing = () => {
             />
             <span className="text-primary">{t('landing:message.baseTitle')}</span>
           </Typography>
-          <div className="lg-grid-cols-1 grid items-center justify-center gap-4 xl:grid-cols-3">
-            <Typography variant="h3" className="xl:col-span-2">
+          <div className="lg-grid-cols-1 grid items-center justify-center gap-y-8 xl:grid-cols-3 xl:gap-10">
+            <Typography variant="h3" className="text-balance xl:col-span-2 xl:text-left">
               {t('landing:message.subtitle')}
             </Typography>
             <Button
@@ -51,16 +52,25 @@ const Landing = () => {
         </div>
         <div className="flex h-full w-full flex-col items-center justify-center xl:col-span-2">
           {tokens && tokens.length > 0 && (
-            <div
-              className="w-fit"
-              onClick={() =>
-                navigate({
-                  pathname: APP_ROUTES.coinDetails.to(tokens[0]!!.address),
-                })
-              }
-              key={tokens[0]!!.address}
-            >
-              <CoinCardMax token={tokens[0]!!} />
+            <div className="flex flex-col items-center justify-center gap-2">
+              <Typography
+                variant="h3"
+                className="justify-center text-balance xl:col-span-2 xl:text-left"
+              >
+                {t('landing:topCoin.title')}
+                <CrownIcon className="mx-2 -mt-1 inline-flex h-6 w-6 items-center fill-primary" />
+              </Typography>
+              <div
+                className="w-fit"
+                onClick={() =>
+                  navigate({
+                    pathname: APP_ROUTES.coinDetails.to(tokens[0]!!.address),
+                  })
+                }
+                key={tokens[0]!!.address}
+              >
+                <CoinCardMax token={tokens[0]!!} />
+              </div>
             </div>
           )}
         </div>

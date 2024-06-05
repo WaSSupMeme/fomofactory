@@ -9,5 +9,8 @@
     "start": {
       "text": "Get Started"
     }
+  },
+  "topCoin": {
+    "title": "Coin of the Week"
   }
 }
