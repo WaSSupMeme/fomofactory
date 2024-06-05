@@ -13,8 +13,6 @@ import { WagmiProvider, http, useWalletClient } from 'wagmi'
 import { base } from 'wagmi/chains'
 import { defineChain } from 'viem'
 
-import circle from '@/assets/png/circle.png'
-
 const Disclaimer: DisclaimerComponent = ({ Text, Link }) => (
   <Text>
     By connecting your wallet, you agree to the{' '}
@@ -28,9 +26,6 @@ interface Props {
 }
 
 const WalletProvider = ({ children }: Props) => {
-  // to prevent eslint from removing the import
-  console.log(circle)
-
   // Enable Coinbase Smart Wallet
   coinbaseWallet.preference = 'all'
 
