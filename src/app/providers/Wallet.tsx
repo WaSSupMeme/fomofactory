@@ -1,28 +1,57 @@
 import { type ReactNode } from 'react'
 
 import {
+  DisclaimerComponent,
   getDefaultConfig,
   RainbowKitProvider,
   lightTheme,
   darkTheme,
   cssStringFromTheme,
 } from '@rainbow-me/rainbowkit'
+import { coinbaseWallet } from '@rainbow-me/rainbowkit/wallets'
 import { WagmiProvider, http, useWalletClient } from 'wagmi'
-import { base, baseSepolia } from 'wagmi/chains'
+import { base } from 'wagmi/chains'
+import { defineChain } from 'viem'
+
+const Disclaimer: DisclaimerComponent = ({ Text, Link }) => (
+  <Text>
+    By connecting your wallet, you agree to the{' '}
+    <Link href="https://fomofactory.wtf/tos">Terms of Service</Link> and acknowledge you have read
+    and understand how FomoFactory <Link href="https://fomofactory.wtf/faq">works</Link>
+  </Text>
+)
 
 interface Props {
   children: ReactNode
 }
 
 const WalletProvider = ({ children }: Props) => {
+  // Enable Coinbase Smart Wallet
+  coinbaseWallet.preference = 'all'
+
+  const baseWithEns = defineChain({
+    ...base,
+    contracts: {
+      ...base.contracts,
+      ensRegistry: {
+        address: import.meta.env[`VITE_ENS_REGISTRY_ADDRESS_${base.id}`],
+      },
+    },
+  })
+
   const config = getDefaultConfig({
     appName: import.meta.env.VITE_APP_NAME,
     projectId: import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID,
-    chains: import.meta.env.DEV ? [base, baseSepolia] : [base],
+    chains: [baseWithEns],
     transports: {
-      [base.id]: http(import.meta.env.VITE_RPC_PROVIDER_URL),
-      [baseSepolia.id]: http(),
+      [baseWithEns.id]: http(import.meta.env.VITE_RPC_PROVIDER_URL),
     },
+    wallets: [
+      {
+        groupName: 'Popular',
+        wallets: [coinbaseWallet],
+      },
+    ],
     ssr: import.meta.env.SSR,
   })
 
@@ -39,7 +68,15 @@ const WalletProvider = ({ children }: Props) => {
 
   return (
     <WagmiProvider config={config}>
-      <RainbowKitProvider modalSize="compact" locale="en" theme={null}>
+      <RainbowKitProvider
+        modalSize="compact"
+        locale="en"
+        theme={null}
+        appInfo={{
+          learnMoreUrl: 'https://fomofactory.wtf/faq',
+          disclaimer: Disclaimer,
+        }}
+      >
         <style
           dangerouslySetInnerHTML={{
             __html: `

@@ -1,5 +1,6 @@
 {
-  "connect": "Connect Wallet",
+  "connect": "Connect",
+  "create": "Create Wallet",
   "error": {
     "network": "Wrong Network"
   }

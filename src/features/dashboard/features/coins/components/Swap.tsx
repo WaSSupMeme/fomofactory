@@ -3,6 +3,7 @@ import { useEthersSigner } from '@/common/utils/ethers'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import {
   darkTheme,
+  DialogAnimationType,
   lightTheme,
   SwapWidget,
   SwapWidgetProps,
@@ -119,6 +120,9 @@ const Swap = ({ token, onSwap }: Props) => {
       if (onSwap) onSwap()
     },
     theme: theme === Theme.LIGHT ? lightWidgetTheme : darkWidgetTheme,
+    dialogOptions: {
+      animationType: DialogAnimationType.FADE,
+    },
     defaultInputTokenAddress: 'NATIVE',
     defaultOutputTokenAddress: token.address,
     disableTokenSelection: true,
@@ -130,6 +134,7 @@ const Swap = ({ token, onSwap }: Props) => {
     <>
       {token && account.address && (
         <SwapWidget
+          className="h-max"
           {...widgetConfig}
           tokenList={[
             {

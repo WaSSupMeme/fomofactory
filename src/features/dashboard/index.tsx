@@ -2,7 +2,6 @@ import { ReactElement, Suspense, useEffect, useState } from 'react'
 import { Navigate, Outlet, Route, Routes, useNavigate } from 'react-router-dom'
 
 import { Loading, Layout } from '@/common/components'
-import ThemeButton from '@/common/components/ThemeButton'
 import ConnectButton from '@/common/components/ConnectButton'
 import { InfiniteMovingCards } from '@/common/components/ui/infinite-moving-cards'
 import { APP_ROUTES } from '@/app/routes/app'
@@ -18,7 +17,7 @@ import Leaderboard from './features/coins/pages/Leaderboard'
 import preview from '@/assets/png/preview.png'
 import SEO from '@/common/components/SEO'
 import CoinCardMini from './features/coins/components/CoinCardMini'
-import { useTopTokens } from '@/api/queries/leaderboard'
+import { useTopTokens } from '@/client/queries/leaderboard'
 
 const Dashboard = () => {
   const { isLoggedIn } = useAuth()
@@ -78,7 +77,6 @@ const Dashboard = () => {
                 ],
                 endSlot: (
                   <>
-                    <ThemeButton />
                     <ConnectButton />
                   </>
                 ),
