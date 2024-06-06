@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 
-import { multicall } from '@wagmi/core'
+import { multicall, writeContract } from '@wagmi/core'
 import {
   Abi,
   formatEther,
@@ -20,7 +20,6 @@ import LiquidityLockerABI from '../abi/LiquidityLocker.json'
 import { FeeAmount } from '@uniswap/v3-sdk'
 import { calculateInitialTick } from '@/common/utils'
 import { fetchUsdEthAmount } from '../queries/eth'
-import { useWriteContract } from '@/common/utils/smartWallet'
 
 async function addTokenToWallet(
   client: WalletClient | undefined,
@@ -144,7 +143,6 @@ export const useCreateToken = (options?: {
   const chainId = useChainId()
   const config = useConfig()
   const client = usePublicClient()
-  const { writeContract } = useWriteContract()
 
   return useMutation({
     ...options,
@@ -188,12 +186,11 @@ export const useClaimFees = (options?: {
   const chainId = useChainId()
   const config = useConfig()
   const client = usePublicClient()
-  const { writeContract } = useWriteContract()
 
   return useMutation({
     ...options,
     mutationKey: ['claimFees', { chainId }],
-    mutationFn: async (data: { positionId: bigint; recipient: `0x${string}` }) => {
+    mutationFn: async (data: { positionId: bigint; recipient: string }) => {
       if (!client) throw new Error('Failed to initialize client')
 
       const hash = await writeContract(config, {

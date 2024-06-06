@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { useWallet } from '@/app/providers/Wallet'
+import { useAccount } from 'wagmi'
 
 interface AuthState {
   userAddress?: string
@@ -7,12 +7,12 @@ interface AuthState {
 }
 
 export const useAuthState = () => {
-  const { data: wallet } = useWallet()
+  const account = useAccount()
   return useMemo(
     () =>
       [
-        { userAddress: wallet?.account.address, isLoggedIn: wallet !== undefined } as AuthState,
+        { userAddress: account.address, isLoggedIn: account.address !== undefined } as AuthState,
       ] as const,
-    [wallet],
+    [account],
   )
 }

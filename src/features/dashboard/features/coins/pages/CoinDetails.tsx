@@ -295,7 +295,7 @@ const CoinDetails = () => {
                 </>
               )}
             </div>
-            {pool && pool.owner === account.address && (
+            {pool && pool.owner.toLowerCase() === account.address?.toLowerCase() && (
               <div className="flex w-96 flex-col gap-4 rounded-md bg-card px-6 text-card-foreground">
                 <Card className="p-2">
                   <div className="flex flex-col space-y-2">

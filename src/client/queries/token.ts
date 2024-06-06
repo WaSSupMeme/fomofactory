@@ -16,7 +16,6 @@ import { Config, useAccount, useChainId, useConfig, usePublicClient } from 'wagm
 
 import { FeeAmount } from '@uniswap/v3-sdk'
 import { fetchEthUsdAmount } from './eth'
-import { useWallet } from '@/app/providers/Wallet'
 import { erc20Abi, fomoFactoryAbi, iQuoterV2Abi } from '../abi/generated'
 import { fetchTokensDexData } from './dex'
 
@@ -248,7 +247,7 @@ const fetchTokenAddress = async (
   symbol: string,
   totalSupply: number,
   salt: number,
-  creator?: `0x${string}`,
+  creator?: string,
 ) => {
   if (!creator) {
     throw new Error('Missing creator address')
@@ -270,7 +269,7 @@ const fetchTokenAddress = async (
   return address as `0x${string}`
 }
 
-const fetchAccountTokens = async (config: Config, chainId: number, account?: `0x${string}`) => {
+const fetchAccountTokens = async (config: Config, chainId: number, account?: string) => {
   if (!account) {
     return []
   }
@@ -326,15 +325,15 @@ export const useTokenAddress = (
 ) => {
   const config = useConfig()
   const chainId = useChainId()
-  const { data: wallet } = useWallet()
+  const account = useAccount()
 
   return useQuery({
     queryKey: [
       'tokenAddress',
-      { creator: wallet?.account.address, name, symbol, totalSupply, salt, chainId },
+      { creator: account.address, name, symbol, totalSupply, salt, chainId },
     ],
     queryFn: () =>
-      fetchTokenAddress(config, chainId, name, symbol, totalSupply, salt, wallet?.account.address),
+      fetchTokenAddress(config, chainId, name, symbol, totalSupply, salt, account.address),
   })
 }
 

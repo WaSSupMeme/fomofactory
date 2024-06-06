@@ -19,6 +19,8 @@ interface ImportMetaEnv {
   readonly VITE_UNISWAP_V3_QUOTER_ADDRESS_8453: string
   readonly VITE_ETH_USD_AGGREGATOR_ADDRESS_8453: string
 
+  readonly VITE_THIRDWEB_CLIENT_ID: string
+
   readonly VITEST?: 'true' | 'false'
   readonly CI?: 'true' | 'false'
 }

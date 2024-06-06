@@ -1,11 +1,11 @@
-import { ConnectButton as RainbowConnectButton } from '@rainbow-me/rainbowkit'
+import { ConnectButton as ThirdwebConnectButton, useActiveWallet } from 'thirdweb/react'
 import React, { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useConnect } from 'wagmi'
 import { Button } from '../ui/button'
 import { cn } from '@/common/styleUtils'
 import { CoinbaseIcon } from '@/assets/svg/CoinbaseIcon'
-import { useWallet } from '@/app/providers/Wallet'
+import { useWagmiAdapter } from '@/app/providers/Wallet'
 
 const GRADIENT_BORDER_WIDTH = 2
 
@@ -115,12 +115,27 @@ const CreateWalletButton = ({ label }: CreateWalletButtonProps) => {
 
 const ConnectButton = () => {
   const { t } = useTranslation()
-  const { data: wallet } = useWallet()
+  const wallet = useActiveWallet()
+
+  const { client, chain } = useWagmiAdapter()
 
   return (
     <div data-rk className="flex flex-row gap-2">
       {!wallet && <CreateWalletButton label={t('wallet:create')} />}
-      <RainbowConnectButton label={t('wallet:connect')} />
+      {client && (
+        <ThirdwebConnectButton
+          client={client}
+          appMetadata={{ name: import.meta.env.VITE_APP_NAME }}
+          connectModal={{
+            titleIcon: '',
+            termsOfServiceUrl: 'https://fomofactory.wtf/tos',
+            showThirdwebBranding: false,
+          }}
+          chain={chain}
+          chains={[chain]}
+          onConnect={(w) => console.log(w)}
+        />
+      )}
     </div>
   )
 }
