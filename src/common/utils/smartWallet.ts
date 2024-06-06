@@ -83,11 +83,14 @@ export function useSmartWallet() {
   }, [availableCapabilities, account])
 
   return useMemo(() => {
+    const capabilitiesForChain =
+      availableCapabilities && account.chainId ? availableCapabilities[account.chainId] : undefined
     return {
       capabilities: capabilitiesSupported ? capabilities : undefined,
       isSmartWallet: capabilitiesSupported,
+      availableCapabilities: capabilitiesForChain,
     }
-  }, [capabilities, capabilitiesSupported])
+  }, [capabilities, capabilitiesSupported, availableCapabilities, account])
 }
 
 export function useWriteContract() {

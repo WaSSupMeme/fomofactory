@@ -16,7 +16,7 @@ const fetchTopTokens = async (config: Config, chainId: number) => {
     args: [0n, maxUint256, false],
   })
 
-  const tokensData = await fetchTokensData(config, tokens as `0x${string}`[], false)
+  const tokensData = await fetchTokensData(config, tokens as `0x${string}`[])
   const tokensDataMap = new Map(tokensData.map((token) => [token.address, token]))
 
   const dexData = (await fetchTokensDexData(config, chainId, tokens as `0x${string}`[]))

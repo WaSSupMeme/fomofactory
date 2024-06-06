@@ -1,7 +1,6 @@
 import { Typography } from '@/common/components'
 import { cn } from '@/common/styleUtils'
 import { useTranslation } from 'react-i18next'
-import { useTokenMetadata } from '@/client/queries/token'
 import { Loader2 } from 'lucide-react'
 
 interface Token {
@@ -10,6 +9,13 @@ interface Token {
   symbol: string
   marketCap?: number
   rank?: number
+  avatar?: string
+  description?: string
+  metadata?: {
+    twitter?: string
+    telegram?: string
+    website?: string
+  }
 }
 
 interface CoinCardMiniProps {
@@ -19,8 +25,6 @@ interface CoinCardMiniProps {
 
 const CoinCardMini = ({ token, showBorder = false }: CoinCardMiniProps) => {
   const { t } = useTranslation()
-
-  const { data: metadata } = useTokenMetadata(token.address)
 
   const formatter = Intl.NumberFormat('en', {
     notation: 'compact',
@@ -42,12 +46,12 @@ const CoinCardMini = ({ token, showBorder = false }: CoinCardMiniProps) => {
           </Typography>
         )}
         <div className="flex h-5 w-5 items-center justify-center">
-          {metadata?.avatar === undefined ? (
+          {token?.avatar === undefined ? (
             <Loader2 className="size-4 animate-spin " />
           ) : (
             <img
               className="aspect-square h-full w-full rounded-lg object-cover group-hover:animate-shake group-hover:transition group-hover:duration-700"
-              src={metadata?.avatar}
+              src={token.avatar}
               title={token.name}
               alt={token.name}
             />

@@ -20,6 +20,23 @@ import { useWallet } from '@/app/providers/Wallet'
 import { erc20Abi, fomoFactoryAbi, iQuoterV2Abi } from '../abi/generated'
 import { fetchTokensDexData } from './dex'
 
+interface TokensMetadata {
+  count: number
+  rows: {
+    ipfs_pin_hash: string
+    metadata: {
+      name: string
+      keyvalues: {
+        description: string
+        fileName: string
+        telegram: string
+        twitter: string
+        website: string
+      }
+    }
+  }[]
+}
+
 const fetchMetadata = async (address: `0x${string}`) => {
   const res = await fetch(
     `https://api.pinata.cloud/data/pinList?status=pinned&metadata[name]=${address}`,
@@ -31,9 +48,9 @@ const fetchMetadata = async (address: `0x${string}`) => {
     },
   )
 
-  const resData: any = await res.json()
+  const resData = (await res.json()) as TokensMetadata
   if (resData.rows.length > 0) {
-    const avatar = resData.rows[0]
+    const avatar = resData.rows[0]!!
     return {
       avatar: `${import.meta.env.VITE_GATEWAY_URL}/ipfs/${avatar.ipfs_pin_hash}/${avatar.metadata.keyvalues.fileName}`,
       description: avatar.metadata.keyvalues.description,
@@ -43,6 +60,52 @@ const fetchMetadata = async (address: `0x${string}`) => {
     }
   }
   return undefined
+}
+
+const fetchTokensMetadata = async (tokens: `0x${string}`[]) => {
+  const pageLimit = 1000
+  let pageOffset = 0
+  const fetchMore = async () =>
+    (await (
+      await fetch(
+        `https://api.pinata.cloud/data/pinList?status=pinned&pageOffset=${pageOffset}&pageLimit=${pageLimit}`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${import.meta.env.VITE_PINATA_JWT}`,
+          },
+        },
+      )
+    ).json()) as TokensMetadata
+
+  let resData = await fetchMore()
+  let rows = resData.rows
+  while (rows.length < resData.count) {
+    pageOffset += resData.rows.length
+    resData = await fetchMore()
+    rows = rows.concat(resData.rows)
+  }
+
+  if (rows.length > 0) {
+    const metadataMap = new Map(
+      resData.rows.map((row) => {
+        return [row.metadata.name, row]
+      }),
+    )
+
+    return tokens.map((token) => {
+      const data: any = metadataMap.get(token)
+      if (!data) return undefined
+      return {
+        avatar: `${import.meta.env.VITE_GATEWAY_URL}/ipfs/${data.ipfs_pin_hash}/${data.metadata.keyvalues.fileName}`,
+        description: data.metadata.keyvalues.description,
+        telegram: data.metadata.keyvalues.telegram,
+        twitter: data.metadata.keyvalues.twitter,
+        website: data.metadata.keyvalues.website,
+      }
+    })
+  }
+  return tokens.map(() => undefined)
 }
 
 export const fetchTokensData = async (
@@ -81,9 +144,7 @@ export const fetchTokensData = async (
   let tokensMetadataMap: Map<`0x${string}`, any> = new Map()
 
   if (includeMetadata) {
-    const tokensMetadata = await Promise.all(
-      tokens.map(async (token) => await fetchMetadata(token)),
-    )
+    const tokensMetadata = await fetchTokensMetadata(tokens)
     tokensMetadataMap = new Map(
       tokensMetadata.map((metadata, idx) => {
         return [tokens[idx]!!, metadata]
@@ -221,7 +282,7 @@ const fetchAccountTokens = async (config: Config, chainId: number, account?: `0x
     args: [account],
   })
 
-  const tokensData = await fetchTokensData(config, tokens as `0x${string}`[], false)
+  const tokensData = await fetchTokensData(config, tokens as `0x${string}`[])
   const tokensDataMap = new Map(tokensData.map((token) => [token.address, token]))
 
   const dexData = (await fetchTokensDexData(config, chainId, tokens as `0x${string}`[]))
@@ -243,7 +304,7 @@ const fetchTokens = async (config: Config, chainId: number) => {
     args: [0n, maxUint256, false],
   })
 
-  const tokensData = await fetchTokensData(config, tokens as `0x${string}`[], false)
+  const tokensData = await fetchTokensData(config, tokens as `0x${string}`[])
   const tokensDataMap = new Map(tokensData.map((token) => [token.address, token]))
 
   const dexData = (await fetchTokensDexData(config, chainId, tokens as `0x${string}`[]))

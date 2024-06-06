@@ -4,7 +4,6 @@ import { TelegramIcon } from '@/assets/svg/TelegramIcon'
 import { TwitterIcon } from '@/assets/svg/TwitterIcon'
 import { WebIcon } from '@/assets/svg/WebIcon'
 import { useTranslation } from 'react-i18next'
-import { useTokenMetadata } from '@/client/queries/token'
 import { Loader2 } from 'lucide-react'
 
 interface Token {
@@ -13,6 +12,13 @@ interface Token {
   symbol: string
   marketCap?: number
   rank?: number
+  avatar?: string
+  description?: string
+  metadata?: {
+    twitter?: string
+    telegram?: string
+    website?: string
+  }
 }
 
 interface CoinCardProps {
@@ -22,8 +28,6 @@ interface CoinCardProps {
 
 const CoinCard = ({ token, showBorder = false }: CoinCardProps) => {
   const { t } = useTranslation()
-
-  const { data: metadata } = useTokenMetadata(token.address)
 
   const formatter = Intl.NumberFormat('en', {
     notation: 'compact',
@@ -51,30 +55,30 @@ const CoinCard = ({ token, showBorder = false }: CoinCardProps) => {
           <Typography variant="regularText">{token.name}</Typography>
           <Typography variant="mutedText">{token.symbol}</Typography>
           <div className="flex flex-row gap-1">
-            {metadata?.telegram && (
+            {token?.metadata?.telegram && (
               <a
                 className="transition duration-300 ease-in-out hover:scale-105 active:scale-95 "
-                href={`https://t.me/${metadata.telegram.substring(1)}`}
+                href={`https://t.me/${token.metadata.telegram.substring(1)}`}
                 target="_blank"
                 rel="noreferrer"
               >
                 <TelegramIcon className="h-6 w-6" />
               </a>
             )}
-            {metadata?.twitter && (
+            {token?.metadata?.twitter && (
               <a
                 className="transition duration-300 ease-in-out hover:scale-105 active:scale-95 "
-                href={`https://twitter.com/${metadata.twitter.substring(1)}`}
+                href={`https://twitter.com/${token.metadata.twitter.substring(1)}`}
                 target="_blank"
                 rel="noreferrer"
               >
                 <TwitterIcon className="h-6 w-6" />
               </a>
             )}
-            {metadata?.website && (
+            {token?.metadata?.website && (
               <a
                 className="transition duration-300 ease-in-out hover:scale-105 active:scale-95 "
-                href={metadata.website}
+                href={token.metadata.website}
                 target="_blank"
                 rel="noreferrer"
               >
@@ -95,12 +99,12 @@ const CoinCard = ({ token, showBorder = false }: CoinCardProps) => {
         </div>
         <div className="grow"></div>
         <div className="flex h-32 w-32 items-center justify-center">
-          {metadata?.avatar === undefined ? (
+          {token?.avatar === undefined ? (
             <Loader2 className="size-4 animate-spin " />
           ) : (
             <img
               className="aspect-square h-full w-full rounded-lg object-cover shadow-lg shadow-primary group-hover:animate-shake group-hover:transition group-hover:duration-700"
-              src={metadata?.avatar}
+              src={token.avatar}
               alt={token.name}
             />
           )}
