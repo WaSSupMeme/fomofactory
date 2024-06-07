@@ -43,13 +43,6 @@ export default defineConfig(({ mode }) => ({
     open: true,
     port: 3000,
   },
-  build: {
-    sourcemap: true,
-    chunkSizeWarningLimit: 1000,
-    commonjsOptions: {
-      transformMixedEsModules: true,
-    },
-  },
   resolve: {
     alias: {
       jsbi: path.resolve(__dirname, './node_modules/jsbi/dist/jsbi-cjs.js'),

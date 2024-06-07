@@ -1,11 +1,11 @@
-import { ConnectButton as ThirdwebConnectButton, useActiveWallet } from 'thirdweb/react'
-import React, { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { ConnectButton as ThirdwebConnectButton, useActiveWallet, useConnect } from 'thirdweb/react'
+import React, { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useConnect } from 'wagmi'
 import { Button } from '../ui/button'
 import { cn } from '@/common/styleUtils'
 import { CoinbaseIcon } from '@/assets/svg/CoinbaseIcon'
 import { useWagmiAdapter } from '@/app/providers/Wallet'
+import { createWallet } from 'thirdweb/wallets'
 
 const GRADIENT_BORDER_WIDTH = 2
 
@@ -35,8 +35,8 @@ interface CreateWalletButtonProps {
 }
 
 const CreateWalletButton = ({ label }: CreateWalletButtonProps) => {
-  const { connectors, connect } = useConnect()
-
+  const { connect } = useConnect()
+  const { client, chain } = useWagmiAdapter()
   const buttonRef = useRef<HTMLDivElement>(null)
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
 
@@ -76,20 +76,19 @@ const CreateWalletButton = ({ label }: CreateWalletButtonProps) => {
     [dimensions, gradientDiameter],
   )
 
-  const createWallet = useCallback(() => {
-    const coinbaseWalletConnector = connectors.find(
-      (connector) => connector.id === 'coinbaseWalletSDK',
-    )
-    if (coinbaseWalletConnector) {
-      connect({ connector: coinbaseWalletConnector })
-    }
-  }, [connectors, connect])
+  const connectWallet = async () => {
+    await connect(async () => {
+      const coinbaseWallet = createWallet('com.coinbase.wallet')
+      await coinbaseWallet.connect({ client, chain })
+      return coinbaseWallet
+    })
+  }
 
   return (
     <Button
       variant="default"
       size="default"
-      onClick={createWallet}
+      onClick={connectWallet}
       className="border-1 box-border rounded-none border-solid border-transparent bg-transparent px-0 py-0 shadow-none"
     >
       <div

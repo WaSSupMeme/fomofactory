@@ -148,6 +148,7 @@ const WagmiAdapter = ({ children }: Props) => {
   const { connectAsync } = useConnect()
   const { disconnectAsync } = useDisconnect()
   useEffect(() => {
+    console.log(activeWallet, account)
     const disconnectIfNeeded = async () => {
       if (activeWallet && chain && account && wagmiAccount.status === 'disconnected') {
         await connectAsync({ connector: thirdWebWallet({ client: viemClientWallet }) })
