@@ -115,17 +115,29 @@ export async function fetchTokensDexData(
     })
   ).map((data: unknown) => (data as [`0x${string}`, bigint, number])[0] as `0x${string}`)
 
-  const response = await fetch(
-    `https://api.geckoterminal.com/api/v2/networks/base/pools/multi/${poolAddresses.join(',')}`,
-  )
+  const response = async (addresses: `0x${string}`[]) => {
+    return await fetch(
+      `https://api.geckoterminal.com/api/v2/networks/base/pools/multi/${addresses.join(',')}`,
+    )
+  }
 
-  const resp = (await response.json()) as DexResponse
-  if (!resp.data) {
+  const chunkSize = 30
+  let data: Pool[] = []
+  for (let i = 0; i < poolAddresses.length; i += chunkSize) {
+    const chunk = poolAddresses.slice(i, i + chunkSize)
+    const resp = await response(chunk)
+    const respData = (await resp.json()) as DexResponse
+    if (respData.data) {
+      data = data.concat(respData.data)
+    }
+  }
+
+  if (!data) {
     return tokens.map((address, idx) => ({ address, poolAddress: poolAddresses[idx] })) as DexData[]
   }
 
   const pools = new Map(
-    resp.data.map((pool) => {
+    data.map((pool) => {
       return [pool.id.toLowerCase(), pool]
     }),
   )

@@ -1,11 +1,10 @@
 import { ConnectButton as RainbowConnectButton } from '@rainbow-me/rainbowkit'
 import React, { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useConnect } from 'wagmi'
+import { useAccount, useConnect } from 'wagmi'
 import { Button } from '../ui/button'
 import { cn } from '@/common/styleUtils'
 import { CoinbaseIcon } from '@/assets/svg/CoinbaseIcon'
-import { useWallet } from '@/app/providers/Wallet'
 
 const GRADIENT_BORDER_WIDTH = 2
 
@@ -115,11 +114,11 @@ const CreateWalletButton = ({ label }: CreateWalletButtonProps) => {
 
 const ConnectButton = () => {
   const { t } = useTranslation()
-  const { data: wallet } = useWallet()
+  const { address } = useAccount()
 
   return (
     <div data-rk className="flex flex-row gap-2">
-      {!wallet && <CreateWalletButton label={t('wallet:create')} />}
+      {!address && <CreateWalletButton label={t('wallet:create')} />}
       <RainbowConnectButton label={t('wallet:connect')} />
     </div>
   )

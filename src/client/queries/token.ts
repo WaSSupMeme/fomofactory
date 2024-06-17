@@ -16,7 +16,6 @@ import { Config, useAccount, useChainId, useConfig, usePublicClient } from 'wagm
 
 import { FeeAmount } from '@uniswap/v3-sdk'
 import { fetchEthUsdAmount } from './eth'
-import { useWallet } from '@/app/providers/Wallet'
 import { erc20Abi, fomoFactoryAbi, iQuoterV2Abi } from '../abi/generated'
 import { fetchTokensDexData } from './dex'
 
@@ -326,15 +325,11 @@ export const useTokenAddress = (
 ) => {
   const config = useConfig()
   const chainId = useChainId()
-  const { data: wallet } = useWallet()
+  const { address } = useAccount()
 
   return useQuery({
-    queryKey: [
-      'tokenAddress',
-      { creator: wallet?.account.address, name, symbol, totalSupply, salt, chainId },
-    ],
-    queryFn: () =>
-      fetchTokenAddress(config, chainId, name, symbol, totalSupply, salt, wallet?.account.address),
+    queryKey: ['tokenAddress', { creator: address, name, symbol, totalSupply, salt, chainId }],
+    queryFn: () => fetchTokenAddress(config, chainId, name, symbol, totalSupply, salt, address),
   })
 }
 

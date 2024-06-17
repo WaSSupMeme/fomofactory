@@ -16,7 +16,7 @@ import {
   zerionWallet,
   walletConnectWallet,
 } from '@rainbow-me/rainbowkit/wallets'
-import { WagmiProvider, http, useAccount, useWalletClient } from 'wagmi'
+import { WagmiProvider, http, useAccount } from 'wagmi'
 import { base } from 'wagmi/chains'
 import { defineChain } from 'viem'
 
@@ -118,4 +118,3 @@ export const useIsSupportedChain = () => {
 }
 
 export default WalletProvider
-export const useWallet = useWalletClient
