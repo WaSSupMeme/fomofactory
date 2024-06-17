@@ -8,7 +8,14 @@ import {
   darkTheme,
   cssStringFromTheme,
 } from '@rainbow-me/rainbowkit'
-import { coinbaseWallet } from '@rainbow-me/rainbowkit/wallets'
+import {
+  coinbaseWallet,
+  rabbyWallet,
+  metaMaskWallet,
+  rainbowWallet,
+  zerionWallet,
+  walletConnectWallet,
+} from '@rainbow-me/rainbowkit/wallets'
 import { WagmiProvider, http, useAccount, useWalletClient } from 'wagmi'
 import { base } from 'wagmi/chains'
 import { defineChain } from 'viem'
@@ -46,6 +53,19 @@ const WalletProvider = ({ children }: Props) => {
     transports: {
       [baseWithEns.id]: http(import.meta.env.VITE_RPC_PROVIDER_URL),
     },
+    wallets: [
+      {
+        groupName: 'Recommended',
+        wallets: [
+          coinbaseWallet,
+          zerionWallet,
+          rabbyWallet,
+          metaMaskWallet,
+          rainbowWallet,
+          walletConnectWallet,
+        ],
+      },
+    ],
     ssr: import.meta.env.SSR,
   })
 
