@@ -46,12 +46,6 @@ const WalletProvider = ({ children }: Props) => {
     transports: {
       [baseWithEns.id]: http(import.meta.env.VITE_RPC_PROVIDER_URL),
     },
-    wallets: [
-      {
-        groupName: 'Popular',
-        wallets: [coinbaseWallet],
-      },
-    ],
     ssr: import.meta.env.SSR,
   })
 
