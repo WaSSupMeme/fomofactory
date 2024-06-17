@@ -1120,6 +1120,131 @@ export const iQuoterV2Abi = [
 ] as const
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// IUniswapV3Factory
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const iUniswapV3FactoryAbi = [
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'fee', internalType: 'uint24', type: 'uint24', indexed: true },
+      {
+        name: 'tickSpacing',
+        internalType: 'int24',
+        type: 'int24',
+        indexed: true,
+      },
+    ],
+    name: 'FeeAmountEnabled',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'oldOwner',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      {
+        name: 'newOwner',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+    ],
+    name: 'OwnerChanged',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'token0',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      {
+        name: 'token1',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      { name: 'fee', internalType: 'uint24', type: 'uint24', indexed: true },
+      {
+        name: 'tickSpacing',
+        internalType: 'int24',
+        type: 'int24',
+        indexed: false,
+      },
+      {
+        name: 'pool',
+        internalType: 'address',
+        type: 'address',
+        indexed: false,
+      },
+    ],
+    name: 'PoolCreated',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'tokenA', internalType: 'address', type: 'address' },
+      { name: 'tokenB', internalType: 'address', type: 'address' },
+      { name: 'fee', internalType: 'uint24', type: 'uint24' },
+    ],
+    name: 'createPool',
+    outputs: [{ name: 'pool', internalType: 'address', type: 'address' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'fee', internalType: 'uint24', type: 'uint24' },
+      { name: 'tickSpacing', internalType: 'int24', type: 'int24' },
+    ],
+    name: 'enableFeeAmount',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'fee', internalType: 'uint24', type: 'uint24' }],
+    name: 'feeAmountTickSpacing',
+    outputs: [{ name: '', internalType: 'int24', type: 'int24' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'tokenA', internalType: 'address', type: 'address' },
+      { name: 'tokenB', internalType: 'address', type: 'address' },
+      { name: 'fee', internalType: 'uint24', type: 'uint24' },
+    ],
+    name: 'getPool',
+    outputs: [{ name: 'pool', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'owner',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '_owner', internalType: 'address', type: 'address' }],
+    name: 'setOwner',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+] as const
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // IUniswapV3Pool
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

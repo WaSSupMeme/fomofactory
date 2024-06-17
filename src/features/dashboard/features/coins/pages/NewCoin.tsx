@@ -24,7 +24,6 @@ import { Textarea } from '@/common/components/ui/textarea'
 import { InputGroup, InputGroupInput, InputGroupText } from '@/common/components/ui/input-group'
 import { Button } from '@/common/components/ui/button'
 import { Card, CardHeader } from '@/common/components/ui/card'
-import { useWallet } from '@/app/providers/Wallet'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { useShowError } from '@/common/hooks/usePrintErrorMessage'
 import { EthIcon } from '@/assets/svg/EthIcon'
@@ -35,14 +34,17 @@ import { useEthUsdAmount } from '@/client/queries/eth'
 import { useNavigate } from 'react-router-dom'
 import { APP_ROUTES } from '@/app/routes'
 import SEO from '@/common/components/SEO'
+import { useAccount } from 'wagmi'
+import { useIsSupportedChain } from '@/app/providers/Wallet'
 
 const NewCoin = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const showError = useShowError()
 
-  const { data: wallet } = useWallet()
+  const account = useAccount()
   const { openConnectModal } = useConnectModal()
+  const isSupportedChain = useIsSupportedChain()
 
   const { data: ethPrice } = useEthUsdAmount(1)
 
@@ -340,12 +342,12 @@ const NewCoin = () => {
               ),
               footer: (
                 <div className="space-y-4">
-                  {wallet && (
+                  {account.address && (
                     <Button
                       form="new-coin-form"
                       type="submit"
                       loading={isSettingTokenMetadata || isCreatingToken}
-                      disabled={isSettingTokenMetadata || isCreatingToken}
+                      disabled={isSettingTokenMetadata || isCreatingToken || !isSupportedChain}
                       block
                     >
                       {isSettingTokenMetadata || isCreatingToken
@@ -353,7 +355,7 @@ const NewCoin = () => {
                         : t('coin:new.submit')}
                     </Button>
                   )}
-                  {!wallet && (
+                  {!account.address && (
                     <Button type="button" onClick={openConnectModal} block>
                       {t('wallet:connect')}
                     </Button>

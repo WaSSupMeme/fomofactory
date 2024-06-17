@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom'
-
-import logo from '@/assets/png/logo-light.png'
+import { Logo as LogoSvg } from '@/assets/svg/Logo'
 
 interface Props {
   to: string
@@ -10,7 +9,7 @@ const Logo = ({ to }: Props) => {
   return (
     <Link to={to}>
       <div className="flex flex-row gap-2">
-        <img className="h-12" alt="Logo" src={logo} />
+        <LogoSvg className="-mt-1 h-9" />
       </div>
     </Link>
   )

@@ -21,7 +21,7 @@ const config = {
       },
     },
     fontFamily: {
-      body: [
+      sans: [
         'SFRounded',
         'ui-rounded',
         'SF Pro Rounded',

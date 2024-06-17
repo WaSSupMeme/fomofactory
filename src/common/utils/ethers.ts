@@ -1,7 +1,7 @@
 import { providers } from 'ethers'
 import { useMemo } from 'react'
 import type { Account, Chain, Client, Transport, WalletCapabilities } from 'viem'
-import { Config, useClient, useConfig, useConnectorClient } from 'wagmi'
+import { Config, useAccount, useClient, useConfig, useConnectorClient } from 'wagmi'
 import { clientToSmartWalletSigner, useSmartWallet } from './smartWallet'
 
 export function clientToProvider(client: Client<Transport, Chain>) {
@@ -26,8 +26,8 @@ export function useEthersProvider({ chainId }: { chainId?: number | undefined } 
   return useMemo(() => (client ? clientToProvider(client) : undefined), [client])
 }
 
-export function clientToSigner(client: Client<Transport, Chain, Account>) {
-  const { account, chain, transport } = client
+export function clientToSigner(client: Client<Transport, Chain, Account>, chain: Chain) {
+  const { account, transport } = client
   const network = {
     chainId: chain.id,
     name: chain.name,
@@ -39,17 +39,18 @@ export function clientToSigner(client: Client<Transport, Chain, Account>) {
 }
 
 /** Hook to convert a Viem Client to an ethers.js Signer. */
-export function useEthersSigner({ chainId }: { chainId?: number } = {}) {
+export function useEthersSigner() {
+  const { chain, chainId } = useAccount()
   const { data: client } = useConnectorClient<Config>({ chainId })
   const config = useConfig()
   const { capabilities, isSmartWallet } = useSmartWallet()
 
   return useMemo(() => {
-    if (isSmartWallet && client) {
-      return clientToSmartWalletSigner(config, client, capabilities as WalletCapabilities)
-    } else if (client) {
-      return clientToSigner(client)
+    if (isSmartWallet && client && chain) {
+      return clientToSmartWalletSigner(config, client, chain, capabilities as WalletCapabilities)
+    } else if (client && chain) {
+      return clientToSigner(client, chain)
     }
     return undefined
-  }, [client, capabilities, isSmartWallet, config])
+  }, [client, capabilities, isSmartWallet, config, chain])
 }

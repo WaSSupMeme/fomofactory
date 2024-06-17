@@ -2,7 +2,6 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 
 import { multicall } from '@wagmi/core'
 import {
-  Abi,
   formatEther,
   parseEther,
   parseUnits,
@@ -14,13 +13,11 @@ import { waitForTransactionReceipt } from 'viem/actions'
 import { Config, useAccount, useChainId, useConfig, usePublicClient, useWalletClient } from 'wagmi'
 import { publicActionsL2 } from 'viem/op-stack'
 
-import IUniswapV3FactoryABI from '@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Factory.sol/IUniswapV3Factory.json'
-import FomoFactoryABI from '../abi/FomoFactory.json'
-import LiquidityLockerABI from '../abi/LiquidityLocker.json'
 import { FeeAmount } from '@uniswap/v3-sdk'
 import { calculateInitialTick } from '@/common/utils'
 import { fetchUsdEthAmount } from '../queries/eth'
 import { useWriteContract } from '@/common/utils/smartWallet'
+import { fomoFactoryAbi, iUniswapV3FactoryAbi, liquidityLockerAbi } from '../abi/generated'
 
 async function addTokenToWallet(
   client: WalletClient | undefined,
@@ -76,12 +73,12 @@ async function prepareCreateToken(
     contracts: [
       {
         address: import.meta.env[`VITE_FOMO_FACTORY_ADDRESS_${chainId}`],
-        abi: FomoFactoryABI as Abi,
+        abi: fomoFactoryAbi,
         functionName: 'protocolFee',
       },
       {
         address: import.meta.env[`VITE_UNISWAP_V3_FACTORY_ADDRESS_${chainId}`],
-        abi: IUniswapV3FactoryABI.abi as Abi,
+        abi: iUniswapV3FactoryAbi,
         functionName: 'feeAmountTickSpacing',
         args: [FeeAmount.HIGH],
       },
@@ -95,7 +92,7 @@ async function prepareCreateToken(
 
   return {
     address: import.meta.env[`VITE_FOMO_FACTORY_ADDRESS_${chainId}`],
-    abi: FomoFactoryABI as Abi,
+    abi: fomoFactoryAbi,
     functionName: 'createMemecoin',
     args: [
       data.name,
@@ -130,7 +127,8 @@ export const useEstimateCreateToken = (data: {
 
       const args = await prepareCreateToken(config, chainId, data)
       const gas =
-        (await client.estimateContractTotalFee({ ...args, account: account.address })) + args.value
+        (await client.estimateContractTotalFee({ ...args, account: account.address } as any)) +
+        args.value
 
       return Number(formatEther(gas))
     },
@@ -163,7 +161,7 @@ export const useCreateToken = (options?: {
       const receipt = await waitForTransactionReceipt(client, { hash })
 
       const logs = parseEventLogs({
-        abi: FomoFactoryABI as Abi,
+        abi: fomoFactoryAbi,
         eventName: 'MemecoinCreated',
         logs: receipt.logs,
       })
@@ -198,7 +196,7 @@ export const useClaimFees = (options?: {
 
       const hash = await writeContract(config, {
         address: import.meta.env[`VITE_LIQUIDITY_LOCKER_ADDRESS_${chainId}`],
-        abi: LiquidityLockerABI as Abi,
+        abi: liquidityLockerAbi,
         functionName: 'claimFees',
         args: [data.positionId, data.recipient],
       })

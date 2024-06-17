@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react'
+import { useMemo, type ReactNode } from 'react'
 
 import {
   DisclaimerComponent,
@@ -9,7 +9,7 @@ import {
   cssStringFromTheme,
 } from '@rainbow-me/rainbowkit'
 import { coinbaseWallet } from '@rainbow-me/rainbowkit/wallets'
-import { WagmiProvider, http, useWalletClient } from 'wagmi'
+import { WagmiProvider, http, useAccount, useWalletClient } from 'wagmi'
 import { base } from 'wagmi/chains'
 import { defineChain } from 'viem'
 
@@ -96,6 +96,11 @@ const WalletProvider = ({ children }: Props) => {
       </RainbowKitProvider>
     </WagmiProvider>
   )
+}
+
+export const useIsSupportedChain = () => {
+  const { chainId } = useAccount()
+  return useMemo(() => chainId === base.id, [chainId])
 }
 
 export default WalletProvider

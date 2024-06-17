@@ -29,6 +29,7 @@ import { useEffect, useState } from 'react'
 import { useAddTokenToWallet, useClaimFees } from '@/client/mutations/token'
 import { formatUnits } from 'viem'
 import Swap from '../components/Swap'
+import { useIsSupportedChain } from '@/app/providers/Wallet'
 
 const CoinDetails = () => {
   const { t } = useTranslation()
@@ -38,6 +39,7 @@ const CoinDetails = () => {
   const { coinId } = useCoinDetailsParams()
 
   const account = useAccount()
+  const isSupportedChain = useIsSupportedChain()
 
   const { data: token, isLoading: isTokenLoading } = useToken(coinId)
   const { data: pool, refetch: refetchPool } = usePool(coinId)
@@ -334,7 +336,8 @@ const CoinDetails = () => {
                     !pool.positionId ||
                     !account?.address ||
                     (!ethFees && !tokenFees) ||
-                    isClaimingFees
+                    isClaimingFees ||
+                    !isSupportedChain
                   }
                   onClick={() => {
                     claimFees({

@@ -11,8 +11,9 @@ import {
 } from '@uniswap/widgets'
 import { useEffect } from 'react'
 
-import { useAccount, useChainId, useConfig } from 'wagmi'
+import { useAccount, useConfig } from 'wagmi'
 import { waitForTransactionReceipt } from '@wagmi/core'
+import { useIsSupportedChain } from '@/app/providers/Wallet'
 
 interface Token {
   address: `0x${string}`
@@ -31,10 +32,10 @@ const Swap = ({ token, onSwap }: Props) => {
   const { theme } = useTheme()
 
   const { openConnectModal } = useConnectModal()
-  const chainId = useChainId()
   const account = useAccount()
   const signer = useEthersSigner()
   const config = useConfig()
+  const isSupportedChain = useIsSupportedChain()
 
   // hack to fix uniswap widget
   useEffect(() => {
@@ -132,7 +133,7 @@ const Swap = ({ token, onSwap }: Props) => {
 
   return (
     <>
-      {token && account.address && (
+      {token && account.address && account.chainId && isSupportedChain ? (
         <SwapWidget
           className="h-max"
           {...widgetConfig}
@@ -142,13 +143,14 @@ const Swap = ({ token, onSwap }: Props) => {
               address: token.address,
               symbol: token.symbol,
               decimals: token.decimals,
-              chainId: chainId,
+              chainId: account.chainId,
               logoURI: token.avatar,
             },
           ]}
         />
+      ) : (
+        <SwapWidgetSkeleton theme={widgetConfig.theme} />
       )}
-      {!account.address && <SwapWidgetSkeleton theme={widgetConfig.theme} />}
     </>
   )
 }
