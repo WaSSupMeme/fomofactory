@@ -1,4 +1,6 @@
 import { Helmet } from 'react-helmet-async'
+import { fetchMetadata, metadataToMetaTags } from 'frames.js/next/pages-router/client'
+import { useEffect, useState } from 'react'
 
 interface SEOProps {
   title?: string
@@ -7,6 +9,7 @@ interface SEOProps {
   type?: string
   image?: string
   siteName?: string
+  frame?: string
 }
 
 export default function SEO({
@@ -16,7 +19,22 @@ export default function SEO({
   type = 'website',
   image,
   siteName,
+  frame,
 }: SEOProps) {
+  const [frameMetadata, setFrameMetadata] = useState<JSX.Element>()
+
+  useEffect(() => {
+    const getMetadata = async () => {
+      if (frame) return
+      const metadata = await fetchMetadata(
+        new URL(`/api${frame}`, import.meta.env.VITE_FRAME_APP_URL),
+      )
+      setFrameMetadata(metadataToMetaTags(metadata))
+    }
+    getMetadata()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   return (
     <Helmet>
       {/* Standard metadata tags */}
@@ -25,11 +43,12 @@ export default function SEO({
       {/* End standard metadata tags */}
       {/* OG tags */}
       <meta property="og:type" content={type} />
-      {title && <meta property="og:title" content={subtitle} />}
+      {title && !frameMetadata && <meta property="og:title" content={subtitle} />}
       {description && <meta property="og:description" content={description} />}
-      {image && <meta property="og:image" content={image} />}
+      {image && !frameMetadata && <meta property="og:image" content={image} />}
       {siteName && <meta property="og:site_name" content={siteName} />}
       {/* End OG tags */}
+      {frameMetadata}
     </Helmet>
   )
 }

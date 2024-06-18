@@ -3,6 +3,7 @@
 
 interface ImportMetaEnv {
   readonly VITE_APP_NAME: string
+  readonly VITE_FRAME_APP_URL: string
   readonly VITE_WALLET_CONNECT_PROJECT_ID: string
   readonly VITE_FULLSTORY_ORG_ID: string
   readonly VITE_PINATA_JWT: string

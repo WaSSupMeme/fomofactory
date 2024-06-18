@@ -60,6 +60,7 @@ const Dashboard = () => {
         description={t('seo:root.description')}
         image={preview}
         siteName={t('seo:root.siteName')}
+        frame="/"
       />
       <Routes>
         <Route
