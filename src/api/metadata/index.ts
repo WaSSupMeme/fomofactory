@@ -17,10 +17,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       if (!doc.getElementsByTagName('head').length) return res.json({ error: 'No head tag found' })
 
       const s = new XMLSerializer()
+      const head = doc.getElementsByTagName('head')[0]!!
 
-      const metadata = Array.from(doc.getElementsByTagName('head')[0]!!.childNodes).map((node) => {
-        return s.serializeToString(node)
-      })
+      const metadata: string[] = []
+      for (let i = 0; i < head.childNodes.length; i++) {
+        const node = head.childNodes[i]!!
+        metadata.push(s.serializeToString(node))
+      }
 
       console.log('metadata', metadata)
 
