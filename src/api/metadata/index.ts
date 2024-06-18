@@ -25,8 +25,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         metadata.push(s.serializeToString(node))
       }
 
-      console.log('metadata', metadata)
-
       return res.json({ metadata })
     } else if (response.status) {
       return res.json({ error: `Failed to fetch metadata: ${response.status}` })
