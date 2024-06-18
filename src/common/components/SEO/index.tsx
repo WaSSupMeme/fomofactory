@@ -25,7 +25,7 @@ export default function SEO({
 
   useEffect(() => {
     const getMetadata = async () => {
-      if (frame) return
+      if (!frame) return
       const metadata = await fetchMetadata(
         new URL(`/api${frame}`, import.meta.env.VITE_FRAME_APP_URL),
       )
