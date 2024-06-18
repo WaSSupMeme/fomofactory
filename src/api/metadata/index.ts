@@ -18,7 +18,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       const s = new XMLSerializer()
 
-      const metadata = Array.from(doc.getElementsByTagName('head')[0]!!.children).map((node) => {
+      const metadata = Array.from(doc.getElementsByTagName('head')[0]!!.childNodes).map((node) => {
         return s.serializeToString(node)
       })
 
