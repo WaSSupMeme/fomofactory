@@ -6,6 +6,9 @@ export async function fetchMetadata(path: string): Promise<JSX.Element | JSX.Ele
     url.searchParams.append('path', encodeURIComponent(path))
     const response = await fetch(url, {
       method: 'GET',
+      headers: {
+        Accept: 'application/json',
+      },
       cache: 'no-cache',
     })
 
