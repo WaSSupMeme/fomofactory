@@ -10,7 +10,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     })
 
     if (response.ok) {
-      const html = (await response.json()) as string
+      const html = await response.text()
 
       const s = new XMLSerializer()
       const doc = new DOMParser().parseFromString(html, 'text/xml')
