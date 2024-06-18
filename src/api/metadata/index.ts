@@ -5,7 +5,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node'
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     const path = decodeURIComponent(req.query['path'] as string)
-    const url = `${process.env['VITE_FRAME_APP_URL']}/api/${path}`
+    const url = new URL(path, `${process.env['VITE_FRAME_APP_URL']}/api`)
     const response = await fetch(url, {
       method: 'GET',
       cache: 'no-cache',
