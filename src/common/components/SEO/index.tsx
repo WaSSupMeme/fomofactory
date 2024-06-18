@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async'
-import { fetchMetadata, metadataToMetaTags } from 'frames.js/next/pages-router/client'
 import { useEffect, useState } from 'react'
+import { fetchMetadata } from '@/common/utils/metadata'
 
 interface SEOProps {
   title?: string
@@ -21,15 +21,13 @@ export default function SEO({
   siteName,
   frame,
 }: SEOProps) {
-  const [frameMetadata, setFrameMetadata] = useState<JSX.Element>()
+  const [frameMetadata, setFrameMetadata] = useState<string | JSX.Element | JSX.Element[]>()
 
   useEffect(() => {
     const getMetadata = async () => {
-      if (!frame) return
-      const metadata = await fetchMetadata(
-        new URL(`/api${frame}`, import.meta.env.VITE_FRAME_APP_URL),
-      )
-      setFrameMetadata(metadataToMetaTags(metadata))
+      if (frame === undefined) return
+      const metadata = await fetchMetadata(frame)
+      setFrameMetadata(metadata)
     }
     getMetadata()
     // eslint-disable-next-line react-hooks/exhaustive-deps

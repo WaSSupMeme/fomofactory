@@ -3,7 +3,6 @@
 
 interface ImportMetaEnv {
   readonly VITE_APP_NAME: string
-  readonly VITE_FRAME_APP_URL: string
   readonly VITE_WALLET_CONNECT_PROJECT_ID: string
   readonly VITE_FULLSTORY_ORG_ID: string
   readonly VITE_PINATA_JWT: string
@@ -19,6 +18,8 @@ interface ImportMetaEnv {
   readonly VITE_UNISWAP_V3_NONFUNGIBLE_POSITION_MANAGER_ADDRESS_8453: string
   readonly VITE_UNISWAP_V3_QUOTER_ADDRESS_8453: string
   readonly VITE_ETH_USD_AGGREGATOR_ADDRESS_8453: string
+
+  readonly VITE_FRAME_APP_PROXY_URL: string
 
   readonly VITEST?: 'true' | 'false'
   readonly CI?: 'true' | 'false'

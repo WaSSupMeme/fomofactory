@@ -126,7 +126,7 @@ const NewCoin = () => {
         title={t('seo:new.title')}
         subtitle={t('seo:new.subtitle')}
         description={t('seo:new.description')}
-        frame={`/coins/create`}
+        frame={`coins/create`}
       />
       <div className="flex h-full w-full flex-col items-center justify-center">
         <aside className="w-11/12 space-y-4 sm:w-11/12 md:w-9/12 lg:w-3/5 xl:w-2/5">

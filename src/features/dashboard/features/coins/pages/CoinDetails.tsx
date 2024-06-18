@@ -99,7 +99,7 @@ const CoinDetails = () => {
         subtitle={t('seo:coin.subtitle', { name: token?.name })}
         description={t('seo:coin.description', { name: token?.name })}
         image={token?.avatar}
-        frame={`/coins/${coinId}`}
+        frame={`coins/${coinId}`}
       />
       <div className="flex h-full w-full flex-col items-center xl:flex-row xl:items-start">
         {isTokenLoading ? (
