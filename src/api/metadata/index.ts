@@ -16,6 +16,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const doc = new DOMParser().parseFromString(html, 'text/xml')
       if (!doc.getElementsByTagName('head').length) return res.json({ error: 'No head tag found' })
 
+      console.log(s.serializeToString(doc.getElementsByTagName('head')[0]!!))
+
       return res.json({ metadata: s.serializeToString(doc.getElementsByTagName('head')[0]!!) })
     } else if (response.status) {
       return res.json({ error: `Failed to fetch metadata: ${response.status}` })
@@ -23,6 +25,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     return res.json({ error: 'Failed to fetch metadata' })
   } catch (error) {
-    return res.json({ error })
+    return res.json({ error: `Failed to fetch metadata: ${error}` })
   }
 }
