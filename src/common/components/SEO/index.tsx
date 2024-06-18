@@ -21,7 +21,7 @@ export default function SEO({
   siteName,
   frame,
 }: SEOProps) {
-  const [frameMetadata, setFrameMetadata] = useState<string | JSX.Element | JSX.Element[]>()
+  const [frameMetadata, setFrameMetadata] = useState<JSX.Element | JSX.Element[]>()
 
   useEffect(() => {
     const getMetadata = async () => {
