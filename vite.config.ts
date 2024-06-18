@@ -64,6 +64,11 @@ export default defineConfig(({ mode }) => ({
         destination: '/api/paymaster',
         addRoute: true,
       },
+      {
+        source: './src/api/metadata/index.ts',
+        destination: '/api/metadata',
+        addRoute: true,
+      },
     ],
   },
 }))
